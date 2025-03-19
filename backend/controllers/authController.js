@@ -1,6 +1,8 @@
-const User = require("../models/UserModel");
-const bcrypt = require("bcrypt");
+// controllers/AuthController.js
+
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const User = require("../models/UserModel");
 
 // Create a super admin (only if one does not already exist)
 const createSuperAdmin = async (req, res, next) => {
@@ -11,12 +13,11 @@ const createSuperAdmin = async (req, res, next) => {
     if (existingSuperAdmin) {
       return res.status(400).json({ message: "Super admin already exists." });
     }
-    
-    // Hash the password before saving
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
-    // Create the super admin user with role 'super-admin'
+
+    // Hash the password before saving to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the super admin user with a hashed password
     const superAdmin = new User({
       firstName,
       lastName,
@@ -24,7 +25,7 @@ const createSuperAdmin = async (req, res, next) => {
       password: hashedPassword,
       role: "super-admin",
     });
-    
+
     await superAdmin.save();
     res.status(201).json({
       message: "Super admin created successfully",
@@ -44,29 +45,29 @@ const createSuperAdmin = async (req, res, next) => {
 const superAdminLogin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    // Find the user with given email and role 'super-admin'
+    console.log("Login attempt for email:", email);
+
+    // Find the super admin by email and role
     const user = await User.findOne({ email, role: "super-admin" });
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Authentication failed: Super admin not found." });
+      console.error("No super admin found for email:", email);
+      return res.status(401).json({ message: "Authentication failed: Super admin not found." });
     }
-    
-    // Compare provided password with stored hashed password
+
+    // Compare the provided password with the stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ message: "Authentication failed: Invalid credentials." });
+      console.error("Password mismatch for email:", email);
+      return res.status(401).json({ message: "Authentication failed: Invalid credentials." });
     }
-    
-    // Generate a JWT token with user ID and role
+
+    // Generate a JWT token with the user ID and role
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-    
+
     res.status(200).json({
       message: "Super admin login successful",
       token,

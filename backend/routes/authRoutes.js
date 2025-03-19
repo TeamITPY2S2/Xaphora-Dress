@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-// Import Auth Controller functions
-const { createSuperAdmin, superAdminLogin } = require("./controllers/authController");
+const { createSuperAdmin, superAdminLogin } = require("../controllers/AuthController");
+
+// GET endpoint to verify that the auth route is active
+router.get("/", (req, res) => {
+  res.send("Auth endpoint is active");
+});
 
 // Route to create the super admin (one time use)
 router.post("/superadmin/create", createSuperAdmin);
