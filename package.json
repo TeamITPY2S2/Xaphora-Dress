@@ -1,0 +1,20 @@
+{
+  "name": "xaphora-dress",
+  "version": "1.0.0",
+  "description": "An online clothing store using the MERN stack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeamITPY2S2/Xaphora-Dress.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TeamITPY2S2/Xaphora-Dress/issues"
+  },
+  "homepage": "https://github.com/TeamITPY2S2/Xaphora-Dress#readme"
+}
