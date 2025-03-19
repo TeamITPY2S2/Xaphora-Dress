@@ -10,31 +10,25 @@ dotenv.config(); // Load environment variables
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// MongoDB connection URL
-app.use("/api", productRoutes);
+app.use(express.json());
 
 // Import Routes
-const userRoutes = require('./Routes/UserRoutes'); 
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./Routes/UserRoutes');
+const deliveryRoutes = require('./Routes/DeliveryRoutes');
 
 // Use Routes
-app.use(express.json());
+app.use("/api", productRoutes);
 app.use("/users", userRoutes);
-
+app.use("/api/delivery", deliveryRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
-
-
-
 
 mongoose
   .connect(URL)
   .then(() => console.log("MongoDB Connection Success!"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
-
-// Use the delivery routes
-app.use("/api/delivery", deliveryRoutes);
 
 // Start the server
 app.listen(PORT, () => {
