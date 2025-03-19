@@ -1,8 +1,13 @@
-// const express = require('express');
-// const router = express.Router();
-// const { register, login } = require('../controllers/authController');
+const express = require("express");
+const router = express.Router();
 
-// router.post('/register', register);
-// router.post('/login', login);
+// Import Auth Controller functions
+const { createSuperAdmin, superAdminLogin } = require("./controllers/authController");
 
-// module.exports = router;
+// Route to create the super admin (one time use)
+router.post("/superadmin/create", createSuperAdmin);
+
+// Route for super admin login
+router.post("/superadmin/login", superAdminLogin);
+
+module.exports = router;
