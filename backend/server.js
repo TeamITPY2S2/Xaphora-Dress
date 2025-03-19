@@ -5,6 +5,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const deliveryRoutes = require("./routes/deliveryRoutes"); // Import the delivery routes
 const app = express();
+const productRoutes = require("../backend/routes/productRoutes");
 
 dotenv.config(); // Load environment variables
 
@@ -14,6 +15,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection URL
+app.use("/api", productRoutes);
+
 const URL = process.env.MONGODB_URL;
 
 // Connect to MongoDB
