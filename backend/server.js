@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const app = express();
+const productRoutes = require("./routes/productRoutes");
 
 dotenv.config(); // Load environment variables
 
