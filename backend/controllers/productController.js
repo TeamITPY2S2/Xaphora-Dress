@@ -4,7 +4,22 @@ const { sendNotification } = require("../services/notificationService");
 // Create a new product
 const createProduct = async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    const { name, category, price, stockQuantity, imageUrl, description } = req.body;
+
+    // Check if required fields are provided
+    if (!name || !category || !price || !stockQuantity || !imageUrl || !description) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const newProduct = new Product({
+      name,
+      category,
+      price,
+      stockQuantity,
+      imageUrl,
+      description,
+    });
+
     await newProduct.save();
     res.status(201).json({ message: "Product created successfully", newProduct });
   } catch (error) {
@@ -42,10 +57,12 @@ const updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
     // Check stock and trigger alert if necessary
     if (product.stockQuantity <= product.minimumStockLevel) {
       sendNotification(product);
     }
+
     res.status(200).json({ message: "Product updated successfully", product });
   } catch (error) {
     res.status(400).json({ message: "Error updating product", error });

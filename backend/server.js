@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const app = express();
-const productRoutes = require("./routes/productRoutes");
+const productRoutes = require("../backend/routes/productRoutes");
 
 dotenv.config(); // Load environment variables
 
@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 8070;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use("/api", productRoutes);
 
 const URL = process.env.MONGODB_URL;
 
