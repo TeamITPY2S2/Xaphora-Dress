@@ -1,23 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const deliveryAgentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  contact: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  region: {
-    type: String,
-    required: true,
-  },
+const DeliveryAgentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  contact: { type: String, required: true },
+  assignedRegion: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("DeliveryAgent", deliveryAgentSchema);
+module.exports = mongoose.model('DeliveryAgent', DeliveryAgentSchema);
