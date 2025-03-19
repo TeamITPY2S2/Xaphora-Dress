@@ -16,11 +16,13 @@ app.use(express.json());
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/UserRoutes');
 const deliveryRoutes = require('./Routes/DeliveryRoutes');
+const cartRoutes = require("./routes/cartRoutes");
 
 // Use Routes
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use("/api/cart", cartRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
