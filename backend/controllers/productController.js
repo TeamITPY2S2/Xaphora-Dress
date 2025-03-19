@@ -1,5 +1,5 @@
-const Product = require("../models/product");
-const { sendNotification } = require("../notifications/notify");
+const Product = require("../models/productModel");
+const { sendNotification } = require("../services/notificationService");
 
 // Create a new product
 const createProduct = async (req, res) => {
