@@ -66,7 +66,7 @@ const getUserById = async (req, res, next) => {
       }
   
       // Respond with the user data
-      res.json(user);
+      res.json({user});
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Error retrieving user" });
@@ -92,7 +92,7 @@ const updateUser = async (req, res, next) => {
     }
 
     // Respond with the updated user data
-    res.json(updatedUser);
+    res.json({updatedUser});
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error updating user" });
@@ -123,8 +123,8 @@ const deleteUser = async (req, res) => {
 // Export controller functions
 module.exports = {
   getAllUsers,
-  getUserById,
   createUser,
+  getUserById,
   updateUser,
   deleteUser,
 };
