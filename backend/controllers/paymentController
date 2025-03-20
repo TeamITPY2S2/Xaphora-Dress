@@ -1,0 +1,24 @@
+const Cart = require("../models/Cart");
+
+exports.mockPayment = async (req, res) => {
+  const { orderId } = req.body; // Here, orderId is actually the cart ID
+  
+  try {
+    // Retrieve the cart using the provided ID
+    const cart = await Cart.findById(orderId);
+    if (!cart) {
+      return res.status(404).json({ error: "Cart not found" });
+    }
+    
+    // Simulate payment processing delay
+    setTimeout(async () => {
+      // Mark the payment as completed on the cart
+      cart.paymentStatus = "completed";
+      await cart.save();
+      res.status(200).json({ success: true, message: "Mock payment completed using cart id" });
+    }, 1000); // 1 second delay for simulation
+  } catch (error) {
+    console.error("Mock payment error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
