@@ -12,12 +12,14 @@ app.use(cors());
 app.use(express.json()); // Built-in middleware to parse JSON
 
 // Import Routes
-const userRoutes = require('./Routes/UserRoutes');
+const userRoutes = require("./Routes/UserRoutes");
 const authRoutes = require("./Routes/authRoutes");
+const addAdminRoutes = require('./Routes/addAdminRoutes'); 
 
 // Use Routes
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/admin", addAdminRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
