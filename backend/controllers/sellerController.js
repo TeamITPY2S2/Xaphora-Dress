@@ -5,7 +5,7 @@ const Seller = require('../models/Seller');
 // @desc    Create a new seller (Signup)
 // @route   POST /api/sellers
 const createSeller = asyncHandler(async (req, res) => {
-  const { name, email, password, storeName, fcmToken } = req.body;
+  const { name, email, password, storeName,role, fcmToken } = req.body;
 
   // Check if seller exists
   const sellerExists = await Seller.findOne({ email });
@@ -20,6 +20,7 @@ const createSeller = asyncHandler(async (req, res) => {
     email,
     password,
     storeName,
+    role,
     fcmToken,
   });
 

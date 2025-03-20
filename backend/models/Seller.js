@@ -8,6 +8,10 @@ const SellerSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     storeName: { type: String, required: true },
+    role: {
+        type : String,
+        default : "seller"
+    },
     fcmToken: { type: String }, // FCM token provided by the seller
   },
   { timestamps: true }
