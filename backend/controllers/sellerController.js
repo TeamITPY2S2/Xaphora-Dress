@@ -76,7 +76,7 @@ const updateSeller = asyncHandler(async (req, res) => {
 const deleteSeller = asyncHandler(async (req, res) => {
   const seller = await Seller.findById(req.params.id);
   if (seller) {
-    await seller.remove();
+    await seller.deleteOne();
     res.json({ message: 'Seller removed' });
   } else {
     res.status(404);
