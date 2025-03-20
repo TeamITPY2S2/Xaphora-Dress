@@ -18,6 +18,8 @@ const userRoutes = require('./Routes/UserRoutes');
 const deliveryRoutes = require('./Routes/DeliveryRoutes');
 const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const addressRoutes = require("./routes/addressRoute"); // NEW: Address routes
+const infoRoutes = require("./routes/infoRoutes"); // NEW: Info routes
 
 // Use Routes
 app.use("/api", productRoutes);
@@ -25,6 +27,8 @@ app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/api/address", addressRoutes); // NEW: Address route endpoint
+app.use("/api/info", infoRoutes); // NEW: Endpoint for card info
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
