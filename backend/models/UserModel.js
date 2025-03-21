@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const User = require("../models/UserModel");
+
 
 const userSchema = new Schema(
     {
@@ -31,8 +33,18 @@ const userSchema = new Schema(
             required: [true, "Password is required"],
             minlength: [8, "Password must be at least 8 characters long"]
         },
+
+          // Add loyaltyPoints to track user's points
+        loyaltyPoints: {
+            type: Number,
+            default: 0
+          }
     },
-    { timestamps: true }
+    {
+         timestamps: true
+     }
 );
 
 module.exports = mongoose.model("User", userSchema);
+
+
