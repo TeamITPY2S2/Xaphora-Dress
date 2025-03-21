@@ -1,43 +1,31 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
 
-// Pages
-import Home from './pages/Home';
+// Pages (ensure these files exist)
 import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 
-// Components
-import Navbar from './components/Navbar';
-import './App.css';
-
-const AppContent = () => {
-  const location = useLocation();
-  // Hide Navbar on Seller Dashboard page
-  const hideNavbar = location.pathname === '/seller-dashboard';
-
-  return (
-    <div className="app-container">
-      {!hideNavbar && <Navbar />}
-      <div className="content-container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/add-product" element={<AddProductPage />} />
-          <Route path="/products" element={<ProductListPage />} />
-          <Route path="/edit-product/:id" element={<EditProductPage />} />
-          <Route path="/seller-dashboard" element={<SellerDashboard />} />
-        </Routes>
-      </div>
-    </div>
-  );
-};
-
 function App() {
   return (
     <Router>
-      <AppContent />
+      <div className="app-container">
+        {/* You can remove the Navbar reference if it's not needed */}
+        <div className="content-container">
+          <Routes>
+            {/* For example, we make the Seller Dashboard the default route */}
+            <Route path="/" element={<SellerDashboard />} />
+            <Route path="/add-product" element={<AddProductPage />} />
+            <Route path="/products" element={<ProductListPage />} />
+            <Route path="/edit-product/:id" element={<EditProductPage />} />
+            {/* Optionally, if you want a dedicated seller dashboard route */}
+            <Route path="/seller-dashboard" element={<SellerDashboard />} />
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 }

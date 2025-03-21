@@ -1,8 +1,39 @@
 /* src/pages/SellerDashboard.css */
 .seller-dashboard {
     padding: 20px;
+    background-color: #f7f7f7;
+    min-height: 100vh;
+    text-align: center;
   }
   
+  .seller-dashboard h1 {
+    margin-bottom: 20px;
+  }
+  
+  /* Styles for the new action buttons */
+  .action-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .action-buttons button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-buttons button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styles for the tab navigation */
   .dashboard-tabs {
     display: flex;
     justify-content: center;
@@ -11,12 +42,16 @@
   }
   
   .dashboard-tabs button {
-    padding: 10px 20px;
+    padding: 10px 15px;
     border: none;
-    background-color: #eee;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 4px;
-    font-size: 16px;
+    background-color: #e0e0e0;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dashboard-tabs button:hover {
+    background-color: #d0d0d0;
   }
   
   .dashboard-tabs button.active {
@@ -24,9 +59,10 @@
     color: #fff;
   }
   
+  /* Dashboard content container */
   .dashboard-content {
-    background-color: #fff;
+    background: #fff;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
   }
   
