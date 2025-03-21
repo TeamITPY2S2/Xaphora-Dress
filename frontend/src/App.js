@@ -7,7 +7,8 @@ import './App.css';
 import Home from './pages/Home';
 import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
-import EditProductPage from './pages/EditProductPage'; // new
+import EditProductPage from './pages/EditProductPage';
+import SellerDashboard from './pages/SellerDashboard';
 
 // Components
 import Navbar from './components/Navbar';
@@ -23,6 +24,7 @@ function App() {
             <Route path="/add-product" element={<AddProductPage />} />
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
+            <Route path="/seller-dashboard" element={<SellerDashboard />} />
           </Routes>
         </div>
       </div>
