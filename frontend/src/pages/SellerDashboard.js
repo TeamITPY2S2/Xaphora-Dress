@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import SellerOverview from '../components/SellerOverview';
 import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
+import SellerReports from '../components/SellerReports'; // New import
+// Import custom CSS if needed
+// import './SellerDashboard.css';
 
 function SellerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -16,36 +19,26 @@ function SellerDashboard() {
 
   // Simulate fetching products based on search criteria
   useEffect(() => {
-    // Only run this if a search has been initiated
     if (isSearching) {
-      // This simulates an API call to search products
       const fetchProducts = async () => {
         try {
-          // In a real application, replace this with your actual API call
           console.log(`Searching for: "${searchQuery}" in category: ${category || 'All'} sorted by: ${sortOrder}`);
-          
-          // Simulate API delay
           await new Promise(resolve => setTimeout(resolve, 500));
           
-          // Mock search results - replace with your actual data fetching logic
           const mockResults = [
             { id: 1, name: 'Product 1', price: 19.99, category: 'electronics', createdAt: '2025-01-15' },
             { id: 2, name: 'Product 2', price: 29.99, category: 'clothing', createdAt: '2025-02-20' },
             { id: 3, name: 'Product 3', price: 39.99, category: 'home', createdAt: '2025-03-10' },
-            // Add more mock products as needed
           ];
           
-          // Filter by search query
           let filteredResults = mockResults.filter(product => 
             product.name.toLowerCase().includes(searchQuery.toLowerCase())
           );
           
-          // Filter by category if selected
           if (category) {
             filteredResults = filteredResults.filter(product => product.category === category);
           }
           
-          // Sort results based on selected order
           switch (sortOrder) {
             case 'newest':
               filteredResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -64,11 +57,7 @@ function SellerDashboard() {
           }
           
           setSearchResults(filteredResults);
-          
-          // Automatically switch to listings tab to show results
           setActiveTab('listings');
-          
-          // Reset searching flag
           setIsSearching(false);
         } catch (error) {
           console.error('Error searching products:', error);
@@ -80,7 +69,6 @@ function SellerDashboard() {
     }
   }, [isSearching, searchQuery, category, sortOrder]);
 
-  // Function to handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
     setIsSearching(true);
@@ -98,6 +86,8 @@ function SellerDashboard() {
                  searchResults={searchResults} 
                  isSearching={isSearching} 
                />;
+      case 'reports':
+        return <SellerReports />;
       default:
         return <SellerOverview />;
     }
@@ -113,13 +103,11 @@ function SellerDashboard() {
             <i className="bi bi-list"></i>
           </button>
         </div>
-        
         <div className="mt-3">
           <div className="px-3 py-2 small text-muted">CORE</div>
           <div className="px-3 py-2 d-flex align-items-center">
             <i className="bi bi-speedometer2 me-2"></i> Dashboard
           </div>
-          
           <div className="px-3 py-2 mt-3 small text-muted">STORE</div>
           <div className="px-3 py-2 d-flex align-items-center">
             <i className="bi bi-box me-2"></i> Products
@@ -130,7 +118,6 @@ function SellerDashboard() {
           <div className="px-3 py-2 d-flex align-items-center">
             <i className="bi bi-list me-2"></i> Categories
           </div>
-          
           <div className="px-3 py-2 mt-3 small text-muted">ACCOUNTS</div>
           <div className="px-3 py-2 d-flex align-items-center">
             <i className="bi bi-people me-2"></i> Clients
@@ -139,7 +126,6 @@ function SellerDashboard() {
             <i className="bi bi-chat me-2"></i> Messages
           </div>
         </div>
-        
         <div className="mt-auto p-3 border-top" style={{ position: 'absolute', bottom: 0, width: '200px' }}>
           <small>Logged in as:<br />John Smith</small>
         </div>
@@ -153,11 +139,16 @@ function SellerDashboard() {
             <button className="navbar-toggler">
               <span className="navbar-toggler-icon"></span>
             </button>
-            
             <div className="d-flex ms-auto">
               <div className="input-group">
-                <input type="text" className="form-control" placeholder="Search for..." />
-                <button className="btn btn-primary">
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Search for..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button className="btn btn-primary" onClick={handleSearch}>
                   <i className="bi bi-search"></i>
                 </button>
               </div>
@@ -175,7 +166,7 @@ function SellerDashboard() {
           <h1 className="mb-1">Dashboard</h1>
           <p className="text-muted">Dashboard</p>
           
-          {/* Product Search */}
+          {/* Product Search Card */}
           <div className="card mb-4">
             <div className="card-header bg-light d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Product Search</h5>
@@ -239,7 +230,7 @@ function SellerDashboard() {
             </div>
           </div>
           
-          {/* Tab Navigation */}
+          {/* Tab Navigation Card */}
           <div className="card mb-4">
             <div className="card-header bg-light">
               <ul className="nav nav-tabs card-header-tabs">
@@ -268,6 +259,14 @@ function SellerDashboard() {
                     {searchResults.length > 0 && (
                       <span className="badge bg-primary ms-1">{searchResults.length}</span>
                     )}
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'reports' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('reports')}
+                  >
+                    <i className="bi bi-file-earmark-bar-graph me-1"></i> Reports
                   </button>
                 </li>
               </ul>
