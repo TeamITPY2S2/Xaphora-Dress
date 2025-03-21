@@ -1,11 +1,13 @@
 // src/pages/ProductListPage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './ProductListPage.css';
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -24,6 +26,18 @@ function ProductListPage() {
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await axios.delete(`http://localhost:8070/api/products/${id}`);
+        // Refresh products list after deletion
+        fetchProducts();
+      } catch (error) {
+        console.error('Error deleting product:', error);
+      }
+    }
+  };
 
   return (
     <div className="product-list-container">
@@ -51,6 +65,14 @@ function ProductListPage() {
                 <p>Price: ${product.price}</p>
                 <p>Stock: {product.stockQuantity}</p>
                 <p>{product.description}</p>
+              </div>
+              <div className="product-actions">
+                <button onClick={() => navigate(`/edit-product/${product._id}`)}>
+                  Edit
+                </button>
+                <button onClick={() => handleDelete(product._id)}>
+                  Delete
+                </button>
               </div>
             </div>
           ))
