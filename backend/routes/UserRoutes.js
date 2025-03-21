@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+require('dotenv').config();
 
 // Import User Controller
 const UserController = require("../controllers/UserControllers");

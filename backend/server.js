@@ -17,8 +17,8 @@ const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/UserRoutes');
 const deliveryRoutes = require('./Routes/DeliveryRoutes');
 const cartRoutes = require("./routes/cartRoutes");
-const authRoutes = require("./Routes/authRoutes");
-const addAdminRoutes = require('./Routes/addAdminRoutes'); 
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // Use Routes
 app.use("/api", productRoutes);
@@ -26,7 +26,7 @@ app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/auth", authRoutes);
-app.use("/admin", addAdminRoutes);
+app.use("/admin", adminRoutes);
 
 
 const PORT = process.env.PORT || 8070;
