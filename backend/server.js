@@ -11,15 +11,27 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // Built-in middleware to parse JSON
 
+
+app.use(express.json());
+
 // Import Routes
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./Routes/UserRoutes');
+const deliveryRoutes = require('./Routes/DeliveryRoutes');
+const cartRoutes = require("./routes/cartRoutes");
 const userRoutes = require("./Routes/UserRoutes");
 const authRoutes = require("./Routes/authRoutes");
 const addAdminRoutes = require('./Routes/addAdminRoutes'); 
 
 // Use Routes
+app.use("/api", productRoutes);
+app.use("/users", userRoutes);
+app.use("/api/delivery", deliveryRoutes);
+app.use("/api/cart", cartRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", addAdminRoutes);
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
@@ -29,6 +41,7 @@ mongoose
   .then(() => console.log("MongoDB Connection Success!"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is up and running on port no: ${PORT}`);
 });
