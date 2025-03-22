@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-dotenv.config(); // Load environment variables
+dotenv.config();
+
 
 const app = express();
 
@@ -12,19 +13,28 @@ app.use(cors());
 app.use(express.json()); // Built-in middleware to parse JSON
 
 
+app.use(express.json());
+app.use(morgan("dev"));
+
 // Import Routes
-const productRoutes = require('./routes/productRoutes');
-const userRoutes = require('./Routes/UserRoutes');
-const deliveryRoutes = require('./Routes/DeliveryRoutes');
+const productRoutes = require("./routes/productRoutes");
+const userRoutes = require("./Routes/UserRoutes");
+const deliveryRoutes = require("./Routes/DeliveryRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const userRoutes = require("./Routes/UserRoutes");
+const authRoutes = require("./Routes/authRoutes");
+
 
 // Use Routes
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/payment", paymentRoutes); // Payment endpoints
+app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 
@@ -37,7 +47,13 @@ mongoose
   .then(() => console.log("MongoDB Connection Success!"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is up and running on port no: ${PORT}`);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
 });
+
+app.listen(PORT, () => {
+  console.log(`Server is up and running on port: ${PORT}`);
+});
+

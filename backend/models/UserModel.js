@@ -1,8 +1,11 @@
 // models/UserModel.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const User = require("../models/UserModel");
+
 
 const userSchema = new Schema(
+
   {
     firstName: {
       type: String,
@@ -37,8 +40,16 @@ const userSchema = new Schema(
       enum: ["buyer", "seller"],
       default: "buyer",
     },
+
+    loyaltyPoints: {
+      type: Number,
+      default: 0
+    }
   },
   { timestamps: true }
+
 );
 
 module.exports = mongoose.model("User", userSchema);
+
+
