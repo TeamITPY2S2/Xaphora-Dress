@@ -1,17 +1,13 @@
-const mongoose = require("mongoose");
+// models/Order.js
+const mongoose = require('mongoose');
 
-const orderSchema = new mongoose.Schema({
-  customerName: { type: String, required: true },
-  items: [{ type: String, required: true }],
-  status: {
-    type: String,
-    enum: ["Ordered", "Packed", "Shipped", "Delivered"],
-    default: "Ordered",
-  },
-  deliveryAgent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "DeliveryAgent", // Reference to the DeliveryAgent model
-  },
+const OrderSchema = new mongoose.Schema({
+  customer: { type: String, required: true },
+  items: [{ type: String }], // Simplified items list
+  shippingRegion: { type: String, required: true },
+  deliveryAgent: { type: mongoose.Schema.Types.ObjectId, ref: 'DeliveryAgent' },
+  status: { type: String, default: 'Ordered' },
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = mongoose.model('Order', OrderSchema);

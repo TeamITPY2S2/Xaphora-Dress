@@ -16,11 +16,17 @@ app.use(express.json());
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/UserRoutes');
 const deliveryRoutes = require('./Routes/DeliveryRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes'); //
+const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
 
 // Use Routes
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use('/api/orders', orderRoutes); 
+app.use('/api/feedback', deliveFeedbackRoutes);
+app.use('/api/admin', monitoringRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
