@@ -1,6 +1,8 @@
+
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import './App.css';
 // src/index.js
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,6 +16,7 @@ import SellerDashboard from './pages/SellerDashboard';
 
 function App() {
   return (
+
     <Router>
       <div className="app-container">
         {/* You can remove the Navbar reference if it's not needed */}
@@ -30,6 +33,7 @@ function App() {
         </div>
       </div>
     </Router>
+
   );
 }
 
