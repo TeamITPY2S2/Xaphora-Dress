@@ -17,9 +17,15 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Import Routes
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./Routes/UserRoutes');
+const deliveryRoutes = require('./Routes/DeliveryRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes'); //
+const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
+const historyRoutes = require('./routes/deliveHistoryRoutes');
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./Routes/UserRoutes");
-const deliveryRoutes = require("./Routes/DeliveryRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -32,6 +38,10 @@ const authRoutes = require("./Routes/authRoutes");
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use('/api/orders', orderRoutes); 
+app.use('/api/feedback', deliveFeedbackRoutes);
+app.use('/api/admin', monitoringRoutes);
+app.use('/api/history', historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/payment", paymentRoutes); // Payment endpoints
 app.use("/users", userRoutes);
