@@ -1,0 +1,21 @@
+/* src/components/SellerOverview.css */
+.seller-overview {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .overview-cards {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .overview-cards .card {
+    flex: 1;
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
