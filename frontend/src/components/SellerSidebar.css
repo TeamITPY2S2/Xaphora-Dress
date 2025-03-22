@@ -1,0 +1,28 @@
+/* src/components/SellerSidebar.css */
+.seller-sidebar {
+    width: 220px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+  }
+  
+  .seller-sidebar h2 {
+    margin-bottom: 20px;
+  }
+  
+  .seller-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .seller-sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .seller-sidebar li.active,
+  .seller-sidebar li:hover {
+    background-color: #555;
+  }
+  
