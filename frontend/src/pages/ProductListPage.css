@@ -1,0 +1,47 @@
+/* src/pages/ProductListPage.css */
+
+/* Existing styles remain here... */
+
+.search-bar {
+  margin-bottom: 15px;
+  text-align: right;
+}
+
+.search-bar input {
+  padding: 8px;
+  font-size: 1rem;
+  width: 250px;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* New styles for edit and delete buttons */
+.product-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.product-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.product-actions button:hover {
+  opacity: 0.9;
+}
+
+.product-actions button:first-of-type {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.product-actions button:last-of-type {
+  background-color: #dc3545;
+  color: #fff;
+}
