@@ -1,5 +1,4 @@
-// addAdminModel.js
-
+// models/AdminModel.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -33,16 +32,17 @@ const adminSchema = new Schema(
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
     },
-    // adminType identifies the specific type of admin
     adminType: {
       type: String,
-      enum: ["delivery", "inventory", "order-management", "reviews", "user-management"],
+      enum: [
+        "super-admin",
+        "delivery",
+        "inventory",
+        "order-management",
+        "reviews",
+        "user-management"
+      ],
       required: [true, "Admin type is required"],
-    },
-    // Role field to clearly identify this as an admin account
-    role: {
-      type: String,
-      default: "admin",
     },
   },
   { timestamps: true }

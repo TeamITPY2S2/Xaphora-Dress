@@ -13,7 +13,6 @@ app.use(cors());
 app.use(express.json()); // Built-in middleware to parse JSON
 
 
-
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -22,10 +21,12 @@ const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./Routes/UserRoutes");
 const deliveryRoutes = require("./Routes/DeliveryRoutes");
 const cartRoutes = require("./routes/cartRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./Routes/UserRoutes");
 const authRoutes = require("./Routes/authRoutes");
-const addAdminRoutes = require('./Routes/addAdminRoutes'); 
+
 
 // Use Routes
 app.use("/api", productRoutes);
@@ -35,8 +36,8 @@ app.use("/api/cart", cartRoutes);
 app.use("/payment", paymentRoutes); // Payment endpoints
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
-app.use("/admin", addAdminRoutes);
-app.use(bodyParser.json());
+app.use("/admin", adminRoutes);
+
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
