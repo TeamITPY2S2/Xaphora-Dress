@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SellerOverview from '../components/SellerOverview';
 import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
-import SellerReports from '../components/SellerReports'; // New import
-// Import custom CSS if needed
-// import './SellerDashboard.css';
+import SellerReports from '../components/SellerReports';
 
 function SellerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -17,28 +15,23 @@ function SellerDashboard() {
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
-  // Simulate fetching products based on search criteria
   useEffect(() => {
     if (isSearching) {
       const fetchProducts = async () => {
         try {
           console.log(`Searching for: "${searchQuery}" in category: ${category || 'All'} sorted by: ${sortOrder}`);
           await new Promise(resolve => setTimeout(resolve, 500));
-          
           const mockResults = [
             { id: 1, name: 'Product 1', price: 19.99, category: 'electronics', createdAt: '2025-01-15' },
             { id: 2, name: 'Product 2', price: 29.99, category: 'clothing', createdAt: '2025-02-20' },
             { id: 3, name: 'Product 3', price: 39.99, category: 'home', createdAt: '2025-03-10' },
           ];
-          
-          let filteredResults = mockResults.filter(product => 
+          let filteredResults = mockResults.filter(product =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase())
           );
-          
           if (category) {
             filteredResults = filteredResults.filter(product => product.category === category);
           }
-          
           switch (sortOrder) {
             case 'newest':
               filteredResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -55,7 +48,6 @@ function SellerDashboard() {
             default:
               break;
           }
-          
           setSearchResults(filteredResults);
           setActiveTab('listings');
           setIsSearching(false);
@@ -64,7 +56,6 @@ function SellerDashboard() {
           setIsSearching(false);
         }
       };
-      
       fetchProducts();
     }
   }, [isSearching, searchQuery, category, sortOrder]);
@@ -94,11 +85,23 @@ function SellerDashboard() {
   };
 
   return (
-    <div className="d-flex">
+    <div
+      className="dashboard-bg d-flex"
+      style={{
+        backgroundImage: 'url(/images/coreui_1200_630.jpg)',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+        minHeight: '100vh'
+      }}
+    >
       {/* Sidebar */}
-      <div className="bg-dark text-white" style={{ width: '200px', minHeight: '100vh' }}>
+      <div className="bg-dark text-white" style={{ width: '200px',
+    minHeight: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.09)', // 60% opaque black
+    color: '#fff' }}>
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Best Store</h5>
+          <h5 className="mb-0">Xaphora Dress</h5>
           <button className="btn btn-sm text-white">
             <i className="bi bi-list"></i>
           </button>
