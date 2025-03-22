@@ -19,6 +19,7 @@ const deliveryRoutes = require('./Routes/DeliveryRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes'); //
 const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
+const historyRoutes = require('./routes/deliveHistoryRoutes');
 
 // Use Routes
 app.use("/api", productRoutes);
@@ -27,6 +28,7 @@ app.use("/api/delivery", deliveryRoutes);
 app.use('/api/orders', orderRoutes); 
 app.use('/api/feedback', deliveFeedbackRoutes);
 app.use('/api/admin', monitoringRoutes);
+app.use('/api/history', historyRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
