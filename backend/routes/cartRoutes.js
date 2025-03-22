@@ -5,11 +5,11 @@ const cartController = require("../controllers/cartController");
 // Create a new cart
 router.post("/", cartController.createCart);
 
-// Get all carts (this fixes the 404 for GET /api/cart)
+// Get all carts
 router.get("/", cartController.getAllCarts);
 
-// Get a specific cart by ID
-router.get("/:id", cartController.getCartById);
+// Get a cart by ID
+router.get("/:cartId", cartController.getCartById);
 
 // Update a cart by ID
 router.put("/:id", cartController.updateCart);
