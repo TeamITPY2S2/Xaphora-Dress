@@ -25,7 +25,7 @@ const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./Routes/UserRoutes");
-const authRoutes = require("./Routes/authRoutes");
+const authRoutes = require("../Routes/authRoutes");
 
 
 // Use Routes
