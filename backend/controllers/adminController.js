@@ -1,5 +1,5 @@
 // controllers/adminController.js
-const Admin = require("../models/AdminModel");
+const Admin = require("../models/adminModel");
 const bcrypt = require("bcryptjs");
 
 // Create a new admin (only accessible by super admin)
