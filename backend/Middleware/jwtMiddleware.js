@@ -1,7 +1,7 @@
+// middleware/jwtMiddleware.js
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  // Get token from header: Authorization: Bearer <token>
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ message: "No token provided" });
@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: "Invalid token" });
     }
-    req.user = decoded; // Attach decoded token to request (e.g. userId and role)
+    req.user = decoded; // Contains { adminId, adminType } OR { userId, role }
     next();
   });
 };
