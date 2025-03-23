@@ -1,4 +1,3 @@
-// models/AdminModel.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -35,7 +34,6 @@ const adminSchema = new Schema(
     adminType: {
       type: String,
       enum: [
-        "super-admin",
         "delivery",
         "inventory",
         "order-management",
