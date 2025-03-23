@@ -24,7 +24,6 @@ const orderRoutes = require('./routes/orderRoutes');
 const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes'); //
 const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
 const historyRoutes = require('./routes/deliveHistoryRoutes');
-const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./Routes/UserRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const authRoutes = require("./routes/authRoutes");
