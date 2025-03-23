@@ -22,7 +22,6 @@ const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes');
 const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
 const historyRoutes = require('./routes/deliveHistoryRoutes');
 const cartRoutes = require("./routes/cartRoutes");
-const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 
@@ -36,7 +35,6 @@ app.use("/api/admin", monitoringRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/payment", paymentRoutes); // Payment endpoints
-app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 
 const PORT = process.env.PORT || 8070;
