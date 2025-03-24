@@ -7,17 +7,17 @@
   --border-color: #e0e0e0;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Outer container */
 .container {
   width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 0;
-  overflow-x: hidden;
+}
+
+.main-wrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
 }
 
 /* Make sure there's no margin around the body */
