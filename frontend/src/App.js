@@ -3,6 +3,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
 import './App.css';
 // src/index.js
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +14,7 @@ import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
+import Home from './pages/home';
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
             <Route path="/edit-product/:id" element={<EditProductPage />} />
             {/* Optionally, if you want a dedicated seller dashboard route */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
+            <Route path='/home'element = {<Home/>}/>
           </Routes>
         </div>
       </div>
