@@ -14,6 +14,9 @@ import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 
+import Login from "./pages/Login";
+import AdminDashboard from "./pages/AdminDashboard";
+
 function App() {
   return (
 
@@ -29,6 +32,10 @@ function App() {
             <Route path="/edit-product/:id" element={<EditProductPage />} />
             {/* Optionally, if you want a dedicated seller dashboard route */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
+
+
+            <Route path="/api/auth/login" element={<Login />} />
+             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
         </div>
       </div>

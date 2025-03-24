@@ -1,4 +1,7 @@
+// controllers/UserController.js
+
 const User = require("../models/UserModel");
+const bcrypt = require("bcryptjs");
 
 // Function to get all users
 const getAllUsers = async (req, res, next) => {
@@ -14,7 +17,7 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-// Function to create a new user
+// Function to create a new user (with password hashing)
 const createUser = async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
   try {
@@ -22,13 +25,17 @@ const createUser = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-    // NOTE: In production, ensure you hash the password before saving
+
+    // Hash the password before storing
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     });
+
     await newUser.save();
     res.status(201).json({ newUser });
   } catch (err) {
@@ -57,14 +64,22 @@ const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { firstName, lastName, email, password } = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { firstName, lastName, email, password },
-      { new: true }
-    );
+    // If you want to re-hash the password on update, do it similarly here:
+    let updatedFields = { firstName, lastName, email };
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updatedFields.password = hashedPassword;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+    });
+
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
+
     res.json({ updatedUser });
   } catch (err) {
     console.error(err);
