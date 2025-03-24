@@ -4,9 +4,21 @@ import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
 
+// AccountLink component: Redirects guests to login and logged in users to dashboard.
+const AccountLink = ({ isAuthenticated }) => {
+  return (
+    <Link to={isAuthenticated ? "/api/auth/login" : "/dashboard" }>
+      <FaUser />
+    </Link>
+  );
+};
+
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Dummy authentication state. In a real application, derive this from your auth provider.
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Sample data for featured categories
   const categories = [
@@ -56,9 +68,7 @@ const Home = () => {
   ];
 
   return (
-    // Outer .container to wrap everything
     <div className="container">
-      {/* .main-wrapper as your main site structure */}
       <div className="main-wrapper">
         
         {/* Top Bar */}
@@ -90,9 +100,8 @@ const Home = () => {
               <Link to="/wishlist">
                 <FaHeart />
               </Link>
-              <Link to="/dashboard">
-                <FaUser />
-              </Link>
+              {/* Use AccountLink to conditionally route to login or dashboard */}
+              <AccountLink isAuthenticated={isAuthenticated} />
               <Link to="/cart">
                 <FaShoppingCart />
               </Link>

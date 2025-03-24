@@ -20,6 +20,9 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import BuyerSignup from "./pages/BuyerSignup";
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import AdminsList from "./pages/AdminsList";
+import AddAdmin from "./pages/AddAdmin";
+ 
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -69,6 +72,10 @@ function App() {
             <Route path='/home'element = {<Home/>}/>
             <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
              <Route path='/seller-login' element ={<SellerLogin/>}/>
+
+             <Route path="/superadmin/admins" element={<AdminsList />} />
+             <Route path="/superadmin/add-admin" element={<AddAdmin />} />
+             <Route path="/superadmin/add-admin" element={<AddAdmin />} />
           </Routes>
         </div>
       </div>

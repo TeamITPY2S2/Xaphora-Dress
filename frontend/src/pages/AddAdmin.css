@@ -1,0 +1,56 @@
+/* src/pages/AddAdmin.css */
+.add-admin-container {
+    width: 400px;
+    margin: 40px auto;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  
+  .add-admin-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-admin-form label {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .add-admin-form input,
+  .add-admin-form select {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .create-admin-button {
+    margin-top: 20px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+  }
+  
+  .create-admin-button:hover {
+    background-color: #333;
+  }
+  
+  .back-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #333;
+  }

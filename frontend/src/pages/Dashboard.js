@@ -142,7 +142,7 @@ function Dashboard() {
       return (
         <div className="account-container">
           <div className="account-header">
-            <Link to="/dashboard" className="home-button">Home</Link>
+            <Link to="/home" className="home-button">Home</Link>
             <h2>MY ACCOUNT</h2>
             <button className="logout-button" onClick={handleLogout}>
               LOG OUT
