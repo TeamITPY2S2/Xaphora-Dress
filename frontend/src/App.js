@@ -68,7 +68,7 @@ function App() {
              <Route path="/superadmin" element={<SuperAdminDashboard />} />
             <Route path='/home'element = {<Home/>}/>
             <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
-            <Route path="/" element={<Navigate to="/seller/login" replace />} />
+             <Route path='/seller-login' element ={<SellerLogin/>}/>
           </Routes>
         </div>
       </div>
