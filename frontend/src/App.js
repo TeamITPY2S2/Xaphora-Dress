@@ -15,9 +15,10 @@ import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 
 import Login from "./pages/Login";
-import AdminDashboard from "./pages/AdminDashboard";
+//import AdminDashboard from "./pages/AdminDashboard";
 import Dashboard from "./pages/Dashboard";
 import BuyerSignup from "./pages/BuyerSignup";
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 
 function App() {
   return (
@@ -37,9 +38,10 @@ function App() {
 
 
             <Route path="/api/auth/login" element={<Login />} />
-             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+           {/*  <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
              <Route path="/dashboard" element={<Dashboard />} />
              <Route path="/signup" element={<BuyerSignup />} />
+             <Route path="/superadmin" element={<SuperAdminDashboard />} />
           </Routes>
         </div>
       </div>

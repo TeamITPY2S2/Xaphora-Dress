@@ -1,5 +1,7 @@
+// src/pages/Login.js
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";  // Added Link import
+import { useNavigate, Link } from "react-router-dom";
+import "./Login.css"; // Import your CSS styling
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,7 +12,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Use the full URL if your backend is on port 8070
       const response = await fetch("http://localhost:8070/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -20,15 +21,19 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store the token and userType in localStorage
+        // Store token and userType in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
 
         setMessage("Login successful!");
-        // Redirect to a universal dashboard
-        navigate("/dashboard");
+
+        // Redirect based on userType
+        if (data.userType === "super-admin") {
+          navigate("/superadmin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        // If not 2xx, show the server's error message or a fallback
         setMessage(data.message || "Login failed");
       }
     } catch (error) {
@@ -38,31 +43,39 @@ function Login() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Email</label><br />
+    <div className="login-container">
+      <h2 className="login-title">LOGIN</h2>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <label className="login-label">EMAIL</label>
         <input
           type="email"
+          className="login-input"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        /><br /><br />
+        />
 
-        <label>Password</label><br />
+        <label className="login-label password-label">PASSWORD</label>
         <input
           type="password"
+          className="login-input"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        /><br /><br />
+        />
 
-        <button type="submit">Login</button>
-        <p style={{ marginTop: "10px" }}>
-          Create Account <Link to="/signup">Sign Up</Link>
-        </p>
+        <button type="submit" className="login-button">LOG IN</button>
       </form>
-      <div style={{ color: "red", marginTop: "10px" }}>{message}</div>
+
+      <p className="login-footer">
+        <Link to="/signup" className="login-link">Forgot your password?</Link>
+      </p>
+
+      <p className="login-footer">
+        Create Account <Link to="/signup" className="login-link">Sign Up</Link>
+      </p>
+
+      <div className="login-message">{message}</div>
     </div>
   );
 }

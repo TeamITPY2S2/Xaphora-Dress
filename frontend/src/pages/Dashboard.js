@@ -1,6 +1,7 @@
 // src/pages/Dashboard.js
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Added Link import
+import "./Dashboard.css"; // Import the CSS file
 
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -13,13 +14,12 @@ function Dashboard() {
       navigate("/login");
       return;
     }
-
     try {
       const response = await fetch("http://localhost:8070/api/dashboard", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
       if (!response.ok) {
@@ -35,12 +35,13 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [navigate]);
+    // eslint-disable-next-line
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
-    navigate("/login");
+    navigate("/api/auth/login");
   };
 
   const handleUpdateProfile = async () => {
@@ -53,13 +54,12 @@ function Dashboard() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ firstName: newFirstName, lastName: newLastName })
+        body: JSON.stringify({ firstName: newFirstName, lastName: newLastName }),
       });
       const data = await response.json();
       if (response.ok) {
-        // Re-fetch dashboard data to ensure full updated info is shown
         await fetchDashboardData();
         alert("Profile updated successfully");
       } else {
@@ -75,12 +75,12 @@ function Dashboard() {
     if (!window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) return;
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("/api/dashboard/delete", {
+      const response = await fetch("http://localhost:8070/api/dashboard/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
       if (response.ok) {
@@ -105,58 +105,82 @@ function Dashboard() {
     return <div>Loading dashboard...</div>;
   }
 
-  // Render dashboard based on userType
+  // Switch on userType to render different dashboards
   switch (dashboardData.userType) {
     case "super-admin":
       return (
-        <div style={{ padding: "20px" }}>
-          <h2>Super Admin Dashboard</h2>
-          <p>
-            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
-          </p>
-          <p>Special data: {dashboardData.specialData}</p>
-          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
-          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+        navigate("/superadmin")
+        // <div style={{ padding: "20px" }}>
+        //   <h2>Super Admin Dashboard</h2>
+        //   <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+        //   <p>Special data: {dashboardData.specialData}</p>
+        //   <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
+        //   <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
+        //   <button onClick={handleLogout}>Logout</button>
+        // </div>
       );
+
     case "admin":
       return (
         <div style={{ padding: "20px" }}>
           <h2>Admin Dashboard</h2>
-          <p>
-            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
-          </p>
+          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
           <p>Admin type: {dashboardData.adminType}</p>
           <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
           <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
           <button onClick={handleLogout}>Logout</button>
         </div>
       );
+
     case "seller":
       return (
         <div style={{ padding: "20px" }}>
           <h2>Seller Dashboard</h2>
-          <p>
-            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
-          </p>
+          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
           <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
           <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
           <button onClick={handleLogout}>Logout</button>
         </div>
       );
+
     case "buyer":
+      // Fixed the nested <p> tags issue and restructured the buyer section.
       return (
-        <div style={{ padding: "20px" }}>
-          <h2>Buyer Dashboard</h2>
-          <p>
-            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
-          </p>
-          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
-          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
-          <button onClick={handleLogout}>Logout</button>
+        <div className="account-container">
+          <div className="account-header">
+            <h2>MY ACCOUNT</h2>
+            <button className="logout-button" onClick={handleLogout}>
+              LOG OUT
+            </button>
+          </div>
+          <div className="account-content">
+            <div className="order-history">
+              <h3>ORDER HISTORY</h3>
+              <p>You haven't placed any orders yet.</p>
+            </div>
+            <div className="account-details">
+              <h3>ACCOUNT DETAILS</h3>
+              <p className="buyer-name">
+                {dashboardData.firstName} {dashboardData.lastName}
+              </p>
+              <p className="buyer-address">Sri Lanka</p>
+              
+              <div className="addressr">
+                <Link to="/address" className="address-link">View Address</Link>
+              </div>
+              <br/><br/>
+              <button onClick={handleUpdateProfile} className="update-profile-button">
+                Update Profile
+              </button>
+              <br /><br />
+              <button onClick={handleDeleteProfile} className="delete-profile-button">
+                Delete Profile
+              </button>
+            </div>
+          </div>
         </div>
       );
+
     default:
       return (
         <div style={{ padding: "20px" }}>

@@ -1,8 +1,58 @@
 // controllers/UserController.js
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// Function to get all users
+// Function to create a new user (with password hashing & token generation)
+const createUser = async (req, res, next) => {
+  const { firstName, lastName, email, password } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      role: "buyer"  // You can change this to "seller" if needed.
+    });
+
+    await newUser.save();
+
+    // Sign a token for the new user (valid for 1 day)
+    const token = jwt.sign(
+      { userId: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET || "secret",
+      { expiresIn: "1d" }
+    );
+
+    // Return token and user details (excluding password)
+    res.status(201).json({
+      message: "User created successfully",
+      token,
+      userType: newUser.role,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        role: newUser.role
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error creating user" });
+  }
+};
+
+// Other functions remain unchanged
+
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -16,34 +66,6 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-// Function to create a new user (with password hashing)
-const createUser = async (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    // Hash the password before storing
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-    });
-
-    await newUser.save();
-    res.status(201).json({ newUser });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error creating user" });
-  }
-};
-
-// Function to get a specific user by ID
 const getUserById = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -58,14 +80,12 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-// Function to update user details
 const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { firstName, lastName, email, password } = req.body;
   try {
     let updatedFields = { firstName, lastName, email };
 
-    // If password is provided, hash it
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updatedFields.password = hashedPassword;
@@ -86,7 +106,6 @@ const updateUser = async (req, res, next) => {
   }
 };
 
-// Function to delete a user
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
