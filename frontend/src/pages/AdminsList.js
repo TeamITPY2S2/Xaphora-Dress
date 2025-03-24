@@ -9,9 +9,8 @@ function AdminsList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token"); // Make sure this is the correct key for your token
     if (!token) {
-      // If your route requires a token, show error or redirect
       setMessage("No token found. Please login.");
       return;
     }
@@ -23,7 +22,7 @@ function AdminsList() {
       const res = await fetch("http://localhost:8070/api/admins", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`, // If using JWT
         },
       });
       const data = await res.json();
@@ -46,6 +45,41 @@ function AdminsList() {
     navigate("/superadmin/add-admin");
   };
 
+  const handleUpdate = (adminId) => {
+    navigate(`/superadmin/update-admin/${adminId}`);
+  };
+
+  const handleDelete = async (adminId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("No token found. Please login.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to delete this admin?")) {
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8070/api/admins/${adminId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // If using JWT
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Admin deleted successfully");
+        // Re-fetch the admins list
+        fetchAdmins(token);
+      } else {
+        setMessage(data.message || "Error deleting admin");
+      }
+    } catch (err) {
+      console.error("Error deleting admin:", err);
+      setMessage("Error deleting admin");
+    }
+  };
+
   return (
     <div className="admins-container">
       <div className="admins-header">
@@ -61,15 +95,21 @@ function AdminsList() {
           <thead>
             <tr>
               <th>Email</th>
+              <th>Full Name</th>
               <th>Admin Type</th>
-              {/* Add more columns if needed */}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {admins.map((admin) => (
               <tr key={admin._id}>
                 <td>{admin.email}</td>
+                <td>{admin.firstName} {admin.lastName}</td>
                 <td>{admin.adminType}</td>
+                <td>
+                  <button onClick={() => handleUpdate(admin._id)}>Update</button>
+                  <button onClick={() => handleDelete(admin._id)}>Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>

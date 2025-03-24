@@ -22,6 +22,7 @@ import BuyerSignup from "./pages/BuyerSignup";
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import AdminsList from "./pages/AdminsList";
 import AddAdmin from "./pages/AddAdmin";
+import UpdateAdmin from './pages/UpdateAdmin';
  
 
 // Protected Route wrapper
@@ -76,6 +77,7 @@ function App() {
              <Route path="/superadmin/admins" element={<AdminsList />} />
              <Route path="/superadmin/add-admin" element={<AddAdmin />} />
              <Route path="/superadmin/add-admin" element={<AddAdmin />} />
+             <Route path="/superadmin/update-admin/:adminId" element={<UpdateAdmin />} />
           </Routes>
         </div>
       </div>
