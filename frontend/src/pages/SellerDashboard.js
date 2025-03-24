@@ -5,6 +5,7 @@ import SellerOverview from '../components/SellerOverview';
 import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
 import SellerReports from '../components/SellerReports';
+import { Link } from 'react-router-dom';
 
 function SellerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -101,11 +102,13 @@ function SellerDashboard() {
     backgroundColor: 'rgba(0, 0, 0, 0.09)', // 60% opaque black
     color: '#fff' }}>
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Xaphora Dress</h5>
-          <button className="btn btn-sm text-white">
-            <i className="bi bi-list"></i>
-          </button>
-        </div>
+  <Link to="http://localhost:3000/home" className="text-decoration-none">
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link>
+  <button className="btn btn-sm text-white">
+    <i className="bi bi-list"></i>
+  </button>
+</div>
         <div className="mt-3">
           <div className="px-3 py-2 small text-muted">CORE</div>
           <div className="px-3 py-2 d-flex align-items-center">

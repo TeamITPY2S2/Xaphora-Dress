@@ -18,7 +18,7 @@ const Home = () => {
     {
       id: 2,
       title: "Men's Collection",
-      image: '/images/mens f.jpeg',
+      image: '/images/mensfassion.avif',
     },
     {
       id: 3,
@@ -32,7 +32,7 @@ const Home = () => {
     {
       id: 1,
       name: "Girls Blouse",
-      price: 'Rs 1,590.00',
+      price: 'Rs 1,090.00',
       image: '/images/blouse.jpg',
     },
     {
@@ -44,14 +44,20 @@ const Home = () => {
     {
       id: 3,
       name: "Casual Denim Trouser",
-      price: 'Rs 1,590.00',
+      price: 'Rs 2,090.00',
       image: '/images/denim.webp',
     },
     {
       id: 4,
       name: "Girls Oversize Trouser",
-      price: 'Rs 1,590.00',
+      price: 'Rs 1,690.00',
       image: '/images/pants.jpg',
+    },
+    {
+      id: 5,
+      name: "Saree Design",
+      price: 'Rs 4,000.00',
+      image: '/images/saree.jpg',
     }
   ];
 
@@ -124,19 +130,28 @@ const Home = () => {
 
         {/* Hero Section */}
         <section className="hero-section">
-          <div className="hero-slider">
-            <div
-              className="hero-slide"
-              style={{ backgroundImage: 'url("/images/menwemenf.webp")' }}
-            >
-              <div className="hero-content">
-                <h1 className="hero-title">New Season Arrivals</h1>
-                <p className="hero-subtitle">Discover the latest trends in fashion</p>
-                <Link to="/shop" className="shop-now-btn">Shop Now</Link>
-              </div>
-            </div>
-          </div>
-        </section>
+  <div className="hero-slider">
+    <div className="hero-slide">
+      {/* Background video */}
+      <video 
+        className="background-video" 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+      >
+        <source src="/images/fashion2.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="hero-content">
+        <h1 className="hero-title">New Season Arrivals</h1>
+        <p className="hero-subtitle">Discover the latest trends in fashion</p>
+        <Link to="/shop" className="shop-now-btn">Shop Now</Link>
+      </div>
+    </div>
+  </div>
+</section>
+
 
         {/* Featured Categories */}
         <section className="featured-categories">
