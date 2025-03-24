@@ -1,7 +1,6 @@
 // models/Order.js
 const mongoose = require('mongoose');
 
-
 const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   items: [
@@ -23,7 +22,7 @@ const orderSchema = new mongoose.Schema({
     default: "processing"
   },
   createdAt: { type: Date, default: Date.now }
-
 });
 
-module.exports = mongoose.model('Order', OrderSchema);
+// Use orderSchema here, not OrderSchema
+module.exports = mongoose.model("Order", orderSchema);
