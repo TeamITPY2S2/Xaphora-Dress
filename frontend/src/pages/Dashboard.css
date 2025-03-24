@@ -1,0 +1,114 @@
+/* src/pages/Dashboard.css */
+
+/* Container for the entire buyer account page */
+.account-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 60px auto;
+    font-family: "Helvetica", sans-serif;
+    color: #000;
+  }
+  
+  /* Header area: MY ACCOUNT + LOG OUT button on top row */
+  .account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* MY ACCOUNT heading */
+  .account-header h2 {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+  
+  /* Logout button in the top right */
+  .logout-button {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .logout-button:hover {
+    text-decoration: underline;
+  }
+  
+  /* Main content area with order history and account details side by side */
+  .account-content {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Left side: ORDER HISTORY */
+  .order-history {
+    width: 45%;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+  }
+  
+  .order-history h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Right side: ACCOUNT DETAILS */
+  .account-details {
+    width: 45%;
+    padding-left: 20px;
+  }
+  
+  .account-details h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .buyer-name {
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  
+  .buyer-address {
+    margin: 5px 0 20px 0;
+    color: #333;
+  }
+  
+  /* Profile update/delete buttons */
+  .update-profile-button,
+  .delete-profile-button {
+    color: #fff;
+    padding: 8px 16px;
+    margin-right: 10px;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .update-profile-button {
+    background-color: #000;
+  }
+  
+  .update-profile-button:hover {
+    background-color: #333;
+  }
+  
+  .delete-profile-button {
+    background-color: rgb(233, 40, 40); /* Red delete button */
+  }
+  
+  .delete-profile-button:hover {
+    background-color: darkred; /* Darker red on hover */
+  }
