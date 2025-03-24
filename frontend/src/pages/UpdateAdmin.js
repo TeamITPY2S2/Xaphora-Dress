@@ -1,6 +1,7 @@
 // src/pages/UpdateAdmin.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import "./UpdateAdmin.css";
 
 function UpdateAdmin() {
   const { adminId } = useParams();
@@ -15,6 +16,7 @@ function UpdateAdmin() {
 
   useEffect(() => {
     fetchAdmin();
+    // eslint-disable-next-line
   }, []);
 
   const fetchAdmin = async () => {
@@ -27,7 +29,7 @@ function UpdateAdmin() {
       const res = await fetch(`http://localhost:8070/api/admins/${adminId}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
@@ -36,7 +38,7 @@ function UpdateAdmin() {
           email: data.email,
           firstName: data.firstName,
           lastName: data.lastName,
-          adminType: data.adminType,
+          adminType: data.adminType || "",
         });
       } else {
         setMessage(data.message || "Error fetching admin");
@@ -85,51 +87,66 @@ function UpdateAdmin() {
   };
 
   return (
-    <div>
+    <div className="update-admin-container">
       <h2>Update Admin</h2>
-      {message && <p style={{ color: "red" }}>{message}</p>}
+      {message && <p className="error-message">{message}</p>}
 
-      <form onSubmit={handleUpdate}>
-        <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={adminData.email}
-          onChange={handleChange}
-          required
-        />
+      <form onSubmit={handleUpdate} className="update-form">
+        <div className="form-group">
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={adminData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>First Name:</label>
-        <input
-          type="text"
-          name="firstName"
-          value={adminData.firstName}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label>First Name:</label>
+          <input
+            type="text"
+            name="firstName"
+            value={adminData.firstName}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>Last Name:</label>
-        <input
-          type="text"
-          name="lastName"
-          value={adminData.lastName}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label>Last Name:</label>
+          <input
+            type="text"
+            name="lastName"
+            value={adminData.lastName}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        <label>Admin Type:</label>
-        <input
-          type="text"
-          name="adminType"
-          value={adminData.adminType}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label>Admin Type:</label>
+          <select
+            name="adminType"
+            value={adminData.adminType}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Admin Type</option>
+            <option value="super-admin">Super Admin</option>
+            <option value="inventory">Inventory</option>
+            <option value="order-management">Order Management</option>
+            <option value="delivery">Delivery</option>
+          </select>
+        </div>
 
-        <button type="submit">Update</button>
-        <button type="button" onClick={handleBack}>
-          Back
-        </button>
+        <div className="button-group">
+          <button type="submit" className="update-button">Update</button>
+          <button type="button" className="back-button" onClick={handleBack}>
+            Back
+          </button>
+        </div>
       </form>
     </div>
   );
