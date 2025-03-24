@@ -1,3 +1,4 @@
+// src/pages/AdminDashboard.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,43 +8,44 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if there's a token in localStorage
-    const token = localStorage.getItem("token");
-    if (!token) {
-      // If no token, redirect to login
-      navigate("/login");
-      return;
-    }
-
-    // Fetch some protected admin data
-    // Adjust the endpoint (/api/admin/dashboard-data) as needed
-    fetch("/api/admin/dashboard-data", {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const fetchAdminData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // Redirect to login if no token exists
+        navigate("/login");
+        return;
       }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          // If the server sends an error property, display it
-          setMessage(data.error);
-        } else {
-          // Otherwise, store the admin data
-          setAdminData(data);
+
+      try {
+        const response = await fetch("/api/admin/dashboard-data", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          // Extract error message from the response
+          const errorData = await response.json();
+          setMessage(errorData.message || "Failed to fetch admin data");
+          return;
         }
-      })
-      .catch((err) => {
-        console.error("Error fetching admin data:", err);
+
+        const data = await response.json();
+        setAdminData(data);
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
         setMessage("Error fetching admin data");
-      });
+      }
+    };
+
+    fetchAdminData();
   }, [navigate]);
 
-  // If there's a server error or no data
   if (message) {
     return <div>{message}</div>;
   }
 
-  // While adminData is loading
   if (!adminData) {
     return <div>Loading admin dashboard...</div>;
   }
@@ -51,10 +53,10 @@ function AdminDashboard() {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Admin Dashboard</h2>
-      <p>Welcome, {adminData.firstName} {adminData.lastName}!</p>
+      <p>
+        Welcome, {adminData.firstName} {adminData.lastName}!
+      </p>
       <p>Role: {adminData.adminType}</p>
-
-      {/* Example stats section */}
       <div style={{ marginTop: "20px" }}>
         <h3>Stats</h3>
         <ul>

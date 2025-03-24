@@ -16,6 +16,7 @@ import SellerDashboard from './pages/SellerDashboard';
 
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
 
             <Route path="/api/auth/login" element={<Login />} />
              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </div>

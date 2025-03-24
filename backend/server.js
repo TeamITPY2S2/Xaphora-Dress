@@ -25,6 +25,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 // Use Routes
 app.use("/api", productRoutes);
@@ -38,6 +39,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/payment", paymentRoutes); // Payment endpoints
 app.use("/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;

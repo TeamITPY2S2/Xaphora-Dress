@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,75 +9,57 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      // Adjust the URL if you are not using a proxy in package.json
+      // Use the full URL if your backend is on port 8070
       const response = await fetch("http://localhost:8070/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
-        setMessage("Login successful!");
-        // Save the JWT token to localStorage for future requests
+        // Store the token and userType in localStorage
         localStorage.setItem("token", data.token);
-        
-        // Redirect based on userType returned by your backend
-        if (data.userType === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/");
-        }
+        localStorage.setItem("userType", data.userType);
+
+        setMessage("Login successful!");
+        // Redirect to a universal dashboard
+        navigate("/dashboard");
       } else {
-        // Show error message returned from the server
+        // If not 2xx, show the server's error message or a fallback
         setMessage(data.message || "Login failed");
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      console.error("Login error:", error);
       setMessage("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
+    <div style={{ maxWidth: "400px", margin: "0 auto" }}>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label><br />
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "4px" }}
-          />
-        </div>
-        <div style={{ marginTop: "15px" }}>
-          <label htmlFor="password">Password:</label><br />
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "4px" }}
-          />
-        </div>
-        <div style={{ marginTop: "20px" }}>
-          <button type="submit" style={{ padding: "10px 20px" }}>Login</button>
-        </div>
+        <label>Email</label><br />
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        /><br /><br />
+
+        <label>Password</label><br />
+        <input
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        /><br /><br />
+
+        <button type="submit">Login</button>
       </form>
-      {message && (
-        <div style={{ marginTop: "10px", color: "red" }}>
-          {message}
-        </div>
-      )}
+      <div style={{ color: "red", marginTop: "10px" }}>{message}</div>
     </div>
   );
 }
