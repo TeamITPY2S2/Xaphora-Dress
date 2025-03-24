@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const addressSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // or "users" if that's your user model name
+    ref: "User",
     required: true
   },
   contactName: {
