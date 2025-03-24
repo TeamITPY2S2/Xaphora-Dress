@@ -3,6 +3,23 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import SellerLogin from './components/SellerLogin';
 import SellerSignup from './components/SellerSignup';
 import './App.css';
+// src/index.js
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Pages (ensure these files exist)
+import AddProductPage from './pages/AddProductPage';
+import ProductListPage from './pages/ProductListPage';
+import EditProductPage from './pages/EditProductPage';
+import SellerDashboard from './pages/SellerDashboard';
+import Home from './pages/home';
+import XaphoraChatbot from './pages/XaphoraChatbot'; 
+
+import Login from "./pages/Login";
+//import AdminDashboard from "./pages/AdminDashboard";
+import Dashboard from "./pages/Dashboard";
+import BuyerSignup from "./pages/BuyerSignup";
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -18,14 +35,23 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
+
+
     <Router>
-      <div className="App">
-        <Routes>
-          {/* Public routes */}
-          <Route path="/seller/login" element={<SellerLogin />} />
+      <div className="app-container">
+        {/* You can remove the Navbar reference if it's not needed */}
+        <div className="content-container">
+          <Routes>
+            {/* For example, we make the Seller Dashboard the default route */}
+            <Route path="/" element={<Home />} />
+            <Route path="/add-product" element={<AddProductPage />} />
+            <Route path="/products" element={<ProductListPage />} />
+            <Route path="/edit-product/:id" element={<EditProductPage />} />
+            {/* Optionally, if you want a dedicated seller dashboard route */}
+            <Route path="/seller-dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/login" element={<SellerLogin />} />
           <Route path="/seller/signup" element={<SellerSignup />} />
-          
-          {/* Protected seller routes */}
+
           <Route 
             path="/seller/dashboard/*" 
             element={
@@ -35,11 +61,19 @@ function App() {
             } 
           />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/seller/login" replace />} />
-        </Routes>
+            <Route path="/api/auth/login" element={<Login />} />
+           {/*  <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
+             <Route path="/dashboard" element={<Dashboard />} />
+             <Route path="/signup" element={<BuyerSignup />} />
+             <Route path="/superadmin" element={<SuperAdminDashboard />} />
+            <Route path='/home'element = {<Home/>}/>
+            <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
+            <Route path="/" element={<Navigate to="/seller/login" replace />} />
+          </Routes>
+        </div>
       </div>
     </Router>
+
   );
 }
 

@@ -1,0 +1,82 @@
+/* src/pages/Login.css */
+
+/* Container centers the form and sets font */
+.login-container {
+    width: 300px;
+    margin: 100px auto;
+    font-family: Arial, sans-serif;
+    color: #000;
+    text-align: left;
+  }
+  
+  /* Title */
+  .login-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+  
+  /* Form layout */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Label styling */
+  .login-label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    letter-spacing: 1px;
+  }
+  
+  /* Input fields */
+  .login-input {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  
+  /* Sign In button */
+  .login-button {
+    margin-top: 20px;
+    background-color: #000;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .login-button:hover {
+    background-color: #333;
+  }
+  
+  /* Footer text (Create Account) */
+  .login-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+  }
+  
+  /* Link style */
+  .login-link {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    margin-left: 5px;
+    border-bottom: 1px solid #000;
+  }
+  
+  /* Message (error or success) */
+  .login-message {
+    margin-top: 15px;
+    color: red; /* Adjust color if you want success messages in green, etc. */
+    text-align: center;
+  }

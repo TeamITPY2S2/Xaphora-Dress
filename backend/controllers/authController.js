@@ -1,48 +1,52 @@
-// const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/User');
-// const bcrypt = require('bcryptjs');
+// controllers/authController.js
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const Admin = require("../models/adminModel");
+const User = require("../models/UserModel");
 
-// const register = async (req, res) => {
-//   const { username, email, password } = req.body;
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // First, check if the email exists in the Admin collection.
+    let user = await Admin.findOne({ email });
+    if (user) {
+      // Compare the submitted password with the hashed password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      // Generate a JWT containing admin details
+      const token = jwt.sign(
+        { adminId: user._id, adminType: user.adminType },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+      return res.status(200).json({ token, userType: "admin", user });
+    }
 
-//   try {
-//     // Check if user already exists
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) return res.status(400).json({ message: 'User already exists' });
+    // If not found in Admin, check the User collection.
+    user = await User.findOne({ email });
+    if (user) {
+      // Compare password (ensure that user passwords are hashed during creation)
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      // Generate a JWT containing user details
+      const token = jwt.sign(
+        { userId: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+      return res.status(200).json({ token, userType: "user", user });
+    }
 
-//     // Hash password
-//     const hashedPassword = await bcrypt.hash(password, 12);
+    // If the email does not exist in either collection.
+    return res.status(400).json({ message: "Invalid credentials" });
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
-//     const newUser = new User({
-//       username,
-//       email,
-//       password: hashedPassword,
-//     });
-
-//     await newUser.save();
-//     res.status(201).json({ message: 'User registered successfully' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
-
-// const login = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json({ message: 'User not found' });
-
-//     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-//     if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
-
-//     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//     res.status(200).json({ token, userId: user._id });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
-
-// module.exports = { register, login };
+module.exports = { login };

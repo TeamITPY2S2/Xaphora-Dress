@@ -1,6 +1,7 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
 
 // 1) Import Firebase libraries
 import { initializeApp } from "firebase/app";
@@ -67,3 +68,4 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
