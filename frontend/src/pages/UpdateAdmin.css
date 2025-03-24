@@ -1,9 +1,9 @@
-/* src/pages/UpdateAdmin.css */
+/* frontend/src/pages/UpdateAdmin.css */
 .update-admin-container {
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
     padding: 20px;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
   }
   
   .update-form {

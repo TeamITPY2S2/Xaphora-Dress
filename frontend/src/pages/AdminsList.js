@@ -1,4 +1,4 @@
-// src/pages/AdminsList.js
+// frontend/src/pages/AdminsList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminsList.css";
@@ -9,7 +9,7 @@ function AdminsList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Make sure this is the correct key for your token
+    const token = localStorage.getItem("token");
     if (!token) {
       setMessage("No token found. Please login.");
       return;
@@ -38,7 +38,7 @@ function AdminsList() {
   };
 
   const handleBack = () => {
-    navigate("/superadmin");
+    navigate("/superadmin"); // adjust if you have a different path
   };
 
   const handleAddAdmin = () => {
@@ -63,7 +63,7 @@ function AdminsList() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // If using JWT
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
@@ -88,7 +88,7 @@ function AdminsList() {
         <button onClick={handleAddAdmin} className="add-admin-button">ADD ADMIN</button>
       </div>
 
-      {message && <p style={{ color: "red" }}>{message}</p>}
+      {message && <p className="error-message">{message}</p>}
 
       {admins.length > 0 ? (
         <table className="admins-table">
@@ -107,8 +107,8 @@ function AdminsList() {
                 <td>{admin.firstName} {admin.lastName}</td>
                 <td>{admin.adminType}</td>
                 <td>
-                  <button onClick={() => handleUpdate(admin._id)}>Update</button>
-                  <button onClick={() => handleDelete(admin._id)}>Delete</button>
+                  <button className="update-btn" onClick={() => handleUpdate(admin._id)}>Update</button>
+                  <button className="delete-btn" onClick={() => handleDelete(admin._id)}>Delete</button>
                 </td>
               </tr>
             ))}
