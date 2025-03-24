@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getMessaging, getToken } from 'firebase/messaging';
+import styles from './SellerSignup.module.css';
 
 // Define the backend URL
 const BACKEND_URL = 'http://localhost:8070';
@@ -61,90 +62,108 @@ const SellerSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your seller account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <div className={styles.signupContainer}>
+      <div className={styles.formCard}>
+        <h2 className={styles.title}>Create Your Store</h2>
+        <p className={styles.subtitle}>Start selling with us today</p>
+        
+        <form className={styles.form} onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{error}</span>
+            <div className={styles.error}>
+              <p>Error</p>
+              <p>{error}</p>
             </div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="name" className="sr-only">Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="storeName" className="sr-only">Store Name</label>
-              <input
-                id="storeName"
-                name="storeName"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Store Name"
-                value={formData.storeName}
-                onChange={handleChange}
-              />
-            </div>
+          
+          <div className={styles.inputGroup}>
+            <label htmlFor="name" className={styles.label}>
+              Full Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              className={styles.input}
+              placeholder="Enter your full name"
+              value={formData.name}
+              onChange={handleChange}
+            />
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {loading ? 'Creating account...' : 'Sign up'}
-            </button>
+          <div className={styles.inputGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className={styles.input}
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+            />
           </div>
+
+          <div className={styles.inputGroup}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className={styles.input}
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label htmlFor="storeName" className={styles.label}>
+              Store Name
+            </label>
+            <input
+              id="storeName"
+              name="storeName"
+              type="text"
+              required
+              className={styles.input}
+              placeholder="Enter your store name"
+              value={formData.storeName}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles.button}
+          >
+            {loading ? (
+              <>
+                <svg className={styles.spinner} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating account...
+              </>
+            ) : (
+              'Create Account'
+            )}
+          </button>
         </form>
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
+
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <p className={styles.subtitle}>
             Already have an account?{' '}
             <button
               onClick={() => navigate('/seller/login')}
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className={styles.link}
             >
               Sign in
             </button>
