@@ -127,10 +127,6 @@ body {
   gap: 2rem;
 }
 
-.nav-list.show {
-  /* if you want to style open/closed states for mobile */
-}
-
 .nav-link {
   color: var(--secondary-color);
   text-decoration: none;
