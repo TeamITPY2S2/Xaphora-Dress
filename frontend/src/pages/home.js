@@ -17,12 +17,12 @@ const Home = () => {
     {
       id: 2,
       title: "Men's Collection",
-      image: '/images/category-men.jpg',
+      image: '/images/mens f.jpeg',
     },
     {
       id: 3,
       title: "Kids & Baby",
-      image: '/images/category-kids.jpg',
+      image: '/images/baby.avif',
     }
   ];
 
@@ -30,27 +30,27 @@ const Home = () => {
   const newArrivals = [
     {
       id: 1,
-      name: "Women's Casual Belt",
+      name: "Girls Blouse",
       price: 'Rs 1,590.00',
-      image: '/images/belt1.jpg',
+      image: '/images/blouse.jpg',
     },
     {
       id: 2,
-      name: "Designer Belt",
+      name: "Over Size T-shirt",
       price: 'Rs 1,590.00',
-      image: '/images/belt2.jpg',
+      image: '/images/oversize.webp',
     },
     {
       id: 3,
-      name: "Formal Belt",
+      name: "Casual Denim Trouser",
       price: 'Rs 1,590.00',
-      image: '/images/belt3.jpg',
+      image: '/images/denim.webp',
     },
     {
       id: 4,
-      name: "Classic Belt",
+      name: "Girls Oversize Trouser",
       price: 'Rs 1,590.00',
-      image: '/images/belt4.jpg',
+      image: '/images/pants.jpg',
     }
   ];
 
