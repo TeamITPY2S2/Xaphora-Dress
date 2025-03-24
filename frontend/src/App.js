@@ -1,9 +1,7 @@
-
-// src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import SellerLogin from './components/SellerLogin';
+import SellerSignup from './components/SellerSignup';
 import './App.css';
 // src/index.js
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,8 +21,21 @@ import Dashboard from "./pages/Dashboard";
 import BuyerSignup from "./pages/BuyerSignup";
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 
+// Protected Route wrapper
+const ProtectedRoute = ({ children }) => {
+  // Add your authentication logic here
+  const isAuthenticated = localStorage.getItem('seller_token'); // You'll need to set this during login
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/seller/login" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
+
 
     <Router>
       <div className="app-container">
@@ -38,7 +49,17 @@ function App() {
             <Route path="/edit-product/:id" element={<EditProductPage />} />
             {/* Optionally, if you want a dedicated seller dashboard route */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/login" element={<SellerLogin />} />
+          <Route path="/seller/signup" element={<SellerSignup />} />
 
+          <Route 
+            path="/seller/dashboard/*" 
+            element={
+              <ProtectedRoute>
+                <div>Dashboard will go here</div>
+              </ProtectedRoute>
+            } 
+          />
 
             <Route path="/api/auth/login" element={<Login />} />
            {/*  <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
@@ -47,6 +68,7 @@ function App() {
              <Route path="/superadmin" element={<SuperAdminDashboard />} />
             <Route path='/home'element = {<Home/>}/>
             <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
+            <Route path="/" element={<Navigate to="/seller/login" replace />} />
           </Routes>
         </div>
       </div>

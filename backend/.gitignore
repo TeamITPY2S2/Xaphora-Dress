@@ -34,8 +34,12 @@ Thumbs.db
 
 # Temporary files and directories
 tmp/
+<<<<<<< HEAD
+temp/
+=======
 
 temp/
 
 temp/
 
+>>>>>>> 022b35603d5f445519e5df70129fe365d4591f2f
