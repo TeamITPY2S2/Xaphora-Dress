@@ -27,7 +27,7 @@ function BuyerSignup() {
         // localStorage.setItem("userType", data.userType || "buyer");
         setMessage("Signup successful!");
         // Redirect to dashboard
-        navigate("/dashboard");
+        navigate("/home");
       } else {
         setMessage(data.message || "Signup failed");
       }

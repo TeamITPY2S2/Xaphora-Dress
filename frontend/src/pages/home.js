@@ -90,7 +90,7 @@ const Home = () => {
               <Link to="/wishlist">
                 <FaHeart />
               </Link>
-              <Link to="/account">
+              <Link to="/dashboard">
                 <FaUser />
               </Link>
               <Link to="/cart">

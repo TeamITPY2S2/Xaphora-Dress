@@ -1,4 +1,3 @@
-// src/pages/Dashboard.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; // Added Link import
 import "./Dashboard.css"; // Import the CSS file
@@ -41,7 +40,7 @@ function Dashboard() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
-    navigate("/api/auth/login");
+    navigate("/home");
   };
 
   const handleUpdateProfile = async () => {
@@ -108,23 +107,17 @@ function Dashboard() {
   // Switch on userType to render different dashboards
   switch (dashboardData.userType) {
     case "super-admin":
-      return (
-        navigate("/superadmin")
-        // <div style={{ padding: "20px" }}>
-        //   <h2>Super Admin Dashboard</h2>
-        //   <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
-        //   <p>Special data: {dashboardData.specialData}</p>
-        //   <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
-        //   <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
-        //   <button onClick={handleLogout}>Logout</button>
-        // </div>
-      );
+      // For super-admin, you might redirect to a dedicated route
+      navigate("/superadmin");
+      return null;
 
     case "admin":
       return (
         <div style={{ padding: "20px" }}>
           <h2>Admin Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
           <p>Admin type: {dashboardData.adminType}</p>
           <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
           <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
@@ -136,7 +129,9 @@ function Dashboard() {
       return (
         <div style={{ padding: "20px" }}>
           <h2>Seller Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
           <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
           <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
           <button onClick={handleLogout}>Logout</button>
@@ -144,10 +139,10 @@ function Dashboard() {
       );
 
     case "buyer":
-      // Fixed the nested <p> tags issue and restructured the buyer section.
       return (
         <div className="account-container">
           <div className="account-header">
+            <Link to="/dashboard" className="home-button">Home</Link>
             <h2>MY ACCOUNT</h2>
             <button className="logout-button" onClick={handleLogout}>
               LOG OUT
@@ -164,11 +159,10 @@ function Dashboard() {
                 {dashboardData.firstName} {dashboardData.lastName}
               </p>
               <p className="buyer-address">Sri Lanka</p>
-              
               <div className="addressr">
                 <Link to="/address" className="address-link">View Address</Link>
               </div>
-              <br/><br/>
+              <br /><br />
               <button onClick={handleUpdateProfile} className="update-profile-button">
                 Update Profile
               </button>

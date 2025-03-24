@@ -31,7 +31,7 @@ function Login() {
         if (data.userType === "super-admin") {
           navigate("/superadmin");
         } else {
-          navigate("/dashboard");
+          navigate("/home");
         }
       } else {
         setMessage(data.message || "Login failed");
