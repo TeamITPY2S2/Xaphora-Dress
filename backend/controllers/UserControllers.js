@@ -1,5 +1,4 @@
 // controllers/UserController.js
-
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 
@@ -64,9 +63,9 @@ const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { firstName, lastName, email, password } = req.body;
   try {
-    // If you want to re-hash the password on update, do it similarly here:
     let updatedFields = { firstName, lastName, email };
 
+    // If password is provided, hash it
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updatedFields.password = hashedPassword;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";  // Added Link import
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -58,6 +58,9 @@ function Login() {
         /><br /><br />
 
         <button type="submit">Login</button>
+        <p style={{ marginTop: "10px" }}>
+          Create Account <Link to="/signup">Sign Up</Link>
+        </p>
       </form>
       <div style={{ color: "red", marginTop: "10px" }}>{message}</div>
     </div>

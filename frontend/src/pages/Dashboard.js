@@ -87,7 +87,7 @@ function Dashboard() {
         alert("Profile deleted successfully");
         localStorage.removeItem("token");
         localStorage.removeItem("userType");
-        navigate("/login");
+        navigate("/signup");
       } else {
         alert(data.message || "Failed to delete profile");
       }
