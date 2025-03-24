@@ -3,6 +3,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
 import './App.css';
 // src/index.js
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +14,8 @@ import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
+import Home from './pages/home';
+import XaphoraChatbot from './pages/XaphoraChatbot'; 
 
 import Login from "./pages/Login";
 //import AdminDashboard from "./pages/AdminDashboard";
@@ -29,7 +32,7 @@ function App() {
         <div className="content-container">
           <Routes>
             {/* For example, we make the Seller Dashboard the default route */}
-            <Route path="/" element={<SellerDashboard />} />
+            <Route path="/" element={<Home />} />
             <Route path="/add-product" element={<AddProductPage />} />
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
@@ -42,6 +45,8 @@ function App() {
              <Route path="/dashboard" element={<Dashboard />} />
              <Route path="/signup" element={<BuyerSignup />} />
              <Route path="/superadmin" element={<SuperAdminDashboard />} />
+            <Route path='/home'element = {<Home/>}/>
+            <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
           </Routes>
         </div>
       </div>

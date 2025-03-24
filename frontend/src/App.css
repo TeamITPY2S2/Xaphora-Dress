@@ -1,14 +1,18 @@
-/* src/App.css */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100vw; 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .content-container {
   flex: 1;
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
   width: 100%;
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Ensure no padding is added */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
