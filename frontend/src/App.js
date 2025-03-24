@@ -25,7 +25,7 @@ function App() {
         <div className="content-container">
           <Routes>
             {/* For example, we make the Seller Dashboard the default route */}
-            <Route path="/" element={<SellerDashboard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/add-product" element={<AddProductPage />} />
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
