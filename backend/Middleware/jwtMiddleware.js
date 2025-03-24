@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: "Invalid token" });
     }
-    req.user = decoded; // Expected payload: { adminId, adminType }
+    req.user = decoded; // Contains { adminId, adminType } OR { userId, role }
     next();
   });
 };

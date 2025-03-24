@@ -17,12 +17,6 @@ import SellerDashboard from './pages/SellerDashboard';
 import Home from './pages/home';
 import XaphoraChatbot from './pages/XaphoraChatbot'; 
 
-import Login from "./pages/Login";
-//import AdminDashboard from "./pages/AdminDashboard";
-import Dashboard from "./pages/Dashboard";
-import BuyerSignup from "./pages/BuyerSignup";
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-
 function App() {
   return (
 
@@ -38,13 +32,6 @@ function App() {
             <Route path="/edit-product/:id" element={<EditProductPage />} />
             {/* Optionally, if you want a dedicated seller dashboard route */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
-
-
-            <Route path="/api/auth/login" element={<Login />} />
-           {/*  <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
-             <Route path="/dashboard" element={<Dashboard />} />
-             <Route path="/signup" element={<BuyerSignup />} />
-             <Route path="/superadmin" element={<SuperAdminDashboard />} />
             <Route path='/home'element = {<Home/>}/>
             <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
           </Routes>
