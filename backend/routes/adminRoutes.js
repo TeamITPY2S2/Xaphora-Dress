@@ -1,4 +1,4 @@
-// routes/adminRoutes.js
+// backend/routes/adminRoutes.js
 const express = require("express");
 const router = express.Router();
 
@@ -20,7 +20,6 @@ const {
  */
 // UNPROTECTED (for initial creation):
 router.post("/create-super-admin", createSuperAdmin);
-
 // PROTECTED (after super admin exists):
 // router.post("/create-super-admin", verifyToken, allowRoles("super-admin"), createSuperAdmin);
 

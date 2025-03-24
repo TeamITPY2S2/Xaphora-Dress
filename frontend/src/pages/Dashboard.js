@@ -7,33 +7,95 @@ function Dashboard() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchDashboardData = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
 
-    fetch("http://localhost:8070/api/dashboard", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.message && !data.userType) {
-        // If there's a message but no userType, assume an error
-        setMessage(data.message);
+    try {
+      const response = await fetch("http://localhost:8070/api/dashboard", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setMessage(data.message || "Error fetching dashboard data");
       } else {
         setDashboardData(data);
       }
-    })
-    .catch((err) => {
+    } catch (err) {
       console.error("Dashboard fetch error:", err);
       setMessage("Error fetching dashboard data");
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
   }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userType");
+    navigate("/login");
+  };
+
+  const handleUpdateProfile = async () => {
+    const newFirstName = prompt("Enter new first name:");
+    const newLastName = prompt("Enter new last name:");
+    if (!newFirstName || !newLastName) return;
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:8070/api/dashboard/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ firstName: newFirstName, lastName: newLastName })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Re-fetch dashboard data to ensure full updated info is shown
+        await fetchDashboardData();
+        alert("Profile updated successfully");
+      } else {
+        alert(data.message || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Error updating profile");
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("/api/dashboard/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("Profile deleted successfully");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userType");
+        navigate("/login");
+      } else {
+        alert(data.message || "Failed to delete profile");
+      }
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+      alert("Error deleting profile");
+    }
+  };
 
   if (message) {
     return <div>{message}</div>;
@@ -43,49 +105,63 @@ function Dashboard() {
     return <div>Loading dashboard...</div>;
   }
 
-  // Check userType from the response
+  // Render dashboard based on userType
   switch (dashboardData.userType) {
     case "super-admin":
       return (
-        <div>
+        <div style={{ padding: "20px" }}>
           <h2>Super Admin Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
           <p>Special data: {dashboardData.specialData}</p>
+          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
+          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
+          <button onClick={handleLogout}>Logout</button>
         </div>
       );
-
     case "admin":
       return (
-        <div>
+        <div style={{ padding: "20px" }}>
           <h2>Admin Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
           <p>Admin type: {dashboardData.adminType}</p>
-          <p>Data: {dashboardData.data}</p>
+          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
+          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
+          <button onClick={handleLogout}>Logout</button>
         </div>
       );
-
     case "seller":
       return (
-        <div>
+        <div style={{ padding: "20px" }}>
           <h2>Seller Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
-          <p>Data: {dashboardData.data}</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
+          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
+          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
+          <button onClick={handleLogout}>Logout</button>
         </div>
       );
-
     case "buyer":
       return (
-        <div>
+        <div style={{ padding: "20px" }}>
           <h2>Buyer Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
-          <p>Data: {dashboardData.data}</p>
+          <p>
+            Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+          </p>
+          <button onClick={handleUpdateProfile}>Update Profile</button>{" "}
+          <button onClick={handleDeleteProfile}>Delete Profile</button>{" "}
+          <button onClick={handleLogout}>Logout</button>
         </div>
       );
-
     default:
       return (
-        <div>
-          <h2>Unknown role</h2>
+        <div style={{ padding: "20px" }}>
+          <h2>Unknown Role</h2>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       );
   }
