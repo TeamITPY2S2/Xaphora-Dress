@@ -15,6 +15,7 @@ import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 import Home from './pages/home';
+import XaphoraChatbot from './pages/XaphoraChatbot'; 
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             {/* Optionally, if you want a dedicated seller dashboard route */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path='/home'element = {<Home/>}/>
+            <Route path = '/chatbot' element = {<XaphoraChatbot/>}/>
           </Routes>
         </div>
       </div>

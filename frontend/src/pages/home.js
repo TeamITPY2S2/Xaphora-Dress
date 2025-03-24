@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
+import XaphoraChatbot from './XaphoraChatbot';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -184,6 +185,8 @@ const Home = () => {
             ))}
           </div>
         </section>
+
+        <XaphoraChatbot/>
 
         {/* Footer */}
         <footer className="footer">
