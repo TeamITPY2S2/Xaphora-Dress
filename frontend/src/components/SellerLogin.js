@@ -63,7 +63,7 @@ const SellerLogin = () => {
       localStorage.setItem('seller_id', seller._id);
 
       // Navigate to dashboard
-      navigate('/seller/dashboard');
+      navigate('/seller-dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
     } finally {

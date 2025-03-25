@@ -24,6 +24,9 @@ import UpdateAdmin from "./pages/UpdateAdmin";
 import BuyersList from './pages/BuyersList';
 import UpdateBuyer from './pages/UpdateBuyer';
 import AddBuyer from './pages/AddBuyer';
+import SellersList from "./pages/SellersList";
+import UpdateSeller from './pages/UpdateSeller';
+import AddSeller from './pages/AddSeller';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -76,6 +79,9 @@ function App() {
             <Route path="/superadmin/buyers" element={<BuyersList />} />
             <Route path="/superadmin/update-buyer/:buyerId" element={<UpdateBuyer />} />
             <Route path="/superadmin/add-buyer" element={<AddBuyer />} />
+            <Route path="/superadmin/sellers" element={<SellersList />} />
+            <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
+            <Route path="/superadmin/add-seller" element={<AddSeller />} />
             
 
             {/* Additional pages */}
