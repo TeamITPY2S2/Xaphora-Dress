@@ -87,6 +87,11 @@ function BuyerSignup() {
         <Link to="/api/auth/login" className="signup-link">
           Login here
         </Link>
+
+        <p className="login-footer">
+                 <Link to="/seller/signup" className="login-link">Signup as a <b>Seller</b></Link>
+              </p>
+
       </p>
     </div>
   );

@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,19 +11,19 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Built-in middleware to parse JSON
+app.use(express.json());
 app.use(morgan("dev"));
 
-// Import Routes (duplicates removed)
-const productRoutes = require('./routes/productRoutes');
-const userRoutes = require('./Routes/UserRoutes');
-const deliveryRoutes = require('./Routes/DeliveryRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const deliveFeedbackRoutes = require('./routes/deliveFeedbackRoutes');
-const monitoringRoutes = require('./routes/deliveMonitoringRoutes');
-const historyRoutes = require('./routes/deliveHistoryRoutes');
+// Import Routes
+const productRoutes = require("./routes/productRoutes");
+const userRoutes = require("./routes/UserRoutes");
+const deliveryRoutes = require("./Routes/DeliveryRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const deliveFeedbackRoutes = require("./routes/deliveFeedbackRoutes");
+const monitoringRoutes = require("./routes/deliveMonitoringRoutes");
+const historyRoutes = require("./routes/deliveHistoryRoutes");
 const cartRoutes = require("./routes/cartRoutes");
-const sellerRoutes = require('./routes/sellerRoutes');
+const sellerRoutes = require("./routes/sellerRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -32,14 +33,13 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
-app.use("/api/orders", orderRoutes); 
+app.use("/api/orders", orderRoutes);
 app.use("/api/feedback", deliveFeedbackRoutes);
-app.use("/api/admin", monitoringRoutes);
+app.use("/api/admins", adminRoutes); // Admin routes at /api/admins
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
-app.use('/api/sellers', sellerRoutes);
-app.use("/payment", paymentRoutes); // Payment endpoints
-app.use("/admin", adminRoutes);
+app.use("/api/sellers", sellerRoutes);
+app.use("/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
@@ -51,6 +51,7 @@ mongoose
   .then(() => console.log("MongoDB Connection Success!"))
   .catch((err) => console.error("MongoDB Connection Failed:", err));
 
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });

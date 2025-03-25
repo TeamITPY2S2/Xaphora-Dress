@@ -1,51 +1,49 @@
-// models/adminModel.js
+// backend/models/adminModel.js
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const bcrypt = require("bcryptjs");
 
-const adminSchema = new Schema(
+const adminSchema = new mongoose.Schema(
   {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     firstName: {
       type: String,
-      required: [true, "First name is required"],
-      trim: true,
-      minlength: [2, "First name must be at least 2 characters long"],
+      required: true,
     },
     lastName: {
       type: String,
-      required: [true, "Last name is required"],
-      trim: true,
-      minlength: [2, "Last name must be at least 2 characters long"],
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      trim: true,
-      lowercase: true,
-      match: [
-        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Please enter a valid email address",
-      ],
+      required: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters long"],
+      required: true,
     },
     adminType: {
       type: String,
+      default: "regular",
       enum: [
         "super-admin",
         "delivery",
         "inventory",
         "order-management",
         "reviews",
-        "user-management"
+        "user-management",
+        "regular"
       ],
-      required: [true, "Admin type is required"],
     },
   },
-  { timestamps: true }
+  { timestamps: true } // This ensures createdAt and updatedAt fields
 );
 
-module.exports = mongoose.model("Admin", adminSchema);
+// Hash password before saving
+adminSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+module.exports = mongoose.models.Admin || mongoose.model("Admin", adminSchema);

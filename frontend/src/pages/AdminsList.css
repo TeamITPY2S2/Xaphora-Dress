@@ -1,0 +1,49 @@
+/* src/pages/AdminsList.css */
+.admins-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  
+  .admins-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .back-button,
+  .add-admin-button,
+  .edit-button,
+  .delete-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    margin: 0 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+  
+  .back-button:hover,
+  .add-admin-button:hover,
+  .edit-button:hover,
+  .delete-button:hover {
+    background-color: #333;
+  }
+  
+  .admins-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admins-table th,
+  .admins-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
