@@ -35,7 +35,7 @@ app.use("/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/feedback", deliveFeedbackRoutes);
-app.use("/api/admins", adminRoutes); // Important: Admin routes at /api/admins
+app.use("/api/admins", adminRoutes); // Admin routes at /api/admins
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/sellers", sellerRoutes);

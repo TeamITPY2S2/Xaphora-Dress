@@ -8,7 +8,7 @@ function AddAdmin() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-  // Default adminType is "user-management" (must match your schema exactly)
+  // Default adminType is "user-management"
   const [adminType, setAdminType] = useState("user-management");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -16,13 +16,11 @@ function AddAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // If your route is protected, you might need a super-admin token
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); // If your route is protected
       const res = await fetch("http://localhost:8070/api/admins", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Include the token if your backend requires authentication
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
@@ -36,7 +34,7 @@ function AddAdmin() {
       const data = await res.json();
       if (res.ok) {
         alert("Admin created successfully");
-        navigate("/superadmin/admins"); // Return to admins list page
+        navigate("/superadmin/admins");
       } else {
         setMessage(data.message || "Failed to create admin");
       }
@@ -91,13 +89,14 @@ function AddAdmin() {
 
         <label>Admin Type</label>
         <select value={adminType} onChange={(e) => setAdminType(e.target.value)}>
-          {/* Make sure these values match your backend's enum EXACTLY */}
+          {/* Must match your backend's enum exactly if required */}
           <option value="super-admin">Super Admin</option>
           <option value="delivery">Delivery</option>
           <option value="inventory">Inventory</option>
           <option value="order-management">Order Management</option>
           <option value="reviews">Reviews</option>
           <option value="user-management">User Management</option>
+          <option value="regular">Regular</option>
         </select>
 
         <button type="submit" className="create-admin-button">Create Admin</button>

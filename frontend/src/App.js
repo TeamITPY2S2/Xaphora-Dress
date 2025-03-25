@@ -20,11 +20,11 @@ import BuyerSignup from "./pages/BuyerSignup";
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import AdminsList from "./pages/AdminsList";
 import AddAdmin from "./pages/AddAdmin";
-import UpdateAdmin from './pages/UpdateAdmin';
+import UpdateAdmin from "./pages/UpdateAdmin";
 
-// Protected Route wrapper
+// Example protected route
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('seller_token'); // For seller login
+  const isAuthenticated = localStorage.getItem('seller_token');
   if (!isAuthenticated) {
     return <Navigate to="/seller/login" replace />;
   }
@@ -37,7 +37,7 @@ function App() {
       <div className="app-container">
         <div className="content-container">
           <Routes>
-            {/* Home page */}
+            {/* Home */}
             <Route path="/" element={<Home />} />
 
             {/* Seller product routes */}
@@ -50,14 +50,14 @@ function App() {
             <Route path="/seller/login" element={<SellerLogin />} />
             <Route path="/seller/signup" element={<SellerSignup />} />
 
-            {/* Protected seller dashboard */}
+            {/* Protected seller route */}
             <Route 
-              path="/seller/dashboard/*" 
+              path="/seller/dashboard/*"
               element={
                 <ProtectedRoute>
-                  <div>Dashboard will go here</div>
+                  <div>Seller Dashboard Protected Content</div>
                 </ProtectedRoute>
-              } 
+              }
             />
 
             {/* Auth & user routes */}

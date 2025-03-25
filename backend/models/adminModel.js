@@ -1,4 +1,4 @@
-// models/adminModel.js
+// backend/models/adminModel.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -23,7 +23,16 @@ const adminSchema = new mongoose.Schema(
     },
     adminType: {
       type: String,
-      default: "regular",
+      default: "regular", // or "user-management" if you want
+      enum: [
+        "super-admin",
+        "delivery",
+        "inventory",
+        "order-management",
+        "reviews",
+        "user-management",
+        "regular"
+      ],
     },
   },
   { timestamps: true }
@@ -37,4 +46,5 @@ adminSchema.pre("save", async function (next) {
   next();
 });
 
-module.exports = mongoose.model("Admin", adminSchema);
+// Prevent OverwriteModelError
+module.exports = mongoose.models.Admin || mongoose.model("Admin", adminSchema);
