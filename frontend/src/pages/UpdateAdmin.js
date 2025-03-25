@@ -135,9 +135,9 @@ function UpdateAdmin() {
           >
             <option value="">Select Admin Type</option>
             <option value="super-admin">Super Admin</option>
+            <option value="delivery">Delivery</option>
             <option value="inventory">Inventory</option>
             <option value="order-management">Order Management</option>
-            <option value="delivery">Delivery</option>
           </select>
         </div>
 

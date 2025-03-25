@@ -1,4 +1,4 @@
-// frontend/src/pages/AdminsList.js
+// src/pages/AdminsList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminsList.css";
@@ -10,10 +10,6 @@ function AdminsList() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage("No token found. Please login.");
-      return;
-    }
     fetchAdmins(token);
   }, [navigate]);
 
@@ -22,12 +18,22 @@ function AdminsList() {
       const res = await fetch("http://localhost:8070/api/admins", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // If using JWT
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
       if (res.ok) {
-        setAdmins(data);
+        // Sort: super-admins first, then descending createdAt
+        const sorted = data.sort((a, b) => {
+          if (a.adminType === "super-admin" && b.adminType !== "super-admin") {
+            return -1;
+          }
+          if (b.adminType === "super-admin" && a.adminType !== "super-admin") {
+            return 1;
+          }
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        setAdmins(sorted);
       } else {
         setMessage(data.message || "Error fetching admins");
       }
@@ -38,7 +44,7 @@ function AdminsList() {
   };
 
   const handleBack = () => {
-    navigate("/superadmin"); // adjust if you have a different path
+    navigate("/superadmin");
   };
 
   const handleAddAdmin = () => {
@@ -46,57 +52,48 @@ function AdminsList() {
   };
 
   const handleUpdate = (adminId) => {
+    // Navigate to UpdateAdmin page
     navigate(`/superadmin/update-admin/${adminId}`);
   };
 
   const handleDelete = async (adminId) => {
+    if (!window.confirm("Are you sure you want to delete this admin?")) return;
     const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage("No token found. Please login.");
-      return;
-    }
-    if (!window.confirm("Are you sure you want to delete this admin?")) {
-      return;
-    }
     try {
       const res = await fetch(`http://localhost:8070/api/admins/${adminId}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Admin deleted successfully");
-        // Re-fetch the admins list
-        fetchAdmins(token);
+        alert("Admin deleted successfully");
+        fetchAdmins(token); // Refresh list
       } else {
-        setMessage(data.message || "Error deleting admin");
+        alert(data.message || "Failed to delete admin");
       }
-    } catch (err) {
-      console.error("Error deleting admin:", err);
-      setMessage("Error deleting admin");
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+      alert("Error deleting admin");
     }
   };
 
   return (
     <div className="admins-container">
       <div className="admins-header">
-        <button onClick={handleBack} className="back-button">BACK</button>
+        <button onClick={handleBack} className="back-button">Back</button>
         <h2>All Admins</h2>
-        <button onClick={handleAddAdmin} className="add-admin-button">ADD ADMIN</button>
+        <button onClick={handleAddAdmin} className="add-admin-button">Add Admin</button>
       </div>
 
-      {message && <p className="error-message">{message}</p>}
+      {message && <p style={{ color: "red" }}>{message}</p>}
 
       {admins.length > 0 ? (
         <table className="admins-table">
           <thead>
             <tr>
               <th>Email</th>
-              <th>Full Name</th>
               <th>Admin Type</th>
+              <th>Created At</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -104,11 +101,15 @@ function AdminsList() {
             {admins.map((admin) => (
               <tr key={admin._id}>
                 <td>{admin.email}</td>
-                <td>{admin.firstName} {admin.lastName}</td>
                 <td>{admin.adminType}</td>
+                <td>{new Date(admin.createdAt).toLocaleString()}</td>
                 <td>
-                  <button className="update-btn" onClick={() => handleUpdate(admin._id)}>Update</button>
-                  <button className="delete-btn" onClick={() => handleDelete(admin._id)}>Delete</button>
+                  <button onClick={() => handleUpdate(admin._id)} className="edit-button">
+                    Update
+                  </button>
+                  <button onClick={() => handleDelete(admin._id)} className="delete-button">
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

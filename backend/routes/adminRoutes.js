@@ -4,9 +4,9 @@ const router = express.Router();
 const Admin = require("../models/adminModel");
 const bcrypt = require("bcryptjs");
 
-// GET all admins
 router.get("/", async (req, res) => {
   try {
+    // Return all admins with createdAt fields
     const admins = await Admin.find({});
     return res.status(200).json(admins);
   } catch (err) {
@@ -88,15 +88,18 @@ router.put("/:id", async (req, res) => {
 // DELETE - Remove an admin
 router.delete("/:id", async (req, res) => {
   try {
-    const admin = await Admin.findById(req.params.id);
+    // Using findByIdAndDelete to delete the admin
+    const admin = await Admin.findByIdAndDelete(req.params.id);
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     }
-    await admin.remove();
     return res.status(200).json({ message: "Admin deleted successfully" });
   } catch (err) {
     console.error("Error deleting admin:", err);
-    return res.status(500).json({ message: "Error deleting admin" });
+    return res.status(500).json({ 
+      message: "Error deleting admin", 
+      error: err.message 
+    });
   }
 });
 

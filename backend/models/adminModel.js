@@ -23,7 +23,7 @@ const adminSchema = new mongoose.Schema(
     },
     adminType: {
       type: String,
-      default: "regular", // or "user-management" if you want
+      default: "regular",
       enum: [
         "super-admin",
         "delivery",
@@ -35,7 +35,7 @@ const adminSchema = new mongoose.Schema(
       ],
     },
   },
-  { timestamps: true }
+  { timestamps: true } // This ensures createdAt and updatedAt fields
 );
 
 // Hash password before saving
@@ -46,5 +46,4 @@ adminSchema.pre("save", async function (next) {
   next();
 });
 
-// Prevent OverwriteModelError
 module.exports = mongoose.models.Admin || mongoose.model("Admin", adminSchema);
