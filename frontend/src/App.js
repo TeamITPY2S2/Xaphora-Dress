@@ -21,6 +21,9 @@ import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import AdminsList from "./pages/AdminsList";
 import AddAdmin from "./pages/AddAdmin";
 import UpdateAdmin from "./pages/UpdateAdmin";
+import BuyersList from './pages/BuyersList';
+import UpdateBuyer from './pages/UpdateBuyer';
+import AddBuyer from './pages/AddBuyer';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -70,11 +73,17 @@ function App() {
             <Route path="/superadmin/admins" element={<AdminsList />} />
             <Route path="/superadmin/add-admin" element={<AddAdmin />} />
             <Route path="/superadmin/update-admin/:adminId" element={<UpdateAdmin />} />
+            <Route path="/superadmin/buyers" element={<BuyersList />} />
+            <Route path="/superadmin/update-buyer/:buyerId" element={<UpdateBuyer />} />
+            <Route path="/superadmin/add-buyer" element={<AddBuyer />} />
+            
 
             {/* Additional pages */}
             <Route path="/home" element={<Home />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
+
+            
           </Routes>
         </div>
       </div>

@@ -16,7 +16,7 @@ app.use(morgan("dev"));
 
 // Import Routes
 const productRoutes = require("./routes/productRoutes");
-const userRoutes = require("./Routes/UserRoutes");
+const userRoutes = require("./routes/UserRoutes");
 const deliveryRoutes = require("./Routes/DeliveryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const deliveFeedbackRoutes = require("./routes/deliveFeedbackRoutes");

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Added Link import
+import { useNavigate, Link } from "react-router-dom";
 import "./Dashboard.css"; // Import the CSS file
 
 function Dashboard() {
@@ -7,6 +7,7 @@ function Dashboard() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  // Fetch dashboard data
   const fetchDashboardData = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -32,21 +33,25 @@ function Dashboard() {
     }
   };
 
+  // On mount, fetch data
   useEffect(() => {
     fetchDashboardData();
     // eslint-disable-next-line
   }, []);
 
+  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     navigate("/home");
   };
 
+  // Handle profile update
   const handleUpdateProfile = async () => {
     const newFirstName = prompt("Enter new first name:");
     const newLastName = prompt("Enter new last name:");
     if (!newFirstName || !newLastName) return;
+
     const token = localStorage.getItem("token");
     try {
       const response = await fetch("http://localhost:8070/api/dashboard/update", {
@@ -70,8 +75,10 @@ function Dashboard() {
     }
   };
 
+  // Handle profile deletion
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) return;
+
     const token = localStorage.getItem("token");
     try {
       const response = await fetch("http://localhost:8070/api/dashboard/delete", {
@@ -96,18 +103,18 @@ function Dashboard() {
     }
   };
 
+  // Display message or loading
   if (message) {
     return <div>{message}</div>;
   }
-
   if (!dashboardData) {
     return <div>Loading dashboard...</div>;
   }
 
-  // Switch on userType to render different dashboards
+  // Render based on user type
   switch (dashboardData.userType) {
     case "super-admin":
-      // For super-admin, you might redirect to a dedicated route
+      // Optionally redirect to a dedicated route
       navigate("/superadmin");
       return null;
 
@@ -148,11 +155,15 @@ function Dashboard() {
               LOG OUT
             </button>
           </div>
+
           <div className="account-content">
+            {/* Left column: Order History */}
             <div className="order-history">
               <h3>ORDER HISTORY</h3>
               <p>You haven't placed any orders yet.</p>
             </div>
+
+            {/* Right column: Account Details */}
             <div className="account-details">
               <h3>ACCOUNT DETAILS</h3>
               <p className="buyer-name">
@@ -162,14 +173,22 @@ function Dashboard() {
               <div className="addressr">
                 <Link to="/address" className="address-link">View Address</Link>
               </div>
-              <br /><br />
-              <button onClick={handleUpdateProfile} className="update-profile-button">
-                Update Profile
-              </button>
-              <br /><br />
-              <button onClick={handleDeleteProfile} className="delete-profile-button">
-                Delete Profile
-              </button>
+
+              {/* Buttons at bottom-right */}
+              <div className="account-actions">
+                <button
+                  onClick={handleUpdateProfile}
+                  className="update-profile-button"
+                >
+                  Update Profile
+                </button>
+                <button
+                  onClick={handleDeleteProfile}
+                  className="delete-profile-button"
+                >
+                  Delete Profile
+                </button>
+              </div>
             </div>
           </div>
         </div>

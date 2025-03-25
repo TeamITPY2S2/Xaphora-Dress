@@ -13,13 +13,13 @@ function SuperAdminDashboard() {
       navigate("/login");
       return;
     }
-    // If you want to fetch some special data, do so here
+    // Optionally fetch user details or super admin name here
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
-    navigate("/login");
+    navigate("/api/auth/login");
   };
 
   const handleViewAdmins = () => {
@@ -27,11 +27,13 @@ function SuperAdminDashboard() {
   };
 
   const handleGetSellers = () => {
-    alert("Fetch sellers logic here");
+    navigate("/superadmin/sellers"); 
+    // Or alert("Fetch sellers logic here");
   };
 
   const handleGetBuyers = () => {
-    alert("Fetch buyers logic here");
+    navigate("/superadmin/buyers");
+    // Or alert("Fetch buyers logic here");
   };
 
   const handleUpdateProfile = () => {
@@ -44,17 +46,28 @@ function SuperAdminDashboard() {
 
   return (
     <div className="superadmin-container">
-      <h2>Super Admin Dashboard</h2>
-      {message && <p style={{ color: "red" }}>{message}</p>}
-      <div className="top-buttons">
+      {/* Top bar for logout */}
+      <div className="top-bar">
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+
+      {/* Center name/title */}
+      <h2 className="superadmin-title">SUPER ADMIN</h2>
+      {message && <p className="superadmin-message">{message}</p>}
+
+      {/* Center buttons (Admins, Sellers, Buyers) */}
+      <div className="center-buttons">
         <button onClick={handleViewAdmins}>Admins</button>
         <button onClick={handleGetSellers}>Sellers</button>
         <button onClick={handleGetBuyers}>Buyers</button>
       </div>
+
+      {/* Bottom-right corner for Update/Delete */}
       <div className="bottom-right-buttons">
         <button onClick={handleUpdateProfile}>Update Profile</button>
         <button onClick={handleDeleteProfile}>Delete Profile</button>
-        <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
   );

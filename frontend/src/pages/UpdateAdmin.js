@@ -138,6 +138,7 @@ function UpdateAdmin() {
             <option value="delivery">Delivery</option>
             <option value="inventory">Inventory</option>
             <option value="order-management">Order Management</option>
+            <option value="reviews">Reviews</option>
           </select>
         </div>
 

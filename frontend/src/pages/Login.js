@@ -75,6 +75,10 @@ function Login() {
         Create Account <Link to="/signup" className="login-link">Sign Up</Link>
       </p>
 
+      <p className="login-footer">
+         <Link to="/seller/login" className="login-link">Log as a <b>Seller</b></Link>
+      </p>
+
       <div className="login-message">{message}</div>
     </div>
   );

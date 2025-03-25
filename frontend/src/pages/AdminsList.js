@@ -23,7 +23,7 @@ function AdminsList() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Sort: super-admins first, then descending createdAt
+        // Sort: super-admins first, then descending by createdAt
         const sorted = data.sort((a, b) => {
           if (a.adminType === "super-admin" && b.adminType !== "super-admin") {
             return -1;
@@ -52,7 +52,6 @@ function AdminsList() {
   };
 
   const handleUpdate = (adminId) => {
-    // Navigate to UpdateAdmin page
     navigate(`/superadmin/update-admin/${adminId}`);
   };
 
@@ -62,7 +61,9 @@ function AdminsList() {
     try {
       const res = await fetch(`http://localhost:8070/api/admins/${adminId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -92,6 +93,7 @@ function AdminsList() {
           <thead>
             <tr>
               <th>Email</th>
+              <th>Full Name</th>
               <th>Admin Type</th>
               <th>Created At</th>
               <th>Actions</th>
@@ -101,6 +103,7 @@ function AdminsList() {
             {admins.map((admin) => (
               <tr key={admin._id}>
                 <td>{admin.email}</td>
+                <td>{`${admin.firstName} ${admin.lastName}`}</td>
                 <td>{admin.adminType}</td>
                 <td>{new Date(admin.createdAt).toLocaleString()}</td>
                 <td>

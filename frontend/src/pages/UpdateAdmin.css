@@ -1,62 +1,74 @@
-/* frontend/src/pages/UpdateAdmin.css */
+/* src/pages/UpdateAdmin.css */
+
+/* Container for the entire update admin page */
 .update-admin-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .update-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: flex-end;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
-  
-  .form-group label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .update-form input[type="text"],
-  .update-form input[type="email"],
-  .update-form select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 200px;
-  }
-  
-  .button-group {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .update-button {
-    background-color: #28a745; /* Green */
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .back-button {
-    background-color: #007BFF; /* Blue */
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-bottom: 10px;
-  }
+  width: 400px;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+/* Page title styling */
+.update-admin-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* The form itself */
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Each group (label + input) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Inputs and selects */
+.form-group input,
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Button container */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Update and Back buttons resized to match */
+.update-button,
+.back-button {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.update-button:hover,
+.back-button:hover {
+  background-color: #333;
+}
