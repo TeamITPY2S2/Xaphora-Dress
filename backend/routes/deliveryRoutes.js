@@ -4,22 +4,30 @@ const router = express.Router();
 const {
   createDeliveryAgent,
   getAllDeliveryAgents,
+  getDeliveryAgentById,  // <-- New function
   updateDeliveryAgent,
   deleteDeliveryAgent,
   assignOrderToDeliveryAgent,
-  assignAgentManually  // Newly added manual assignment function
+  assignAgentManually
 } = require('../controllers/deliveryController');
 
-// CRUD routes for delivery agents
-router.post('/agents', createDeliveryAgent);       // Create a new delivery agent
-router.get('/agents', getAllDeliveryAgents);         // Retrieve all delivery agents
-router.put('/agents/:id', updateDeliveryAgent);      // Update a delivery agent by ID
-router.delete('/agents/:id', deleteDeliveryAgent);   // Delete a delivery agent by ID
+// Create a new delivery agent
+router.post('/agents', createDeliveryAgent);
 
-// Route to assign an order to a delivery agent automatically (based on shipping region)
+// Retrieve all delivery agents
+router.get('/agents', getAllDeliveryAgents);
+
+// Retrieve a single delivery agent by ID
+router.get('/agents/:id', getDeliveryAgentById);
+
+// Update a delivery agent by ID
+router.put('/agents/:id', updateDeliveryAgent);
+
+// Delete a delivery agent by ID
+router.delete('/agents/:id', deleteDeliveryAgent);
+
+// Additional routes for orders (if needed)
 router.post('/orders/:orderId/assign', assignOrderToDeliveryAgent);
-
-// Route to manually assign an order to a delivery agent based on selected agent
 router.put('/orders/:orderId/manual-assign', assignAgentManually);
 
 module.exports = router;
