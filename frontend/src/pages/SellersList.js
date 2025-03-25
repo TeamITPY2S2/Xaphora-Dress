@@ -1,4 +1,3 @@
-// src/pages/SellersList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SellersList.css";
@@ -11,6 +10,7 @@ function SellersList() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
+      // If no token, redirect to login or any appropriate route
       navigate("/api/auth/login");
     } else {
       fetchSellers(token);
@@ -28,7 +28,8 @@ function SellersList() {
       });
       const data = await res.json();
       if (res.ok) {
-        // data should be an array of sellers
+        // Sort by createdAt descending so newest appears first
+        data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setSellers(data);
       } else {
         setMessage(data.message || "Error fetching sellers");
@@ -39,18 +40,22 @@ function SellersList() {
     }
   };
 
+  // Navigate back to the superadmin dashboard
   const handleBack = () => {
     navigate("/superadmin");
   };
 
+  // Navigate to AddSeller form
   const handleAddSeller = () => {
     navigate("/superadmin/add-seller");
   };
 
+  // Navigate to UpdateSeller form
   const handleUpdate = (sellerId) => {
     navigate(`/superadmin/update-seller/${sellerId}`);
   };
 
+  // Delete a seller
   const handleDelete = async (sellerId) => {
     if (!window.confirm("Are you sure you want to delete this seller?")) return;
     const token = localStorage.getItem("token");

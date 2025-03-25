@@ -1,49 +1,111 @@
-/* src/pages/AdminsList.css */
-.admins-container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 40px auto;
-    font-family: Arial, sans-serif;
-    color: #000;
+/* AdminsList.css */
+
+/* Override/extend Bootstrap utility classes if needed, or just define new classes */
+
+/* Back and Add Admin buttons in the header */
+.btn-back {
+  background-color: #6c757d; /* Gray for "Back" */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-right: 10px; /* Optional spacing */
+}
+
+.btn-back:hover {
+  opacity: 0.9;
+}
+
+.btn-add {
+  background-color: #007bff; /* Blue for "Add Admin" */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 10px; /* Optional spacing */
+}
+
+.btn-add:hover {
+  opacity: 0.9;
+}
+
+/* Table Action Buttons (Update, Delete) */
+.btn-update,
+.btn-delete {
+  background: none;
+  border: 1px solid;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn-update {
+  color: #28a745;      /* Green */
+  border-color: #28a745;
+}
+
+.btn-update:hover {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn-delete {
+  color: #dc3545;      /* Red */
+  border-color: #dc3545;
+}
+
+.btn-delete:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Optionally style the .action-buttons cell if needed */
+.action-buttons {
+  white-space: nowrap; /* Prevent the buttons from wrapping to multiple lines */
+}
+
+/* Optional: further refine the container if desired */
+.container-fluid.p-4 {
+  background-color: #f4f6f9; /* Matches the pattern from other pages */
+  min-height: 100vh; /* Fill the viewport height */
+}
+
+/* You can also override table styling if you prefer more consistent design
+   (though Bootstrap's .table-striped and .table-hover are good defaults). */
+
+/* Example: Adjust the row hover color */
+.table-hover tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Example: Make table headings a bit bolder */
+.table thead th {
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Responsive Tweaks (optional) */
+@media (max-width: 768px) {
+  .btn-back,
+  .btn-add {
+    margin-bottom: 10px;
   }
   
-  .admins-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  /* Adjust table font size or spacing if needed */
+  .table {
+    font-size: 0.9rem;
   }
-  
-  .back-button,
-  .add-admin-button,
-  .edit-button,
-  .delete-button {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin: 0 5px;
-    cursor: pointer;
-    text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .table {
     font-size: 0.8rem;
-    letter-spacing: 1px;
   }
-  
-  .back-button:hover,
-  .add-admin-button:hover,
-  .edit-button:hover,
-  .delete-button:hover {
-    background-color: #333;
-  }
-  
-  .admins-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .admins-table th,
-  .admins-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-  }
+}

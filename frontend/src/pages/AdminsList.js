@@ -1,4 +1,3 @@
-// src/pages/AdminsList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminsList.css";
@@ -10,6 +9,10 @@ function AdminsList() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     fetchAdmins(token);
   }, [navigate]);
 
@@ -23,7 +26,6 @@ function AdminsList() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Sort: super-admins first, then descending by createdAt
         const sorted = data.sort((a, b) => {
           if (a.adminType === "super-admin" && b.adminType !== "super-admin") {
             return -1;
@@ -68,7 +70,7 @@ function AdminsList() {
       const data = await res.json();
       if (res.ok) {
         alert("Admin deleted successfully");
-        fetchAdmins(token); // Refresh list
+        fetchAdmins(token);
       } else {
         alert(data.message || "Failed to delete admin");
       }
@@ -79,48 +81,76 @@ function AdminsList() {
   };
 
   return (
-    <div className="admins-container">
-      <div className="admins-header">
-        <button onClick={handleBack} className="back-button">Back</button>
-        <h2>All Admins</h2>
-        <button onClick={handleAddAdmin} className="add-admin-button">Add Admin</button>
+    <div className="container-fluid p-4">
+      <div className="row mb-3">
+        <div className="col-12 d-flex justify-content-between align-items-center">
+          <button 
+            className="btn-back" 
+            onClick={handleBack}
+          >
+            Back
+          </button>
+          <h2 className="text-center mb-0">All Admins</h2>
+          <button 
+            className="btn-add" 
+            onClick={handleAddAdmin}
+          >
+            Add Admin
+          </button>
+        </div>
       </div>
 
-      {message && <p style={{ color: "red" }}>{message}</p>}
-
-      {admins.length > 0 ? (
-        <table className="admins-table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Full Name</th>
-              <th>Admin Type</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map((admin) => (
-              <tr key={admin._id}>
-                <td>{admin.email}</td>
-                <td>{`${admin.firstName} ${admin.lastName}`}</td>
-                <td>{admin.adminType}</td>
-                <td>{new Date(admin.createdAt).toLocaleString()}</td>
-                <td>
-                  <button onClick={() => handleUpdate(admin._id)} className="edit-button">
-                    Update
-                  </button>
-                  <button onClick={() => handleDelete(admin._id)} className="delete-button">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No admins found.</p>
+      {message && (
+        <div className="alert alert-danger" role="alert">
+          {message}
+        </div>
       )}
+
+      <div className="row">
+        <div className="col-12">
+          {admins.length > 0 ? (
+            <table className="table table-striped table-hover shadow-sm">
+              <thead className="table-light">
+                <tr>
+                  <th>Email</th>
+                  <th>Full Name</th>
+                  <th>Admin Type</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admins.map((admin) => (
+                  <tr key={admin._id}>
+                    <td>{admin.email}</td>
+                    <td>{`${admin.firstName} ${admin.lastName}`}</td>
+                    <td>{admin.adminType}</td>
+                    <td>{new Date(admin.createdAt).toLocaleString()}</td>
+                    <td className="action-buttons">
+                      <button 
+                        className="btn-update" 
+                        onClick={() => handleUpdate(admin._id)}
+                      >
+                        Update
+                      </button>
+                      <button 
+                        className="btn-delete" 
+                        onClick={() => handleDelete(admin._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="alert alert-info" role="alert">
+              No admins found.
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

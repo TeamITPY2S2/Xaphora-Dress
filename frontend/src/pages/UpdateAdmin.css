@@ -1,74 +1,101 @@
-/* src/pages/UpdateAdmin.css */
+/* UpdateAdmin.css */
 
-/* Container for the entire update admin page */
-.update-admin-container {
-  width: 400px;
-  margin: 40px auto;
-  font-family: Arial, sans-serif;
-  color: #000;
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #50e3c2;
+  --error-color: #e74c3c;
+  --background-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  --input-bg: #fff;
+  --border-radius: 8px;
 }
 
-/* Page title styling */
+.update-admin-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background: var(--background-gradient);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .update-admin-container h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #333;
 }
 
-/* Error message styling */
 .error-message {
-  color: red;
-  margin-bottom: 15px;
+  color: var(--error-color);
   text-align: center;
+  margin-bottom: 15px;
 }
 
-/* The form itself */
 .update-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Each group (label + input) */
 .form-group {
   display: flex;
   flex-direction: column;
 }
 
-/* Labels */
 .form-group label {
-  font-weight: bold;
   margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
 }
 
-/* Inputs and selects */
 .form-group input,
 .form-group select {
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
+  font-size: 1em;
+  background: var(--input-bg);
+  transition: border-color 0.3s ease;
 }
 
-/* Button container */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
 .button-group {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-/* Update and Back buttons resized to match */
 .update-button,
 .back-button {
-  background-color: #000;
-  color: #fff;
-  border: none;
   padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
+  font-size: 1em;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.update-button:hover,
+.update-button {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.update-button:hover {
+  background: #357ABD;
+  transform: scale(1.05);
+}
+
+.back-button {
+  background: var(--secondary-color);
+  color: #fff;
+}
+
 .back-button:hover {
-  background-color: #333;
+  background: #3bb9a2;
+  transform: scale(1.05);
 }
