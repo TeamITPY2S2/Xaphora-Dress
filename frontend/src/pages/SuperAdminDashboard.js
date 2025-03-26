@@ -47,10 +47,11 @@ function SuperAdminDashboard() {
   return (
     <div className="superadmin-container">
       {/* Top bar for logout */}
-      <div className="top-bar">
-        <button className="logout-button" onClick={handleLogout}>
+      <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
+      <div className="top-bar">
+        
       </div>
 
       {/* Center name/title */}
@@ -63,12 +64,15 @@ function SuperAdminDashboard() {
         <button onClick={handleGetSellers}>Sellers</button>
         <button onClick={handleGetBuyers}>Buyers</button>
       </div>
+      
 
       {/* Bottom-right corner for Update/Delete */}
       <div className="bottom-right-buttons">
         <button onClick={handleUpdateProfile}>Update Profile</button>
         <button onClick={handleDeleteProfile}>Delete Profile</button>
+        
       </div>
+      
     </div>
   );
 }

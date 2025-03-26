@@ -12,10 +12,10 @@
 }
 
 /* Top bar for logout button (right corner) */
-.top-bar {
+/* .top {
   position: relative;
   height: 40px; /* Just enough to hold the logout button */
-}
+/* } */
 
 /* Logout button in the top-right corner */
 .logout-button {
@@ -28,7 +28,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  color: #000;
+  color: #df1212;
 }
 .logout-button:hover {
   text-decoration: underline;
