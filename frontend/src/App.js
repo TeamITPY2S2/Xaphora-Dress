@@ -12,6 +12,14 @@ import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
+import AddDeliveryAgent from './pages/addDeliveryAgent';
+import AdminDashboard from './pages/AdminDashboard';
+import ViewDeliveOrderDetails from './pages/ViewDeliveOrderDetails';
+import ViewAgents from './pages/ViewAgents';
+import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent';
+import DeliveOrdersTable from './components/DeliveOrdersTable';
+import UserOrderDetails from './pages/UserOrderDetails';
+
 import Home from './pages/home';
 import XaphoraChatbot from './pages/XaphoraChatbot'; 
 import Login from "./pages/Login";
@@ -53,6 +61,14 @@ function App() {
 
             {/* Seller login & signup */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
+            <Route path="/addDeliveryAgent" element={<AddDeliveryAgent />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
+            <Route path="/Order" element={<DeliveOrdersTable />} />
+            <Route path="/agents" element={<ViewAgents />} />
+            {/* Updated route: now matches the URL pattern used in ViewAgents.js */}
+            <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
+            <Route path="/Order/:orderId" element={<UserOrderDetails />} />
             <Route path="/seller/login" element={<SellerLogin />} />
             <Route path="/seller/signup" element={<SellerSignup />} />
 

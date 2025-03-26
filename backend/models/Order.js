@@ -1,9 +1,20 @@
 // models/Order.js
 const mongoose = require('mongoose');
 
-
-const orderSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const OrderSchema = new mongoose.Schema({
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User", 
+    required: true 
+  },
+  customerName: {
+    type: String,
+    required: true
+  },
+  shippingAddress: {
+    type: String,
+    required: true
+  },
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
@@ -11,19 +22,31 @@ const orderSchema = new mongoose.Schema({
       price: { type: Number, required: true }
     }
   ],
-  totalAmount: { type: Number, required: true },
+  totalAmount: { 
+    type: Number, 
+    required: true 
+  },
   paymentStatus: {
     type: String,
     enum: ["pending", "completed", "failed"],
     default: "pending"
   },
-  orderStatus: {
+  // Renamed from orderStatus to status with your required steps
+  status: {
     type: String,
-    enum: ["processing", "shipped", "delivered", "cancelled"],
-    default: "processing"
+    enum: ["Ordered", "Packed", "Shipped", "Delivered"],
+    default: "Ordered"
   },
-  createdAt: { type: Date, default: Date.now }
-
+  // Optionally track the date the order was placed
+  placedDate: {
+    type: Date,
+    default: Date.now
+  },
+  // Keep track of when this record was created
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  }
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Order', OrderSchema);
