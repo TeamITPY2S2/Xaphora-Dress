@@ -1,7 +1,7 @@
 // src/pages/BuyersList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "./BuyersList.css"; // Import the CSS file
+import "./BuyersList.css"; 
 
 function BuyersList() {
   const [buyers, setBuyers] = useState([]);
@@ -11,15 +11,15 @@ function BuyersList() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      // If no token, redirect to login page
+
       navigate("/api/auth/login");
     } else {
       fetchBuyers(token);
     }
-    // eslint-disable-next-line
+
   }, [navigate]);
 
-  // Fetch all users, then filter out buyers
+  // Fetch all users
   const fetchBuyers = async (token) => {
     try {
       const res = await fetch("http://localhost:8070/users", {
@@ -30,9 +30,9 @@ function BuyersList() {
       });
       const data = await res.json();
       if (res.ok) {
-        // data is expected to be an object: { users: [...] }
+        
         const buyersList = data.users.filter((user) => user.role === "buyer");
-        // Optional: sort by createdAt descending
+        // sort by created descending order
         const sortedBuyers = buyersList.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
@@ -75,7 +75,7 @@ function BuyersList() {
       const data = await res.json();
       if (res.ok) {
         alert("Buyer deleted successfully");
-        // Refresh buyers list
+
         fetchBuyers(token);
       } else {
         alert(data.message || "Failed to delete buyer");

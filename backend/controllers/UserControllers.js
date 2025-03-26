@@ -3,7 +3,7 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Function to create a new user (with password hashing & token generation)
+// create a new user 
 const createUser = async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
   try {
@@ -20,19 +20,19 @@ const createUser = async (req, res, next) => {
       lastName,
       email,
       password: hashedPassword,
-      role: "buyer"  // You can change this to "seller" if needed.
+      role: "buyer"
     });
 
     await newUser.save();
 
-    // Sign a token for the new user (valid for 1 day)
+    // Sign a token for the new user - valid for 1 day
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1d" }
     );
 
-    // Return token and user details (excluding password)
+    // Return token, user details
     res.status(201).json({
       message: "User created successfully",
       token,
@@ -50,8 +50,6 @@ const createUser = async (req, res, next) => {
     res.status(500).json({ message: "Error creating user" });
   }
 };
-
-// Other functions remain unchanged
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -75,7 +73,6 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Return an object with user property
     res.json({ user });
   } catch (error) {
     console.error("Error in getUserById:", error);

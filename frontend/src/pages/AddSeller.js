@@ -27,7 +27,7 @@ const AddSeller = () => {
     });
   };
 
-  // Get the FCM token automatically using Firebase Messaging
+  // Get the FCM token 
   const getFCMToken = async () => {
     try {
       const messaging = getMessaging();

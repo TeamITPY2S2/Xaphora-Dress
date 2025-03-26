@@ -114,9 +114,15 @@ function Dashboard() {
   // Render based on user type
   switch (dashboardData.userType) {
     case "super-admin":
-      // Optionally redirect to a dedicated route
+
       navigate("/superadmin");
       return null;
+
+      case "delivery":
+
+      navigate("/admin-dashboard");
+      return null;
+      
 
     case "admin":
       return (
@@ -163,7 +169,7 @@ function Dashboard() {
               <p>You haven't placed any orders yet.</p>
             </div>
 
-            {/* Right column: Account Details */}
+
             <div className="account-details">
               <h3>ACCOUNT DETAILS</h3>
               <p className="buyer-name">
@@ -174,7 +180,7 @@ function Dashboard() {
                 <Link to="/address" className="address-link">View Address</Link>
               </div>
 
-              {/* Buttons at bottom-right */}
+     
               <div className="account-actions">
                 <button
                   onClick={handleUpdateProfile}

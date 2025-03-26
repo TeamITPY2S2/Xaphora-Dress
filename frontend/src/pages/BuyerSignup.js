@@ -14,7 +14,7 @@ function BuyerSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // POST request to the /users endpoint
+      // POST request to the /users 
       const response = await fetch("/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,9 +22,7 @@ function BuyerSignup() {
       });
       const data = await response.json();
       if (response.ok) {
-        // Optionally store a token or userType if returned
-        // localStorage.setItem("token", data.token);
-        // localStorage.setItem("userType", data.userType || "buyer");
+
         setMessage("Signup successful!");
         // Redirect to dashboard
         navigate("/api/auth/login");
