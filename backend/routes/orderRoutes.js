@@ -4,11 +4,12 @@ const router = express.Router();
 const Order = require('../models/Order');
 const { updateOrderStatus } = require('../controllers/deliveStatusController');
 
-// Create a new order (temporary)
+// Create a new order using the updated Order model fields
 router.post('/', async (req, res) => {
   try {
-    const { customer, items, shippingRegion } = req.body;
-    const newOrder = new Order({ customer, items, shippingRegion });
+    // Expecting new field names from the updated Order model
+    const { userId, customerName, shippingAddress, items, totalAmount } = req.body;
+    const newOrder = new Order({ userId, customerName, shippingAddress, items, totalAmount });
     await newOrder.save();
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
@@ -39,5 +40,7 @@ router.get('/:orderId', async (req, res) => {
   }
 });
 
+// Update order status
 router.put('/:orderId/status', updateOrderStatus);
+
 module.exports = router;

@@ -5,7 +5,7 @@ import AdminDashboard from '../components/AdminDashboard';
 const AdminDashboardPage = () => {
   return (
     <div>
-      <h1>Delivery Management Admin Dashboard</h1>
+      <h3>Delivery Management Admin Dashboard</h3>
       <AdminDashboard />
     </div>
   );

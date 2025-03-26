@@ -1,5 +1,8 @@
+import './ViewAgents.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+
 
 const ViewAgents = () => {
   const [agents, setAgents] = useState([]);

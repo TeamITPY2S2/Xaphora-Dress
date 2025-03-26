@@ -18,6 +18,8 @@ import ViewDeliveOrderDetails from './pages/ViewDeliveOrderDetails';
 import ViewAgents from './pages/ViewAgents';
 import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent';
 import DeliveOrdersTable from './components/DeliveOrdersTable';
+import UserOrderDetails from './pages/UserOrderDetails';
+
 
 function App() {
   return (
@@ -35,11 +37,12 @@ function App() {
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/addDeliveryAgent" element={<AddDeliveryAgent />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/order/:orderId" element={<ViewDeliveOrderDetails />} />
+            <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
             <Route path="/Order" element={<DeliveOrdersTable />} />
             <Route path="/agents" element={<ViewAgents />} />
             {/* Updated route: now matches the URL pattern used in ViewAgents.js */}
             <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
+            <Route path="/Order/:orderId" element={<UserOrderDetails />} />
           </Routes>
         </div>
       </div>

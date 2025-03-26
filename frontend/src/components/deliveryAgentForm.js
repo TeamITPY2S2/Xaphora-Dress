@@ -32,7 +32,7 @@ const DeliveryAgentForm = () => {
 
   return (
     <div className="form-container">
-      <h2>Add Delivery Agent</h2>
+      <h4>Add Delivery Agent</h4>
       {error && <p className="error">{error}</p>}
       {success && <p className="success">{success}</p>}
       <form onSubmit={handleSubmit}>

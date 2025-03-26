@@ -1,4 +1,5 @@
 // src/components/AdminDashboard.js
+import './AdminDashboard.css';
 import React, { useState, useEffect } from 'react';
 import { getAgents, getAgentPerformance } from '../api/adminAPI';
 import { useNavigate } from 'react-router-dom';
@@ -22,14 +23,18 @@ const AdminDashboard = () => {
     fetchAgents();
   }, []);
 
-  // Handle agent dropdown change
   const handleAgentChange = async (e) => {
     const agentId = e.target.value;
     setSelectedAgent(agentId);
     if (agentId) {
       try {
-        const result = await getAgentPerformance(agentId);
-        setPerformance(result.performance || 'Performance details not available');
+        const response = await fetch(`http://localhost:8070/api/admin/agent-performance?agentId=${agentId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch performance');
+        }
+        const result = await response.json();
+        // Assuming result.report is an array of objects; format it using JSON.stringify
+        setPerformance(JSON.stringify(result.report, null, 2) || 'Performance details not available');
       } catch (error) {
         console.error('Error fetching performance:', error);
         setPerformance('Error fetching performance');
@@ -38,6 +43,7 @@ const AdminDashboard = () => {
       setPerformance('');
     }
   };
+  
 
   return (
     <div className="admin-dashboard" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
