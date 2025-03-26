@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 const { sendNotification } = require("../services/notificationService");
+const mongoose = require('mongoose');
 
 // Create a new product
 const createProduct = async (req, res) => {
@@ -34,6 +35,36 @@ const getProducts = async (req, res) => {
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products", error });
+  }
+};
+
+// Get products by category
+const getProductsByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    
+    // If categoryId is "1", fetch all products
+    if (categoryId === "1") {
+      const products = await Product.find();
+      if (!products.length) {
+        return res.status(404).json({ message: "No products found" });
+      }
+      return res.json(products);
+    }
+
+    // For other category IDs, check if it's a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    const products = await Product.find({ category: categoryId });
+    if (!products.length) {
+      return res.status(404).json({ message: "No products found for this category" });
+    }
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).json({ message: "Error fetching products", error: error.message });
   }
 };
 
@@ -85,6 +116,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   createProduct,
   getProducts,
+  getProductsByCategory,
   getProductById,
   updateProduct,
   deleteProduct

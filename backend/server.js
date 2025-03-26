@@ -28,10 +28,11 @@ const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const userProfileRoutes = require('./routes/userProfileRoutes');
 
 // Use Routes
-app.use("/api", productRoutes);
-app.use("/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/feedback", deliveFeedbackRoutes);
@@ -39,9 +40,10 @@ app.use("/api/admins", adminRoutes); // Admin routes at /api/admins
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/sellers", sellerRoutes);
-app.use("/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use('/api/users', userProfileRoutes);
 
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;

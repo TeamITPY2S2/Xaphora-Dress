@@ -1,30 +1,43 @@
 const mongoose = require("mongoose");
 const Cart = require("../models/Cart");
 
-// Create a new cart
-exports.createCart = async (req, res) => {
+// Get or create cart for a user
+const getOrCreateCart = async (req, res) => {
   try {
-    const { userId, items, totalPrice } = req.body;
-
-    // Optional: compute totalPrice if not provided
-    let computedTotal = 0;
-    if (items && items.length > 0) {
-      computedTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    console.log('Request user:', req.user); // Debug log
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'User not authenticated' });
     }
 
-    // Use the provided totalPrice or the computed total
-    const finalPrice = totalPrice || computedTotal;
+    const userId = req.user._id;
+    console.log('User ID:', userId); // Debug log
 
-    const newCart = new Cart({
-      userId: mongoose.Types.ObjectId(userId), // Ensure userId is an ObjectId
-      items,
-      totalPrice: finalPrice
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      console.log('Creating new cart for user:', userId); // Debug log
+      // Create a new cart if one doesn't exist
+      cart = new Cart({
+        userId,
+        items: [],
+        totalPrice: 0
+      });
+      await cart.save();
+      console.log('New cart created:', cart); // Debug log
+    }
+
+    // Log the cart data for debugging
+    console.log('Cart data:', cart);
+
+    // Return the cart with all fields
+    res.status(200).json({
+      _id: cart._id.toString(), // Convert ObjectId to string
+      userId: cart.userId.toString(), // Convert ObjectId to string
+      items: cart.items || [],
+      totalPrice: cart.totalPrice || 0
     });
-
-    const savedCart = await newCart.save();
-    res.status(201).json(savedCart);
   } catch (err) {
-    console.error("Error creating cart:", err);
+    console.error("Error getting/creating cart:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -41,7 +54,7 @@ exports.getAllCarts = async (req, res) => {
 };
 
 // Get a cart by ID
-exports.getCartById = async (req, res) => {
+const getCartById = async (req, res) => {
   try {
     const { cartId } = req.params;
     const cart = await Cart.findById(cartId);
@@ -56,12 +69,12 @@ exports.getCartById = async (req, res) => {
 };
 
 // Update a cart by ID
-exports.updateCart = async (req, res) => {
+const updateCart = async (req, res) => {
   try {
     const { id } = req.params; // route param is :id
     const updates = req.body;
 
-    // If userId is present, ensure it’s an ObjectId
+    // If userId is present, ensure it's an ObjectId
     if (updates.userId) {
       updates.userId = mongoose.Types.ObjectId(updates.userId);
     }
@@ -78,7 +91,7 @@ exports.updateCart = async (req, res) => {
 };
 
 // Delete a cart by ID
-exports.deleteCart = async (req, res) => {
+const deleteCart = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedCart = await Cart.findByIdAndDelete(id);
@@ -90,4 +103,11 @@ exports.deleteCart = async (req, res) => {
     console.error("Error deleting cart:", err);
     res.status(500).json({ error: err.message });
   }
+};
+
+module.exports = {
+  getOrCreateCart,
+  getCartById,
+  updateCart,
+  deleteCart
 };

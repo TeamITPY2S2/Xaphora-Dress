@@ -1,20 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cartController");
+const { authenticateToken } = require("../middleware/auth");
 
-// Create a new cart
-router.post("/", cartController.createCart);
-
-// Get all carts
-router.get("/", cartController.getAllCarts);
+// Get or create cart for the authenticated user
+router.get("/", authenticateToken, cartController.getOrCreateCart);
 
 // Get a cart by ID
-router.get("/:cartId", cartController.getCartById);
+router.get("/:cartId", authenticateToken, cartController.getCartById);
 
 // Update a cart by ID
-router.put("/:id", cartController.updateCart);
+router.put("/:id", authenticateToken, cartController.updateCart);
 
 // Delete a cart by ID
-router.delete("/:id", cartController.deleteCart);
+router.delete("/:id", authenticateToken, cartController.deleteCart);
 
 module.exports = router;

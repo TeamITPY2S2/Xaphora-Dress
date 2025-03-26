@@ -35,6 +35,21 @@ import AddBuyer from './pages/AddBuyer';
 import SellersList from "./pages/SellersList";
 import UpdateSeller from './pages/UpdateSeller';
 import AddSeller from './pages/AddSeller';
+import CategoryProducts from './pages/CategoryProducts';
+import ProductDetails from './pages/ProductDetails';
+import Cart from './pages/Cart';
+import Register from './pages/Register';
+import Wishlist from './pages/Wishlist';
+import Checkout from './pages/Checkout';
+import OrderConfirmation from './pages/OrderConfirmation';
+import OrderHistory from './pages/OrderHistory';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import Logout from './pages/Logout';
+import NotFound from './pages/NotFound';
+import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -48,11 +63,28 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <div className="app-container">
-        <div className="content-container">
+      <div className="App">
+        <Navbar />
+        <main>
           <Routes>
-            {/* Home */}
             <Route path="/" element={<Home />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/category/:categoryId" element={
+              <PrivateRoute>
+                <CategoryProducts />
+              </PrivateRoute>
+            } />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/order-history" element={<OrderHistory />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
 
             {/* Seller product routes */}
             <Route path="/add-product" element={<AddProductPage />} />
@@ -104,10 +136,9 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
-
-            
           </Routes>
-        </div>
+        </main>
+        <Footer />
       </div>
     </Router>
   );

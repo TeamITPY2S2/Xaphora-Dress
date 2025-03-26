@@ -7,6 +7,7 @@ require("dotenv").config();
 const UserController = require("../controllers/UserControllers");
 
 // Define Routes
+router.post("/login", UserController.login);         // Login route
 router.get("/", UserController.getAllUsers);         // Get all users
 router.post("/", UserController.createUser);         // Create a new user
 router.get("/:id", UserController.getUserById);      // Get a user by ID

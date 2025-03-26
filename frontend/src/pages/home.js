@@ -164,6 +164,7 @@ const Home = () => {
 
         {/* Featured Categories */}
         <section className="featured-categories">
+          <h2>Featured Categories</h2>
           <div className="category-grid">
             {categories.map((category) => (
               <div key={category.id} className="category-card">
