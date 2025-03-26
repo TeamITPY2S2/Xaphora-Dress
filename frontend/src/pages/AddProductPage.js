@@ -83,6 +83,7 @@ function AddProductPage() {
             placeholder="Enter product price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            min={1}
             required
           />
         </div>
@@ -94,6 +95,7 @@ function AddProductPage() {
             placeholder="Enter stock quantity"
             value={stockQuantity}
             onChange={(e) => setStockQuantity(e.target.value)}
+            min={1}
             required
           />
         </div>

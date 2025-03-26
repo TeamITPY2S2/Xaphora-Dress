@@ -1,0 +1,267 @@
+/* XaphoraChatbot.css - Blue Theme for Xaphora Dress Chatbot */
+
+:root {
+    --xaphora-primary: #1a75ff;         /* Bright blue */
+    --xaphora-primary-dark: #0052cc;    /* Darker blue */
+    --xaphora-primary-light: #e6f0ff;   /* Light blue */
+    --xaphora-secondary: #003366;       /* Navy blue */
+    --xaphora-text: #333333;            /* Dark gray for text */
+    --xaphora-light-text: #ffffff;      /* White text */
+    --xaphora-background: #f5f8ff;      /* Very light blue background */
+    --xaphora-border: #cce0ff;          /* Light blue border */
+    --xaphora-shadow: rgba(26, 117, 255, 0.2);  /* Blue shadow */
+  }
+  
+  /* Main container */
+  .xaphora-chatbot-container {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--xaphora-text);
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  /* Toggle button */
+  .xaphora-chatbot-toggle {
+    background-color: var(--xaphora-primary);
+    color: var(--xaphora-light-text);
+    border: none;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--xaphora-shadow);
+    transition: all 0.3s ease;
+  }
+  
+  .xaphora-chatbot-toggle:hover {
+    background-color: var(--xaphora-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--xaphora-shadow);
+  }
+  
+  /* Chatbot dialog */
+  .xaphora-chatbot-dialog {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+  }
+  
+  .xaphora-chatbot-dialog.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  /* Header */
+  .xaphora-chatbot-header {
+    background-color: var(--xaphora-primary);
+    color: var(--xaphora-light-text);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  .xaphora-chatbot-logo {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    object-fit: contain;
+  }
+  
+  .xaphora-chatbot-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    flex-grow: 1;
+  }
+  
+  .xaphora-chatbot-close {
+    background: none;
+    border: none;
+    color: var(--xaphora-light-text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+  }
+  
+  /* Messages container */
+  .xaphora-chatbot-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: var(--xaphora-background);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Message styles */
+  .xaphora-chatbot-message {
+    display: flex;
+    margin-bottom: 10px;
+    max-width: 85%;
+  }
+  
+  .xaphora-chatbot-message.user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+  
+  .xaphora-chatbot-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .xaphora-chatbot-message.user .xaphora-chatbot-avatar {
+    margin-right: 0;
+    margin-left: 10px;
+  }
+  
+  .xaphora-chatbot-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .xaphora-chatbot-bubble {
+    background-color: white;
+    padding: 12px 16px;
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+  }
+  
+  .xaphora-chatbot-message.assistant .xaphora-chatbot-bubble {
+    background-color: white;
+    border-top-left-radius: 4px;
+  }
+  
+  .xaphora-chatbot-message.user .xaphora-chatbot-bubble {
+    background-color: var(--xaphora-primary);
+    color: var(--xaphora-light-text);
+    border-top-right-radius: 4px;
+  }
+  
+  /* Typing indicator */
+  .xaphora-chatbot-bubble.typing {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    min-width: 50px;
+  }
+  
+  .xaphora-chatbot-bubble.typing .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--xaphora-primary);
+    margin: 0 2px;
+    animation: typing 1.4s infinite ease-in-out both;
+  }
+  
+  .xaphora-chatbot-bubble.typing .dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  
+  .xaphora-chatbot-bubble.typing .dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+  
+  @keyframes typing {
+    0%, 80%, 100% { 
+      transform: scale(0.6);
+      opacity: 0.6;
+    }
+    40% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Input area */
+  .xaphora-chatbot-input {
+    display: flex;
+    padding: 10px 15px;
+    background-color: white;
+    border-top: 1px solid var(--xaphora-border);
+  }
+  
+  .xaphora-chatbot-input input {
+    flex-grow: 1;
+    border: 1px solid var(--xaphora-border);
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .xaphora-chatbot-input input:focus {
+    border-color: var(--xaphora-primary);
+    box-shadow: 0 0 0 2px var(--xaphora-shadow);
+  }
+  
+  .xaphora-chatbot-input button {
+    background-color: var(--xaphora-primary);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 16px;
+    margin-left: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .xaphora-chatbot-input button:hover {
+    background-color: var(--xaphora-primary-dark);
+  }
+  
+  .xaphora-chatbot-input button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 480px) {
+    .xaphora-chatbot-dialog {
+      width: calc(100vw - 40px);
+      height: 60vh;
+      bottom: 80px;
+    }
+    
+    .xaphora-chatbot-toggle {
+      width: calc(100vw - 40px);
+      text-align: center;
+    }
+  }

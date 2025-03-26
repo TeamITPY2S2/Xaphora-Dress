@@ -1,0 +1,55 @@
+/* src/pages/AddBuyer.css */
+.add-buyer-container {
+    width: 400px;
+    margin: 40px auto;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  
+  .add-buyer-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-buyer-form label {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .add-buyer-form input {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .create-buyer-button {
+    margin-top: 20px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+  }
+  
+  .create-buyer-button:hover {
+    background-color: #333;
+  }
+  
+  .back-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #333;
+  }

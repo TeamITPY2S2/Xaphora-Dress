@@ -1,0 +1,141 @@
+/* Container for the entire account/dashboard page */
+.account-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 60px auto;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+/* Header: Home button (left), title (center), and logout button (right) */
+.account-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Center the "My Account" title */
+.page-title {
+  flex: 1;               /* fill the remaining space */
+  text-align: center;
+  margin: 0;             /* remove default heading margin */
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Home button styling */
+.home-button {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: 1px solid #000;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+.home-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Logout button styling (text-only, uppercase) */
+.logout-button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  outline: none;
+}
+.logout-button:hover {
+  text-decoration: underline;
+  color: #e81414;
+}
+
+/* Main content area with two columns */
+.account-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Left column: Order history */
+.order-history {
+  width: 45%;
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+}
+.order-history h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Right column: Account details */
+.account-details {
+  width: 45%;
+  padding-left: 20px;
+
+  /* Make this column a flex container so we can push buttons to the bottom */
+  display: flex;
+  flex-direction: column;
+}
+.account-details h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.buyer-name {
+  font-weight: bold;
+  margin: 5px 0;
+}
+.buyer-address {
+  margin: 5px 0 20px 0;
+  color: #333;
+}
+
+/* Address link styling */
+.address-link {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+}
+
+/* Container to position the update/delete buttons at the bottom-right */
+.account-actions {
+  margin-top: auto;                 /* push to the bottom of the column */
+  display: flex;
+  justify-content: flex-end;        /* align buttons to the right */
+  gap: 10px;                        /* small spacing between buttons */
+}
+
+/* Update, Delete, and other text-only buttons */
+.update-profile-button,
+.delete-profile-button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  outline: none;
+  color: #000; /* Default text color for update button */
+}
+.update-profile-button:hover,
+.delete-profile-button:hover {
+  text-decoration: underline;
+}
+
+/* Delete Profile button: red text, dark red on hover */
+.delete-profile-button {
+  color: red;
+}
+.delete-profile-button:hover {
+  color: darkred;
+}
