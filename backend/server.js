@@ -26,9 +26,13 @@ const cartRoutes = require("./routes/cartRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-const authRoutes = require("./routes/authRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
 
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const clothuserRoutes =require( './routes/clothuser.routes.js');
+const clothauthroutes =require( './routes/clothauth.routes.js');
+// Use Routes
+app.use("/api/user",clothuserRoutes)
+app.use("/api/clothauth",clothauthroutes)
 // Use Routes
 app.use("/api", productRoutes);
 app.use("/users", userRoutes);
@@ -40,7 +44,6 @@ app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/sellers", sellerRoutes);
 app.use("/payment", paymentRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 const PORT = process.env.PORT || 8070;

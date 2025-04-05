@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
+import { useSelector } from 'react-redux';
+
 
 // AccountLink component: Redirects guests to login and logged in users to dashboard.
 const AccountLink = ({ isAuthenticated }) => {
@@ -17,6 +19,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const { currentUser } = useSelector((state) => state.user);
   // Dummy authentication state. In a real application, derive this from your auth provider.
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -97,6 +100,8 @@ const Home = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+
+              
               <button className="search-button">
                 <FaSearch />
               </button>
@@ -106,6 +111,14 @@ const Home = () => {
               <Link to="/wishlist">
                 <FaHeart />
               </Link>
+              
+<Link to='/sign-in'>
+            {currentUser ? (
+              <img src={currentUser.profilePicture} alt='Profile' className='h-7 w-7 rounded-full object-cover'></img>
+            ) : (
+              <li>Sign In</li>
+            )}
+          </Link>  
               {/* Use AccountLink to conditionally route to login or dashboard */}
               <AccountLink isAuthenticated={isAuthenticated} />
               <Link to="/cart">

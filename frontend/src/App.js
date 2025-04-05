@@ -24,6 +24,12 @@ import UpdateAdmin from "./pages/UpdateAdmin";
 import BuyersList from './pages/BuyersList';
 import UpdateBuyer from './pages/UpdateBuyer';
 import AddBuyer from './pages/AddBuyer';
+import Signin from './pages/Signin';
+import SignUp from './pages/SignUp';
+import Profile from './pages/Profile';
+import ItemProfile from './pages/ItemProfile';
+import AddFinancial from './pages/AddItem';
+import UpdateItem from './pages/UpdateItem'
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -40,50 +46,24 @@ function App() {
       <div className="app-container">
         <div className="content-container">
           <Routes>
-            {/* Home */}
             <Route path="/" element={<Home />} />
-
-            {/* Seller product routes */}
-            <Route path="/add-product" element={<AddProductPage />} />
-            <Route path="/products" element={<ProductListPage />} />
-            <Route path="/edit-product/:id" element={<EditProductPage />} />
-
-            {/* Seller login & signup */}
-            <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/seller/login" element={<SellerLogin />} />
-            <Route path="/seller/signup" element={<SellerSignup />} />
-
-            {/* Protected seller route */}
-            <Route 
-              path="/seller/dashboard/*"
-              element={
-                <ProtectedRoute>
-                  <div>Seller Dashboard Protected Content</div>
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Auth & user routes */}
-            <Route path="/api/auth/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/signup" element={<BuyerSignup />} />
-
-            {/* Super admin routes */}
-            <Route path="/superadmin" element={<SuperAdminDashboard />} />
-            <Route path="/superadmin/admins" element={<AdminsList />} />
-            <Route path="/superadmin/add-admin" element={<AddAdmin />} />
-            <Route path="/superadmin/update-admin/:adminId" element={<UpdateAdmin />} />
-            <Route path="/superadmin/buyers" element={<BuyersList />} />
-            <Route path="/superadmin/update-buyer/:buyerId" element={<UpdateBuyer />} />
-            <Route path="/superadmin/add-buyer" element={<AddBuyer />} />
-            
-
-            {/* Additional pages */}
-            <Route path="/home" element={<Home />} />
+            <Route path="/buyer-signup" element={<BuyerSignup />} />
+            <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
+            <Route path="/admins-list" element={<AdminsList />} />
+            <Route path="/add-admin" element={<AddAdmin />} />
+            <Route path="/update-admin/:id" element={<UpdateAdmin />} />
+            <Route path="/buyers-list" element={<BuyersList />} />
+            <Route path="/update-buyer/:id" element={<UpdateBuyer />} />
+            <Route path="/add-buyer" element={<AddBuyer />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/sign-in" element={<Signin />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/itemprofile" element={<ItemProfile />} />
+            <Route path="/add-item" element={<AddFinancial />} />
+            <Route path="/update-item/:id" element={<UpdateItem />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
-
-            
           </Routes>
         </div>
       </div>

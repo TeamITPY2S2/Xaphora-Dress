@@ -1,0 +1,57 @@
+.add-finance-container {
+    width: 60%;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+  
+  .add-finance-container h1 {
+    text-align: center;
+  }
+  
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+  }
+  
+  form input {
+    width: 48%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  form .error {
+    color: red;
+    font-size: 14px;
+  }
+  
+  #submit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+  }
+  
+  #submit-button:hover {
+    background-color: #0056b3;
+  }
+  .add-finance-container h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px;
+    border-bottom: 3px solid #007bff;
+    margin-bottom: 20px;
+  }
+    
