@@ -31,7 +31,6 @@ function ProductListPage() {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await axios.delete(`http://localhost:8070/api/products/${id}`);
-        // Refresh products list after deletion
         fetchProducts();
       } catch (error) {
         console.error('Error deleting product:', error);
@@ -58,7 +57,13 @@ function ProductListPage() {
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <div className="product-card" key={product._id}>
-              <img src={product.imageUrl} alt={product.name} />
+              {product.imageUrl && (
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.name} 
+                  style={{ width: '200px', height: 'auto', objectFit: 'cover' }}
+                />
+              )}
               <div className="product-info">
                 <h3>{product.name}</h3>
                 <p>Category: {product.category}</p>
