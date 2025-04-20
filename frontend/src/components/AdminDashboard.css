@@ -1,4 +1,4 @@
-/* Container & Global Styles */
+
 .admin-dashboard {
     padding: 20px;
     font-family: Arial, sans-serif;
@@ -6,15 +6,15 @@
     color: #333;
   }
   
-  /* Top Bar Styles */
-  .top-bar {
+  /* Top Bar */
+  .top{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
   }
   
-  .top-bar button {
+  .top button {
     background-color: transparent;
     border: 1px solid black;
     border-radius: 4px;
@@ -25,11 +25,11 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  .top-bar button:hover {
+  .top button:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
   
-  /* Top Right Buttons Container */
+ 
   .top-right-buttons {
     display: flex;
     gap: 10px;
@@ -43,7 +43,7 @@
     color: #007bff;
   }
   
-  /* Agent Performance Section */
+  
   .agent-performance {
     margin-bottom: 20px;
   }
@@ -70,8 +70,7 @@
     min-height: 100px;
     font-family: inherit;
   }
-  
-  /* Order Tracking Button */
+ 
   .order-tracking {
     text-align: center;
   }

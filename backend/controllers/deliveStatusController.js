@@ -1,4 +1,4 @@
-// controllers/deliveStatusController.js
+
 const Order = require('../models/Order');
 
 exports.updateOrderStatus = async (req, res) => {
@@ -6,7 +6,7 @@ exports.updateOrderStatus = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    // Validate the status value
+    
     const validStatuses = ['Ordered', 'Packed', 'Shipped', 'Delivered'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status value' });

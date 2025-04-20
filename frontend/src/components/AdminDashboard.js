@@ -1,4 +1,4 @@
-// src/components/AdminDashboard.js
+
 import './AdminDashboard.css';
 import React, { useState, useEffect } from 'react';
 import { getAgents, getAgentPerformance } from '../api/adminAPI';
@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [performance, setPerformance] = useState('');
   const navigate = useNavigate();
 
-  // Fetch agents when the component mounts
+  // Fetch agents 
   useEffect(() => {
     async function fetchAgents() {
       try {
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
           throw new Error('Failed to fetch performance');
         }
         const result = await response.json();
-        // Assuming result.report is an array of objects; format it using JSON.stringify
+        
         setPerformance(JSON.stringify(result.report, null, 2) || 'Performance details not available');
       } catch (error) {
         console.error('Error fetching performance:', error);
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       {/* Top Bar */}
-      <div className="top-bar" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+      <div className="top" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <button className="assign-order-button" style={{ padding: '10px 15px', fontSize: '16px' }}>
           Assign Order
         </button>
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Agent Performance Section */}
+      {/* Agent Performance */}
       <div className="agent-performance" style={{ marginBottom: '20px' }}>
         <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
           Agent Performance:
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
         />
       </div>
 
-      {/* View Order & Order Tracking Button */}
+      {/* View Order & Order Tracking */}
       <div className="order-tracking">
         <button 
           className="order-tracking-button" 

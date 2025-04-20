@@ -1,10 +1,10 @@
-// models/DeliveryAgent.js
+
 const mongoose = require('mongoose');
 
 const DeliveryAgentSchema = new mongoose.Schema({
   name: { type: String, required: true },
   
-  // Validates that contact is exactly 10 digits and contains only numbers
+ 
   contact: { 
     type: String, 
     required: true,
@@ -16,7 +16,7 @@ const DeliveryAgentSchema = new mongoose.Schema({
     }
   },
   
-  // Validates the email format, ensures uniqueness and stores in lowercase
+  
   email: { 
     type: String, 
     required: true,

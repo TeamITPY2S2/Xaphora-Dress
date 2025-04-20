@@ -1,4 +1,4 @@
-// src/components/DeliveOrdersTable.js
+
 import React, { useState, useEffect } from 'react';
 
 const DeliveOrdersTable = () => {
@@ -6,7 +6,7 @@ const DeliveOrdersTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch orders from the backend
+  // Fetch orders 
   const fetchOrders = async () => {
     try {
       const response = await fetch('http://localhost:8070/api/orders');
@@ -39,7 +39,7 @@ const DeliveOrdersTable = () => {
       if (!response.ok) {
         throw new Error('Failed to update order status.');
       }
-      // Update the local state to reflect the new status
+      
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, status: newStatus } : order

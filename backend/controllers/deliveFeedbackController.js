@@ -1,7 +1,7 @@
-// controllers/deliveFeedbackController.js
+
 const Feedback = require('../models/deliveFeedback');
 
-// Submit new feedback (already implemented)
+// Submit new feedback 
 exports.submitFeedback = async (req, res) => {
   try {
     const { order, deliveryAgent, rating, comment } = req.body;
@@ -16,7 +16,7 @@ exports.submitFeedback = async (req, res) => {
   }
 };
 
-// Get all feedback (already implemented)
+// Get all feedback 
 exports.getAllFeedback = async (req, res) => {
   try {
     const feedbacks = await Feedback.find().populate('order deliveryAgent');

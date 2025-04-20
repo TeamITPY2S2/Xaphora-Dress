@@ -1,4 +1,4 @@
-// models/Order.js
+
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
@@ -31,18 +31,18 @@ const OrderSchema = new mongoose.Schema({
     enum: ["pending", "completed", "failed"],
     default: "pending"
   },
-  // Renamed from orderStatus to status with your required steps
+
   status: {
     type: String,
     enum: ["Ordered", "Packed", "Shipped", "Delivered"],
     default: "Ordered"
   },
-  // Optionally track the date the order was placed
+
   placedDate: {
     type: Date,
     default: Date.now
   },
-  // Keep track of when this record was created
+
   createdAt: { 
     type: Date, 
     default: Date.now 

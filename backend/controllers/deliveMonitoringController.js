@@ -1,9 +1,8 @@
-// controllers/deliveMonitoringController.js
+
 const Order = require('../models/Order');
 const DeliveryAgent = require('../models/DeliveryAgent');
 
-// Generates a report that groups orders by their status (e.g., Ordered, Packed, Shipped, Delivered)
-// and includes an array of order IDs and customer IDs for each group.
+
 exports.getDeliveryProgressReport = async (req, res) => {
   try {
     const report = await Order.aggregate([
@@ -12,7 +11,7 @@ exports.getDeliveryProgressReport = async (req, res) => {
           _id: "$status",
           count: { $sum: 1 },
           orderIds: { $push: "$_id" },
-          customerIds: { $push: "$customer_id" } // Assuming your Order model uses "customer_id"
+          customerIds: { $push: "$customer_id" } 
         }
       }
     ]);
@@ -26,14 +25,13 @@ exports.getDeliveryProgressReport = async (req, res) => {
   }
 };
 
-// Generates a report for each delivery agent with total and delivered orders,
-// and includes detailed order information (order ID and customer ID).
+
 exports.getAgentPerformanceReport = async (req, res) => {
   try {
     const detailedReport = await DeliveryAgent.aggregate([
       {
         $lookup: {
-          from: "orders", // Ensure this matches your orders collection name in MongoDB
+          from: "orders", 
           localField: "_id",
           foreignField: "deliveryAgent",
           as: "orders"
@@ -59,7 +57,7 @@ exports.getAgentPerformanceReport = async (req, res) => {
               as: "order",
               in: {
                 orderId: "$$order._id",
-                customerId: "$$order.customer_id" // Adjust if your field is named differently (e.g., "customer")
+                customerId: "$$order.customer_id" 
               }
             }
           }
