@@ -3,16 +3,17 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Function to create a new user (with password hashing & token generation)
-const createUser = async (req, res, next) => {
+// ✅ Create a new user with dynamic role\const createUser = async (req, res, next) => {
+// ✅ MAKE SURE async is added here
+const createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -20,19 +21,17 @@ const createUser = async (req, res, next) => {
       lastName,
       email,
       password: hashedPassword,
-      role: "buyer"  // You can change this to "seller" if needed.
+      role: "buyer", // or req.body.role if dynamic
     });
 
     await newUser.save();
 
-    // Sign a token for the new user (valid for 1 day)
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1d" }
     );
 
-    // Return token and user details (excluding password)
     res.status(201).json({
       message: "User created successfully",
       token,
@@ -42,8 +41,8 @@ const createUser = async (req, res, next) => {
         email: newUser.email,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
-        role: newUser.role
-      }
+        role: newUser.role,
+      },
     });
   } catch (err) {
     console.error(err);
@@ -51,8 +50,7 @@ const createUser = async (req, res, next) => {
   }
 };
 
-// Other functions remain unchanged
-
+// 🔍 Get all users
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -66,16 +64,14 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-// GET a single user by ID
+// 🔍 Get a single user by ID
 const getUserById = async (req, res) => {
   try {
-    const { id } = req.params;  // e.g. /users/:id
+    const { id } = req.params;
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Return an object with user property
     res.json({ user });
   } catch (error) {
     console.error("Error in getUserById:", error);
@@ -83,6 +79,7 @@ const getUserById = async (req, res) => {
   }
 };
 
+// 🔄 Update user by ID
 const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { firstName, lastName, email, password } = req.body;
@@ -109,6 +106,7 @@ const updateUser = async (req, res, next) => {
   }
 };
 
+// ❌ Delete user by ID
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {

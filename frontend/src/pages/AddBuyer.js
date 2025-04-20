@@ -1,163 +1,140 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './AddBuyer.css'; // Regular CSS import
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import SuperAdminSidebar from "../components/SuperAdminSidebar";
 
-// Define the backend URL (adjust if necessary)
-const BACKEND_URL = 'http://localhost:8070';
+// import the global layout/css from AdminsList (contains .superadmin-layout, .superadmin-main, etc)
+import "./AdminsList.css";
+// import just the AddBuyer page styles
+import "./AddBuyer.css";
+
+const BACKEND_URL = "http://localhost:8070/api";
 
 const AddBuyer = () => {
   const navigate = useNavigate();
+  const [buyers, setBuyers] = useState([]);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle input field changes
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  // fetch existing buyers for the summary panel
+  const fetchBuyers = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get(`${BACKEND_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const buyersOnly = res.data.users.filter((u) => u.role === "buyer");
+      setBuyers(buyersOnly);
+    } catch {
+      console.error("Error fetching buyers");
+    }
   };
 
-  // Handle form submission
+  useEffect(() => {
+    fetchBuyers();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
-
     try {
-      // POST request to create a new buyer (role = "buyer")
-      const response = await axios.post(`${BACKEND_URL}/users`, {
-        ...formData,
-        role: 'buyer',
-      });
-
-      if (response.data) {
-        alert('Buyer created successfully');
-        navigate('/superadmin/buyers');
-      }
+      await axios.post(
+        `${BACKEND_URL}/users`,
+        { ...formData, role: "buyer" },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      alert("Buyer added!");
+      navigate("/superadmin/buyers");
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="signupContainer">
-      <div className="formCard">
-        <h2 className="title">Add New Buyer</h2>
-        <p className="subtitle">Fill in the details below</p>
-        
-        <form className="form" onSubmit={handleSubmit}>
-          {error && (
-            <div className="error">
-              <p>Error</p>
-              <p>{error}</p>
+    <div className="superadmin-layout">
+      <SuperAdminSidebar />
+
+      <main className="superadmin-main">
+        <div className="add-buyer-content">
+          <form className="formCard" onSubmit={handleSubmit}>
+            <h2 className="title">Add New Buyer</h2><br/>
+           
+
+            {error && <div className="error">{error}</div>}
+
+            <div className="inputGroup">
+              <label>First Name</label>
+              <input
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Enter buyer's first name"
+                required
+              />
             </div>
-          )}
+            <div className="inputGroup">
+              <label>Last Name</label>
+              <input
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter buyer's last name"
+                required
+              />
+            </div>
+            <div className="inputGroup">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter buyer's email"
+                required
+              />
+            </div>
+            <div className="inputGroup">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Create a password"
+                required
+              />
+            </div>
 
-          <div className="inputGroup">
-            <label htmlFor="firstName" className="label">
-              First Name
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              required
-              className="input"
-              placeholder="Enter buyer's first name"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="inputGroup">
-            <label htmlFor="lastName" className="label">
-              Last Name
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              required
-              className="input"
-              placeholder="Enter buyer's last name"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="inputGroup">
-            <label htmlFor="email" className="label">
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="input"
-              placeholder="Enter buyer's email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="inputGroup">
-            <label htmlFor="password" className="label">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="input"
-              placeholder="Create a password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="button"
-          >
-            {loading ? (
-              <>
-                <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating account...
-              </>
-            ) : (
-              'Create Buyer'
-            )}
-          </button>
-        </form>
-
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <p className="subtitle">
-            Already added?{' '}
-            <button
-              onClick={() => navigate('/superadmin/buyers')}
-              className="link"
-            >
-              View Buyers
+            <button type="submit" className="button" disabled={loading}>
+              {loading ? "Creating..." : "Create Buyer"}
             </button>
-          </p>
+          </form>
+
+          <div className="buyers-summary">
+            <h3>📊 Total Buyers: {buyers.length}</h3>
+            <ol>
+              {buyers.map((b) => (
+                <li key={b._id}>
+                  {b.firstName} {b.lastName}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

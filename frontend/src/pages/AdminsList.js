@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SuperAdminSidebar from "../components/SuperAdminSidebar";
 import "./AdminsList.css";
 
 function AdminsList() {
@@ -45,10 +46,6 @@ function AdminsList() {
     }
   };
 
-  const handleBack = () => {
-    navigate("/superadmin");
-  };
-
   const handleAddAdmin = () => {
     navigate("/superadmin/add-admin");
   };
@@ -81,76 +78,58 @@ function AdminsList() {
   };
 
   return (
-    <div className="container-fluid p-4">
-      <div className="row mb-3">
-        <div className="col-12 d-flex justify-content-between align-items-center">
-          <button 
-            className="btn-back" 
-            onClick={handleBack}
-          >
-            Back
-          </button>
-          <h2 className="text-center mb-0">All Admins</h2>
-          <button 
-            className="btn-add" 
-            onClick={handleAddAdmin}
-          >
+    <div className="superadmin-layout">
+      <SuperAdminSidebar />
+      <main className="superadmin-main">
+        <div className="buyers-header">
+          <h2>All Admins</h2>
+          <button onClick={handleAddAdmin} className="add-buyer-button">
             Add Admin
           </button>
         </div>
-      </div>
 
-      {message && (
-        <div className="alert alert-danger" role="alert">
-          {message}
-        </div>
-      )}
+        {message && <p style={{ color: "red" }}>{message}</p>}
 
-      <div className="row">
-        <div className="col-12">
-          {admins.length > 0 ? (
-            <table className="table table-striped table-hover shadow-sm">
-              <thead className="table-light">
-                <tr>
-                  <th>Email</th>
-                  <th>Full Name</th>
-                  <th>Admin Type</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
+        {admins.length > 0 ? (
+          <table className="buyers-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Full Name</th>
+                <th>Admin Type</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {admins.map((admin) => (
+                <tr key={admin._id}>
+                  <td>{admin.email}</td>
+                  <td>{`${admin.firstName} ${admin.lastName}`}</td>
+                  <td>{admin.adminType}</td>
+                  <td>{new Date(admin.createdAt).toLocaleString()}</td>
+                  <td>
+                    <button
+                      onClick={() => handleUpdate(admin._id)}
+                      className="edit-button"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(admin._id)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {admins.map((admin) => (
-                  <tr key={admin._id}>
-                    <td>{admin.email}</td>
-                    <td>{`${admin.firstName} ${admin.lastName}`}</td>
-                    <td>{admin.adminType}</td>
-                    <td>{new Date(admin.createdAt).toLocaleString()}</td>
-                    <td className="action-buttons">
-                      <button 
-                        className="btn-update" 
-                        onClick={() => handleUpdate(admin._id)}
-                      >
-                        Update
-                      </button>
-                      <button 
-                        className="btn-delete" 
-                        onClick={() => handleDelete(admin._id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="alert alert-info" role="alert">
-              No admins found.
-            </div>
-          )}
-        </div>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No admins found.</p>
+        )}
+      </main>
     </div>
   );
 }

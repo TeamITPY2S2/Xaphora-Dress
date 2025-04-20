@@ -1,5 +1,7 @@
+// src/pages/SellersList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SuperAdminSidebar from "../components/SuperAdminSidebar";
 import "./SellersList.css";
 
 function SellersList() {
@@ -10,128 +12,81 @@ function SellersList() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      // If no token, redirect to login or any appropriate route
       navigate("/api/auth/login");
-    } else {
-      fetchSellers(token);
+      return;
     }
-    // eslint-disable-next-line
+    fetchSellers(token);
   }, [navigate]);
 
   const fetchSellers = async (token) => {
     try {
       const res = await fetch("http://localhost:8070/api/sellers", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
-        // Sort by createdAt descending so newest appears first
         data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setSellers(data);
       } else {
         setMessage(data.message || "Error fetching sellers");
       }
-    } catch (error) {
-      console.error("Error fetching sellers:", error);
+    } catch {
       setMessage("Error fetching sellers");
     }
   };
 
-  // Navigate back to the superadmin dashboard
-  const handleBack = () => {
-    navigate("/superadmin");
-  };
-
-  // Navigate to AddSeller form
-  const handleAddSeller = () => {
-    navigate("/superadmin/add-seller");
-  };
-
-  // Navigate to UpdateSeller form
-  const handleUpdate = (sellerId) => {
-    navigate(`/superadmin/update-seller/${sellerId}`);
-  };
-
-  // Delete a seller
-  const handleDelete = async (sellerId) => {
-    if (!window.confirm("Are you sure you want to delete this seller?")) return;
+  const handleBack = () => navigate("/superadmin");
+  const handleAdd = () => navigate("/superadmin/add-seller");
+  const handleUpdate = id => navigate(`/superadmin/update-seller/${id}`);
+  const handleDelete = async id => {
+    if (!window.confirm("Are you sure?")) return;
     const token = localStorage.getItem("token");
-    try {
-      const res = await fetch(`http://localhost:8070/api/sellers/${sellerId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Seller deleted successfully");
-        fetchSellers(token); // Refresh the list
-      } else {
-        alert(data.message || "Failed to delete seller");
-      }
-    } catch (error) {
-      console.error("Error deleting seller:", error);
-      alert("Error deleting seller");
-    }
+    const res = await fetch(`http://localhost:8070/api/sellers/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { message: msg } = await res.json();
+    if (res.ok) fetchSellers(token);
+    else alert(msg || "Failed to delete");
   };
 
   return (
-    <div className="sellers-container">
-      <div className="sellers-header">
-        <button onClick={handleBack} className="back-button">
-          Back
-        </button>
-        <h2>All Sellers</h2>
-        <button onClick={handleAddSeller} className="add-seller-button">
-          Add Seller
-        </button>
-      </div>
+    <div className="superadmin-layout">
+      <SuperAdminSidebar />
+      <main className="superadmin-main">
+        <div className="sellers-header">
+          <h2>All Sellers</h2>
+          <button onClick={handleAdd} className="add-seller-button">Add Seller</button>
+        </div>
 
-      {message && <p style={{ color: "red" }}>{message}</p>}
+        {message && <p className="error-text">{message}</p>}
 
-      {sellers.length > 0 ? (
-        <table className="sellers-table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Name</th>
-              <th>Store Name</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sellers.map((seller) => (
-              <tr key={seller._id}>
-                <td>{seller.email}</td>
-                <td>{seller.name}</td>
-                <td>{seller.storeName}</td>
-                <td>{new Date(seller.createdAt).toLocaleString()}</td>
-                <td>
-                  <button
-                    onClick={() => handleUpdate(seller._id)}
-                    className="edit-button"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => handleDelete(seller._id)}
-                    className="delete-button"
-                  >
-                    Delete
-                  </button>
-                </td>
+        {sellers.length > 0 ? (
+          <table className="sellers-table">
+            <thead>
+              <tr>
+                <th>Email</th><th>Name</th><th>Store</th><th>Created At</th><th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No sellers found.</p>
-      )}
+            </thead>
+            <tbody>
+              {sellers.map(s => (
+                <tr key={s._id}>
+                  <td>{s.email}</td>
+                  <td>{s.name}</td>
+                  <td>{s.storeName}</td>
+                  <td>{new Date(s.createdAt).toLocaleString()}</td>
+                  <td className="action-buttons">
+                    <button onClick={() => handleUpdate(s._id)} className="edit-button">Update</button>
+                    <button onClick={() => handleDelete(s._id)} className="delete-button">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No sellers found.</p>
+        )}
+      </main>
     </div>
   );
 }

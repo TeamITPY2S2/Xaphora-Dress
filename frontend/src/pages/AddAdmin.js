@@ -53,8 +53,7 @@ const AddAdmin = () => {
   return (
     <div className="signupContainer">
       <div className="formCard">
-        <h2 className="title">Add New Admin</h2>
-        <p className="subtitle">Fill in the details below</p>
+        <h2 className="title">Add New Admin</h2><br/>
         
         <form className="form" onSubmit={handleSubmit}>
           {error && (

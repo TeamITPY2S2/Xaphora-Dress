@@ -71,8 +71,7 @@ const AddSeller = () => {
   return (
     <div className="signupContainer">
       <div className="formCard">
-        <h2 className="title">Add New Seller</h2>
-        <p className="subtitle">Fill in the details below</p>
+        <h2 className="title">Add New Seller</h2><br/>
         
         <form className="form" onSubmit={handleSubmit}>
           {error && (
