@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css"; // Import your CSS styling
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -43,6 +45,8 @@ function Login() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="login-container">
       <h2 className="login-title">LOGIN</h2>
       <form className="login-form" onSubmit={handleSubmit}>
@@ -81,6 +85,8 @@ function Login() {
 
       <div className="login-message">{message}</div>
     </div>
+    <Footer />
+    </>
   );
 }
 

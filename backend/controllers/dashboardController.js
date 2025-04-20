@@ -24,6 +24,8 @@ const getRoleBasedDashboardInfo = async (req, res) => {
         userType: user.role,
         firstName: user.firstName,
         lastName: user.lastName,
+
+        email: user.email, 
       });
     }
 
