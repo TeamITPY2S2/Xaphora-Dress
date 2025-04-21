@@ -51,23 +51,25 @@ function Dashboard() {
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile?")) return;
     const token = localStorage.getItem("token");
+  
     try {
-      const res = await fetch("http://localhost:8070/api/dashboard/delete", {
+      const res = await fetch("http://localhost:8070/api/users", {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+  
+      const data = await res.json();
       if (res.ok) {
-        alert("Profile deleted successfully");
-        handleLogout();
+        alert("Your account has been deleted successfully.");
+        handleLogout(); // Clean up and redirect
       } else {
-        const data = await res.json();
-        alert(data.message || "Failed to delete profile");
+        alert(data.message || "Failed to delete your account.");
       }
-    } catch {
-      alert("Error deleting profile");
+    } catch (err) {
+      console.error("Error deleting profile:", err);
+      alert("Error deleting your profile.");
     }
   };
 
@@ -104,7 +106,7 @@ function Dashboard() {
           <div className="buyer-account-page">
             <header className="buyer-header">
               <h1>My Account</h1>
-                <button className="btn-menu" onClick={() => setDrawerOpen(true)}>
+              <button className="btn-menu" onClick={() => setDrawerOpen(true)}>
                 <FaBars style={{ fontSize: "1.2rem" }} /> Menu
               </button>
             </header>
@@ -141,7 +143,7 @@ function Dashboard() {
 
   return (
     <>
-    <Navbar /> 
+      <Navbar />
       {content}
       <AccountDrawer
         isOpen={drawerOpen}
