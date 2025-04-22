@@ -6,12 +6,20 @@ import "./Auth.css";
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const { token } = useParams();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
+
+    if (password.length < 6) {
+      setMessage("Password must be at least 6 characters long.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch(`http://localhost:8070/api/auth/reset-password/${token}`, {
@@ -27,8 +35,11 @@ function ResetPassword() {
       } else {
         setMessage(data.message || "Invalid or expired token");
       }
-    } catch {
-      setMessage("Server error");
+    } catch (err) {
+      console.error("Reset error:", err);
+      setMessage("Server error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,14 +48,18 @@ function ResetPassword() {
       <h2>Reset Password</h2>
       {message && <p className="auth-message">{message}</p>}
       <form onSubmit={handleSubmit}>
-        <label>New Password:</label>
+        <label htmlFor="new-password">New Password:</label>
         <input
+          id="new-password"
           type="password"
           required
+          placeholder="Enter new password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Reset Password</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Updating..." : "Reset Password"}
+        </button>
       </form>
     </div>
   );

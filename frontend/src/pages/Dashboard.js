@@ -48,9 +48,8 @@ function Dashboard() {
     navigate("/home");
   };
 
-  const handleResetPassword = () => {
-    const token = localStorage.getItem("token");
-    navigate(`/reset-password/${token}`);
+  const handleChangePassword = () => {
+    navigate("/change-password");
   };
 
 
@@ -158,7 +157,7 @@ function Dashboard() {
         onLogout={handleLogout}
         onAccountDetails={() => setDrawerOpen(false)}
         onAddresses={() => navigate("/address")}
-        onResetPassword={handleResetPassword}
+        onChangePassword={handleChangePassword} 
         onUpdateProfile={() => navigate("/update-profile")}
         onDeleteProfile={handleDeleteProfile}
       />

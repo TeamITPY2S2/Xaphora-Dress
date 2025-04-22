@@ -48,7 +48,9 @@ const UpdateBuyerProfile = () => {
       [e.target.name]: e.target.value,
     }));
   };
-
+  const handleChangePassword = () => {
+    navigate("/change-password");
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -161,9 +163,9 @@ const UpdateBuyerProfile = () => {
         onClose={() => setDrawerOpen(false)}
         userName={`${formData.firstName} ${formData.lastName}`}
         onLogout={handleLogout}
-        onAccountDetails={() => setDrawerOpen(false)}
+        onAccountDetails={() => navigate("/dashboard")}
         onAddresses={() => navigate("/address")}
-        onResetPassword={() => navigate("/reset-password")}
+        onChangePassword={handleChangePassword}
         onUpdateProfile={() => navigate("/update-profile")}
         onDeleteProfile={handleDeleteProfile}
       />

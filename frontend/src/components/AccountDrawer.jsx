@@ -7,7 +7,7 @@ export default function AccountDrawer({
   userName,
   onAccountDetails,
   onAddresses,
-  onResetPassword,
+  onChangePassword,  // ✅ added
   onUpdateProfile,
   onDeleteProfile,
   onLogout,
@@ -33,7 +33,7 @@ export default function AccountDrawer({
           >
             Account Details
           </li>
-          
+
           <li
             onClick={() => {
               onAddresses();
@@ -42,14 +42,16 @@ export default function AccountDrawer({
           >
             Addresses
           </li>
+
           <li
             onClick={() => {
-              onResetPassword();
+              onChangePassword();  // ✅ trigger the handler
               onClose();
             }}
           >
-            Reset Your Password
+            Change Password
           </li>
+
           <li
             onClick={() => {
               onUpdateProfile();
@@ -58,6 +60,7 @@ export default function AccountDrawer({
           >
             Update Profile
           </li>
+
           <li
             onClick={() => {
               onDeleteProfile();
@@ -66,6 +69,7 @@ export default function AccountDrawer({
           >
             Delete Profile
           </li>
+
           <li
             className="danger"
             onClick={() => {

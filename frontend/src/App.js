@@ -30,6 +30,7 @@ import AddSeller from './pages/AddSeller';
 import UpdateBuyerProfile from './pages/UpdateBuyerProfile'; // Added
 import ResetPassword from './pages/ResetPassword';
 import ForgotPassword from './pages/ForgotPassword';
+import ChangePassword from "./pages/ChangePassword";
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -95,6 +96,7 @@ function App() {
             {/* Forgot password */}
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path = "/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
 
           </Routes>
         </div>
