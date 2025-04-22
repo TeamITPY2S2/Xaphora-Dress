@@ -28,6 +28,8 @@ import SellersList from "./pages/SellersList";
 import UpdateSeller from './pages/UpdateSeller';
 import AddSeller from './pages/AddSeller';
 import UpdateBuyerProfile from './pages/UpdateBuyerProfile'; // Added
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -89,6 +91,10 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
+            
+            {/* Forgot password */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path = "/reset-password/:token" element={<ResetPassword />} />
 
           </Routes>
         </div>
