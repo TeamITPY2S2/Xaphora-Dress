@@ -1,68 +1,89 @@
-
-import './AdminDashboard.css';
+// src/components/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
-import { getAgents, getAgentPerformance } from '../api/adminAPI';
 import { useNavigate } from 'react-router-dom';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
-  const [performance, setPerformance] = useState('');
+  const [performance, setPerformance] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch agents 
+  // Fetch agents list
   useEffect(() => {
     async function fetchAgents() {
       try {
-        const data = await getAgents();
-        setAgents(data);
-      } catch (error) {
-        console.error('Error fetching agents:', error);
+        const res = await fetch('http://localhost:8070/api/delivery/agents');
+        if (!res.ok) throw new Error('Failed to fetch agents');
+        setAgents(await res.json());
+      } catch (err) {
+        console.error(err);
       }
     }
     fetchAgents();
   }, []);
 
+  // Handler to load one agent’s performance
   const handleAgentChange = async (e) => {
     const agentId = e.target.value;
     setSelectedAgent(agentId);
-    if (agentId) {
-      try {
-        const response = await fetch(`http://localhost:8070/api/admin/agent-performance?agentId=${agentId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch performance');
-        }
-        const result = await response.json();
-        
-        setPerformance(JSON.stringify(result.report, null, 2) || 'Performance details not available');
-      } catch (error) {
-        console.error('Error fetching performance:', error);
-        setPerformance('Error fetching performance');
-      }
-    } else {
-      setPerformance('');
+    setPerformance(null);
+
+    if (!agentId) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:8070/api/admin/agent-performance/${agentId}`
+      );
+      if (!res.ok) throw new Error('Failed to fetch performance');
+      const { report } = await res.json();
+      setPerformance(report);
+    } catch (err) {
+      console.error(err);
+      setPerformance({ error: 'Could not load performance' });
     }
   };
-  
+
+  // Build the textarea content
+  const performanceText = React.useMemo(() => {
+    if (!selectedAgent) return '';
+    if (performance?.error) return performance.error;
+    if (!performance) return '';
+
+    const lines = [
+      `ID: ${performance._id}`,
+      `Name: ${performance.name}`,
+      `Region: ${performance.assignedRegion}`,
+      `Total Orders: ${performance.totalOrders}`,
+      `Delivered Orders: ${performance.deliveredOrders}`
+    ];
+
+    if (performance.orderDetails?.length) {
+      lines.push('', 'Order Details:');
+      performance.orderDetails.forEach(o => {
+        lines.push(`  • ${o.orderId} — ${o.customerName}`);
+      });
+    }
+
+    return lines.join('\n');
+  }, [performance, selectedAgent]);
 
   return (
-    <div className="admin-dashboard" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div className="admin-dashboard">
       {/* Top Bar */}
-      <div className="top" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <button className="assign-order-button" style={{ padding: '10px 15px', fontSize: '16px' }}>
+      <div className="top">
+        <button className="assign-order-button">
           Assign Order
         </button>
         <div className="top-right-buttons">
-          <button 
-            className="add-agent-button" 
-            style={{ padding: '10px 15px', marginRight: '10px', fontSize: '16px' }}
+          <button
+            className="add-agent-button"
             onClick={() => navigate('/addDeliveryAgent')}
           >
             Add Agent
           </button>
-          <button 
-            className="view-agent-button" 
-            style={{ padding: '10px 15px', fontSize: '16px' }}
+          <button
+            className="view-agent-button"
             onClick={() => navigate('/agents')}
           >
             View Agent
@@ -70,15 +91,12 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Agent Performance */}
-      <div className="agent-performance" style={{ marginBottom: '20px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-          Agent Performance:
-        </label>
-        <select 
-          value={selectedAgent} 
-          onChange={handleAgentChange} 
-          style={{ padding: '8px', width: '100%', marginBottom: '10px' }}
+      {/* Agent Performance Section */}
+      <div className="agent-performance">
+        <label>Agent Performance:</label>
+        <select
+          value={selectedAgent}
+          onChange={handleAgentChange}
         >
           <option value="">Select an Agent</option>
           {agents.map(agent => (
@@ -87,22 +105,22 @@ const AdminDashboard = () => {
             </option>
           ))}
         </select>
+
         <textarea
+          className="agent-performance-text"
           readOnly
-          value={performance}
+          value={performanceText}
           placeholder="Agent performance details will be displayed here..."
-          style={{ padding: '10px', width: '100%', height: '100px', resize: 'none' }}
         />
       </div>
 
-      {/* View Order & Order Tracking */}
+      {/* View Order & Tracking */}
       <div className="order-tracking">
-        <button 
-          className="order-tracking-button" 
-          style={{ padding: '10px 15px', fontSize: '16px' }}
+        <button
+          className="order-tracking-button"
           onClick={() => navigate('/Order')}
         >
-          View Order & Order Tracking
+          View Order & Tracking
         </button>
       </div>
     </div>
