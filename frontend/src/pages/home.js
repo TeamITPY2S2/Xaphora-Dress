@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
@@ -16,9 +17,33 @@ const AccountLink = ({ isAuthenticated }) => {
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Dummy authentication state. In a real application, derive this from your auth provider.
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch products when component mounts
+  useEffect(() => {
+    fetchNewArrivals();
+  }, []);
+
+  const fetchNewArrivals = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:8070/api/products');
+      // Sort by date and take the latest products
+      const sortedProducts = response.data
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5); // Take only the 5 most recent products
+      setNewArrivals(sortedProducts);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching new arrivals:', error);
+      setError('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Sample data for featured categories
   const categories = [
@@ -36,40 +61,6 @@ const Home = () => {
       id: 3,
       title: "Kids & Baby",
       image: '/images/baby.avif',
-    }
-  ];
-
-  // Sample data for new arrivals
-  const newArrivals = [
-    {
-      id: 1,
-      name: "Girls Blouse",
-      price: 'Rs 1,090.00',
-      image: '/images/blouse.jpg',
-    },
-    {
-      id: 2,
-      name: "Over Size T-shirt",
-      price: 'Rs 1,590.00',
-      image: '/images/oversize.webp',
-    },
-    {
-      id: 3,
-      name: "Casual Denim Trouser",
-      price: 'Rs 2,090.00',
-      image: '/images/denim.webp',
-    },
-    {
-      id: 4,
-      name: "Girls Oversize Trouser",
-      price: 'Rs 1,690.00',
-      image: '/images/pants.jpg',
-    },
-    {
-      id: 5,
-      name: "Saree Design",
-      price: 'Rs 4,000.00',
-      image: '/images/saree.jpg',
     }
   ];
 
@@ -184,30 +175,39 @@ const Home = () => {
         </section>
 
         {/* New Arrivals */}
-        <section className="product-grid">
+        <section className="new-arrivals-section">
           <div className="section-header">
             <h2 className="section-title">New Arrivals</h2>
-            <Link to="/new-arrivals" className="view-all">
+            <Link to="/products" className="view-all">
               View All
             </Link>
           </div>
-          <div className="products-row">
-            {newArrivals.map((product) => (
-              <div key={product.id} className="product-card">
-                <Link to={`/product/${product.id}`}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="product-image"
-                  />
-                  <div className="product-details">
-                    <h3 className="product-title">{product.name}</h3>
-                    <p className="product-price">{product.price}</p>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="loading">Loading products...</div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            <div className="products-grid">
+              {newArrivals.map((product) => (
+                <div key={product._id} className="product-card">
+                  <Link to={`/product/${product._id}`} className="product-link">
+                    <div className="product-image-container">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="product-image"
+                      />
+                    </div>
+                    <div className="product-info">
+                      <h3 className="product-name">{product.name}</h3>
+                      <p className="product-price">Rs {product.price.toFixed(2)}</p>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <XaphoraChatbot/>
