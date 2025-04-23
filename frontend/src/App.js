@@ -10,6 +10,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 // Pages
 import AddProductPage from './pages/AddProductPage';
 import ProductListPage from './pages/ProductListPage';
+import ProductDetail from './pages/ProductDetail';
 import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 import AddDeliveryAgent from './pages/addDeliveryAgent';
@@ -54,7 +55,8 @@ function App() {
             {/* Home */}
             <Route path="/" element={<Home />} />
 
-            {/* Seller product routes */}
+            {/* Product routes */}
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/add-product" element={<AddProductPage />} />
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
