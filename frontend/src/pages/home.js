@@ -6,13 +6,37 @@ import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/f
 import XaphoraChatbot from './XaphoraChatbot';
 
 // AccountLink component: Redirects guests to login and logged in users to dashboard.
-const AccountLink = ({ isAuthenticated }) => {
+const AccountLink = () => {
+  const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("userType");
+
+  let route = "/api/auth/login"; // default to login
+
+  if (token) {
+    switch (userType) {
+      case "super-admin":
+        route = "/superadmin";
+        break;
+      case "admin":
+      case "buyer":
+        route = "/dashboard";
+        break;
+      case "seller":
+        route = "/seller-dashboard";
+        break;
+      default:
+        route = "/dashboard";
+    }
+  }
+
   return (
-    <Link to={isAuthenticated ? "/api/auth/login" : "/dashboard" }>
+    <Link to={route}>
       <FaUser />
     </Link>
   );
 };
+
+
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');

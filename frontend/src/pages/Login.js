@@ -1,7 +1,8 @@
-// src/pages/Login.js
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "./Login.css"; // Import your CSS styling
+import "./Login.css";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(""); // Clear previous message
     try {
       const response = await fetch("http://localhost:8070/api/auth/login", {
         method: "POST",
@@ -21,20 +23,23 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token and userType in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
 
         setMessage("Login successful!");
 
-        // Redirect based on userType
+        // Redirect based on role
         if (data.userType === "super-admin") {
           navigate("/superadmin");
+        } else if (data.userType === "admin") {
+          navigate("/dashboard");
+        } else if (data.userType === "user") {
+          navigate("/home");
         } else {
           navigate("/home");
         }
       } else {
-        setMessage(data.message || "Login failed");
+        setMessage(data.message || "Invalid email or password");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -43,44 +48,49 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <h2 className="login-title">LOGIN</h2>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <label className="login-label">EMAIL</label>
-        <input
-          type="email"
-          className="login-input"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+    <>
+      <Navbar />
+      <div className="login-container">
+        <h2 className="login-title">LOGIN</h2>
 
-        <label className="login-label password-label">PASSWORD</label>
-        <input
-          type="password"
-          className="login-input"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {message && <div className="login-message">{message}</div>}
 
-        <button type="submit" className="login-button">LOG IN</button>
-      </form>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label className="login-label">EMAIL</label>
+          <input
+            type="email"
+            className="login-input"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-      <p className="login-footer">
-        <Link to="/signup" className="login-link">Forgot your password?</Link>
-      </p>
+          <label className="login-label password-label">PASSWORD</label>
+          <input
+            type="password"
+            className="login-input"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-      <p className="login-footer">
-        Create Account <Link to="/signup" className="login-link">Sign Up</Link>
-      </p>
+          <button type="submit" className="login-button">LOG IN</button>
+        </form>
 
-      <p className="login-footer">
-         <Link to="/seller/login" className="login-link">Log as a <b>Seller</b></Link>
-      </p>
+        <p className="login-footer">
+          <Link to="/forgot-password" className="login-link">Forgot your password?</Link>
+        </p>
 
-      <div className="login-message">{message}</div>
-    </div>
+        <p className="login-footer">
+          Create Account <Link to="/signup" className="login-link">Sign Up</Link>
+        </p>
+
+        <p className="login-footer">
+          <Link to="/seller/login" className="login-link">Log as a <b>Seller</b></Link>
+        </p>
+      </div>
+      <Footer />
+    </>
   );
 }
 

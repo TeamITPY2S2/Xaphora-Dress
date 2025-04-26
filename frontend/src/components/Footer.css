@@ -1,0 +1,109 @@
+.footer {
+    margin-bottom: 0;
+  padding-bottom: 0;
+    background-color: #001f60; /* deep blue */
+    color: #ffffff;
+    padding: 40px 20px 0;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+  }
+  
+  .footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-col h4 {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-col ul li {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  
+  .footer-col ul li:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-col input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+    font-size: 0.85rem;
+  }
+  
+  .footer-col input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .footer-col button {
+    background-color: #ffffff;
+    color: #001f60;
+    padding: 10px 16px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  
+  .footer-col button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 15px 0;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.75rem;
+    background-color: #001849;
+  }
+  
+  .footer-bottom a {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  .footer-bottom a:hover {
+    text-decoration: underline;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .social-icons svg {
+    background-color: #ffffff;
+    color: #001f60;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .social-icons svg:hover {
+    transform: scale(1.1);
+  }

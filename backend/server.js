@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,10 +13,10 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// Import Routes
+// Routes
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/UserRoutes");
-const deliveryRoutes = require("./Routes/DeliveryRoutes");
+const deliveryRoutes = require("./routes/deliveryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const deliveFeedbackRoutes = require("./routes/deliveFeedbackRoutes");
 const monitoringRoutes = require("./routes/deliveMonitoringRoutes");
@@ -30,21 +29,25 @@ const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const fcmRoutes = require('./routes/fcmRoutes');
 
-// Use Routes
-app.use("/api", productRoutes);
-app.use("/users", userRoutes);
+// Route Usage
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/feedback", deliveFeedbackRoutes);
-app.use("/api/admins", adminRoutes); // Admin routes at /api/admins
+app.use("/api/monitoring", monitoringRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/sellers", sellerRoutes);
-app.use("/payment", paymentRoutes);
+app.use("/api/admins", adminRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
+
 app.use("/api/dashboard", dashboardRoutes);
 app.use('/api/fcm', fcmRoutes);
 
+
+// MongoDB Connection
 const PORT = process.env.PORT || 8070;
 const URL = process.env.MONGODB_URL;
 
@@ -55,10 +58,11 @@ mongoose
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Unhandled error:", err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is up and running on port: ${PORT}`);
 });

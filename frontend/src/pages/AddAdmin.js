@@ -1,108 +1,186 @@
-// src/pages/AddAdmin.js
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./AddAdmin.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './AddAdmin.css'; // Regular CSS import
 
-function AddAdmin() {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
-  // Default adminType is "user-management"
-  const [adminType, setAdminType] = useState("user-management");
-  const [message, setMessage] = useState("");
+// Define the backend URL (adjust if necessary)
+const BACKEND_URL = 'http://localhost:8070';
+
+const AddAdmin = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    adminType: 'regular', // default admin type
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Handle input field changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      const token = localStorage.getItem("token"); // If your route is protected
-      const res = await fetch("http://localhost:8070/api/admins", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email,
-          firstName,
-          lastName,
-          password,
-          adminType
-        })
+      // POST request to create a new admin
+      // Adjust the endpoint if necessary (some apps use /api/admins)
+      const response = await axios.post(`${BACKEND_URL}/api/admins`, {
+        ...formData,
       });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Admin created successfully");
-        navigate("/superadmin/admins");
-      } else {
-        setMessage(data.message || "Failed to create admin");
+
+      if (response.data) {
+        alert('Admin created successfully');
+        navigate('/superadmin/admins');
       }
-    } catch (error) {
-      console.error("Error creating admin:", error);
-      setMessage("Error creating admin");
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    navigate("/superadmin/admins");
-  };
-
   return (
-    <div className="add-admin-container">
-      <button onClick={handleBack} className="back-button">Back</button>
-      <h2>Add New Admin</h2>
-      {message && <p style={{ color: "red" }}>{message}</p>}
+    <div className="signupContainer">
+      <div className="formCard">
+        <h2 className="title">Add New Admin</h2><br/>
+        
+        <form className="form" onSubmit={handleSubmit}>
+          {error && (
+            <div className="error">
+              <p>Error</p>
+              <p>{error}</p>
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit} className="add-admin-form">
-        <label>Email</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <div className="inputGroup">
+            <label htmlFor="firstName" className="label">
+              First Name
+            </label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              required
+              className="input"
+              placeholder="Enter admin's first name"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </div>
 
-        <label>First Name</label>
-        <input
-          type="text"
-          required
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
+          <div className="inputGroup">
+            <label htmlFor="lastName" className="label">
+              Last Name
+            </label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              required
+              className="input"
+              placeholder="Enter admin's last name"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
 
-        <label>Last Name</label>
-        <input
-          type="text"
-          required
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-        />
+          <div className="inputGroup">
+            <label htmlFor="email" className="label">
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="input"
+              placeholder="Enter admin's email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
 
-        <label>Password</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <div className="inputGroup">
+            <label htmlFor="password" className="label">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="input"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
 
-        <label>Admin Type</label>
-        <select value={adminType} onChange={(e) => setAdminType(e.target.value)}>
-          {/* Must match your backend's enum exactly if required */}
-          <option value="super-admin">Super Admin</option>
-          <option value="delivery">Delivery</option>
-          <option value="inventory">Inventory</option>
-          <option value="order-management">Order Management</option>
-          <option value="reviews">Reviews</option>
-          <option value="user-management">User Management</option>
-          <option value="regular">Regular</option>
-        </select>
+          <div className="inputGroup">
+            <label htmlFor="adminType" className="label">
+              Admin Type
+            </label>
+            <select
+              id="adminType"
+              name="adminType"
+              className="input"
+              value={formData.adminType}
+              onChange={handleChange}
+            >
+              <option value="super-admin">Super Admin</option>
+              <option value="delivery">Delivery</option>
+              <option value="inventory">Inventory</option>
+              <option value="order-management">Order Management</option>
+              <option value="reviews">Reviews</option>
+              <option value="user-management">User Management</option>
+              <option value="regular">Regular</option>
+            </select>
+          </div>
 
-        <button type="submit" className="create-admin-button">Create Admin</button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="button"
+          >
+            {loading ? (
+              <>
+                <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating account...
+              </>
+            ) : (
+              'Create Admin'
+            )}
+          </button>
+        </form>
+
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <p className="subtitle">
+            Already added?{' '}
+            <button
+              onClick={() => navigate('/superadmin/admins')}
+              className="link"
+            >
+              View Admins
+            </button>
+          </p>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default AddAdmin;

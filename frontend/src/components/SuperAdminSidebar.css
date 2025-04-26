@@ -1,0 +1,80 @@
+.superadmin-sidebar {
+  width: 250px;
+  background-color: #111827;
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.home-logo {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 30px;
+  transition: color 0.3s;
+}
+
+.home-logo:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.admin-title {
+  color: #60a5fa;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-list li {
+  padding: 12px 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d1d5db;
+  border-radius: 6px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-list li.active,
+.nav-list li:hover {
+  background-color: #1f2937;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #ef4444;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}

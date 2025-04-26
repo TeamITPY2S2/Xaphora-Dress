@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./BuyerSignup.css"; // Import the CSS file
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function BuyerSignup() {
   const [firstName, setFirstName] = useState("");
@@ -14,14 +16,23 @@ function BuyerSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      // POST request to the /users endpoint
+      const response = await fetch("/api/users", {  //frontend/admin-dashboards
+
       // POST request to the /users 
-      const response = await fetch("/users", {
+      const response = await fetch("/users", { //dev
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, password }),
       });
       const data = await response.json();
       if (response.ok) {
+
+        // Optionally store a token or userType if returned
+         localStorage.setItem("token", data.token);
+        localStorage.setItem("userType", data.userType || "buyer");
 
         setMessage("Signup successful!");
         // Redirect to dashboard
@@ -36,6 +47,8 @@ function BuyerSignup() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="signup-container">
       <h2 className="signup-title">Buyer Signup</h2>
       {message && <p className="signup-message">{message}</p>}
@@ -92,6 +105,8 @@ function BuyerSignup() {
 
       </p>
     </div>
+    <Footer />
+    </>
   );
 }
 
