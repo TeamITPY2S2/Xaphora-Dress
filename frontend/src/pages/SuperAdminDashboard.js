@@ -181,49 +181,7 @@ function SuperAdminDashboard() {
           </button>
         </section>
       </main>
-//=======
-//    <div className="superadmin-container">
-//      
-//      {/* Top bar for logout */}
-//       <button className="" onClick={handleHome}>
-//           HOME
-//         </button>
-//       <button className="logout-button" onClick={handleLogout}>
-//           Logout
-//         </button>
-//       <div className="top-bar">
-        
-        
-//       </div>
 
-//       {/* Center name/title */}
-//       <h2 className="superadmin-title">SUPER ADMIN</h2>
-//       {message && <p className="superadmin-message">{message}</p>}
-      
-
-//       {/* Center buttons (Admins, Sellers, Buyers) */}
-//       <div className="center-buttons">
-        
-//         <button onClick={handleViewAdmins}>Admins</button>
-//         <button onClick={handleGetSellers}>Sellers</button>
-//         <button onClick={handleGetBuyers}>Buyers</button>
-//       </div>
-      
-      
-
-//       {/* Bottom-right corner for Update/Delete */}
-//       <div className="bottom-right-buttons">
-
-      
-
-//         <button onClick={handleUpdateProfile}>Update Profile</button>
-//         <button onClick={handleDeleteProfile}>Delete Profile</button>
-
-        
-        
-//       </div>
-      
-// >>>>>>> dev
     </div>
   );
 }
