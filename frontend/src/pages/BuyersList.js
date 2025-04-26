@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import SuperAdminSidebar from "../components/SuperAdminSidebar";
 import "./BuyersList.css";
+//import { useNavigate, Link } from "react-router-dom";
+
 
 function BuyersList() {
   const [buyers, setBuyers] = useState([]);
@@ -12,11 +15,16 @@ function BuyersList() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login");
+
+
+      navigate("/api/auth/login");
     } else {
       fetchBuyers(token);
     }
+
   }, [navigate]);
+
+  // Fetch all users
 
   const fetchBuyers = async (token) => {
     try {
@@ -27,12 +35,23 @@ function BuyersList() {
         },
       });
       const data = await res.json();
+//<<<<<<< frontend/admin-dashboards
       if (res.ok && Array.isArray(data)) {
         const buyersOnly = data.filter((u) => u.role === "buyer");
         setBuyers(buyersOnly);
       } else if (res.ok && data.users) {
         const buyersOnly = data.users.filter((u) => u.role === "buyer");
         setBuyers(buyersOnly);
+// =======
+//       if (res.ok) {
+        
+//         const buyersList = data.users.filter((user) => user.role === "buyer");
+//         // sort by created descending order
+//         const sortedBuyers = buyersList.sort(
+//           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+//         );
+//         setBuyers(sortedBuyers);
+// >>>>>>> dev
       } else {
         setMessage(data.message || "Error fetching buyers");
       }
@@ -57,6 +76,7 @@ function BuyersList() {
       const data = await res.json();
       if (res.ok) {
         alert("Buyer deleted successfully");
+
         fetchBuyers(token);
       } else {
         alert(data.message || "Failed to delete buyer");

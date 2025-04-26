@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 
 router.get("/", async (req, res) => {
   try {
-    // Return all admins with createdAt fields
+    // Return all admins
     const admins = await Admin.find({});
     return res.status(200).json(admins);
   } catch (err) {
@@ -72,7 +72,7 @@ router.put("/:id", async (req, res) => {
     admin.adminType = adminType || admin.adminType;
 
     if (password) {
-      // If password is updated, hash it
+
       const salt = await bcrypt.genSalt(10);
       admin.password = await bcrypt.hash(password, salt);
     }
@@ -88,7 +88,7 @@ router.put("/:id", async (req, res) => {
 // DELETE - Remove an admin
 router.delete("/:id", async (req, res) => {
   try {
-    // Using findByIdAndDelete to delete the admin
+    // using findByIdAndDelete to delete the admin
     const admin = await Admin.findByIdAndDelete(req.params.id);
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });

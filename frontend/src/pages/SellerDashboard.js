@@ -293,9 +293,12 @@ function SellerDashboard() {
               </button>
             </div>
             <div>
-              <button className="btn btn-outline-secondary">
-                <i className="bi bi-gear me-1"></i> Settings
-              </button>
+            <button 
+        className="btn btn-danger ms-2" 
+        onClick={() => navigate('/api/auth/login')}
+      >
+        <i className="bi bi-box-arrow-right"></i> Logout
+      </button>
             </div>
           </div>
         </div>

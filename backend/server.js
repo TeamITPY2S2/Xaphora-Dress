@@ -27,6 +27,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const fcmRoutes = require('./routes/fcmRoutes');
 
 // Route Usage
 app.use("/api/products", productRoutes);
@@ -41,7 +42,10 @@ app.use("/api/sellers", sellerRoutes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", dashboardRoutes); // superadmin stats & profile
+
+app.use("/api/dashboard", dashboardRoutes);
+app.use('/api/fcm', fcmRoutes);
+
 
 // MongoDB Connection
 const PORT = process.env.PORT || 8070;

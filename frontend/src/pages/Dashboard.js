@@ -80,6 +80,7 @@ function Dashboard() {
 
   let content;
   if (message) {
+
     content = <div className="dashboard-message">{message}</div>;
   } else if (!dashboardData) {
     content = <div className="dashboard-loading">Loading dashboard...</div>;
@@ -132,6 +133,7 @@ function Dashboard() {
                 </div>
                 <Link to="/address" className="info-link">View Address</Link>
               </section>
+
             </div>
           </div>
         );

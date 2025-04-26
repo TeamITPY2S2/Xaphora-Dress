@@ -54,10 +54,11 @@ const adminSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+
+  { timestamps: true } // This ensures created at and updated at fields
+
 );
 
-// Hash password before saving
 adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {

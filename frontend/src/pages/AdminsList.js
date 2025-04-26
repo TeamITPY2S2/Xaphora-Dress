@@ -27,6 +27,9 @@ function AdminsList() {
       });
       const data = await res.json();
       if (res.ok) {
+
+        // super-admins first, then descending order
+
         const sorted = data.sort((a, b) => {
           if (a.adminType === "super-admin" && b.adminType !== "super-admin") {
             return -1;
@@ -67,7 +70,9 @@ function AdminsList() {
       const data = await res.json();
       if (res.ok) {
         alert("Admin deleted successfully");
-        fetchAdmins(token);
+
+        fetchAdmins(token); 
+
       } else {
         alert(data.message || "Failed to delete admin");
       }

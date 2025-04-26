@@ -5,8 +5,9 @@ const Order = require('../models/Order'); // Using our temporary Order model
 // Create a new delivery agent
 exports.createDeliveryAgent = async (req, res) => {
   try {
-    const { name, contact, assignedRegion } = req.body;
-    const newAgent = new DeliveryAgent({ name, contact, assignedRegion });
+    // Updated to include email
+    const { name, contact, email, assignedRegion } = req.body;
+    const newAgent = new DeliveryAgent({ name, contact, email, assignedRegion });
     await newAgent.save();
     res.status(201).json({ message: 'Delivery agent created successfully', agent: newAgent });
   } catch (error) {
@@ -24,14 +25,29 @@ exports.getAllDeliveryAgents = async (req, res) => {
   }
 };
 
+// NEW: Retrieve a single delivery agent by ID
+exports.getDeliveryAgentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const agent = await DeliveryAgent.findById(id);
+    if (!agent) {
+      return res.status(404).json({ message: 'Delivery agent not found' });
+    }
+    res.status(200).json(agent);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Update a delivery agent
 exports.updateDeliveryAgent = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, contact, assignedRegion } = req.body;
+    // Updated to include email
+    const { name, contact, email, assignedRegion } = req.body;
     const updatedAgent = await DeliveryAgent.findByIdAndUpdate(
       id,
-      { name, contact, assignedRegion },
+      { name, contact, email, assignedRegion },
       { new: true }
     );
     if (!updatedAgent) {

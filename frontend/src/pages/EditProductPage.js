@@ -15,6 +15,7 @@ function EditProductPage() {
     imageUrl: '',
     description: ''
   });
+  const [newImage, setNewImage] = useState(null); // optional new file
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -32,15 +33,40 @@ function EditProductPage() {
   };
 
   const handleChange = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
+    setProduct({
+      ...product,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setNewImage(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Create FormData and add updated fields
+    const formData = new FormData();
+    formData.append("name", product.name);
+    formData.append("category", product.category);
+    formData.append("price", product.price);
+    formData.append("stockQuantity", product.stockQuantity);
+    formData.append("description", product.description);
+
+    // If a new image file is selected, append it to FormData
+    if (newImage) {
+      formData.append("image", newImage);
+    }
+
     try {
-      const response = await axios.put(`http://localhost:8070/api/products/${id}`, product);
+      const response = await axios.put(`http://localhost:8070/api/products/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       setMessage(response.data.message);
-      // Optionally navigate back after successful update
+      // Optionally navigate back after a short delay
       setTimeout(() => {
         navigate('/products');
       }, 1500);
@@ -100,13 +126,18 @@ function EditProductPage() {
         </div>
 
         <div className="form-group">
-          <label>Image URL:</label>
+          <label>Current Image:</label>
+          {product.imageUrl && (
+            <img src={product.imageUrl} alt={product.name} style={{ width: '200px' }} />
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Change Image:</label>
           <input 
-            type="text" 
-            name="imageUrl" 
-            value={product.imageUrl} 
-            onChange={handleChange} 
-            required 
+            type="file" 
+            accept="image/*" 
+            onChange={handleImageChange} 
           />
         </div>
 

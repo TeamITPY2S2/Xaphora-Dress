@@ -16,20 +16,27 @@ function BuyerSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
       // POST request to the /users endpoint
-      const response = await fetch("/api/users", {
+      const response = await fetch("/api/users", {  //frontend/admin-dashboards
+
+      // POST request to the /users 
+      const response = await fetch("/users", { //dev
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, password }),
       });
       const data = await response.json();
       if (response.ok) {
+
         // Optionally store a token or userType if returned
          localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType || "buyer");
+
         setMessage("Signup successful!");
         // Redirect to dashboard
-        navigate("/home");
+        navigate("/api/auth/login");
       } else {
         setMessage(data.message || "Signup failed");
       }

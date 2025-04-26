@@ -3,9 +3,9 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// ✅ Create a new user with dynamic role\const createUser = async (req, res, next) => {
-// ✅ MAKE SURE async is added here
-const createUser = async (req, res) => {
+
+const createUser = async (req, res, next) => {
+
   const { firstName, lastName, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
@@ -21,16 +21,24 @@ const createUser = async (req, res) => {
       lastName,
       email,
       password: hashedPassword,
-      role: "buyer", // or req.body.role if dynamic
+
+      role: "buyer"
+
     });
 
     await newUser.save();
+
+
+    // Sign a token for the new user - valid for 1 day
 
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1d" }
     );
+
+
+    // Return token, user details
 
     res.status(201).json({
       message: "User created successfully",
@@ -50,7 +58,9 @@ const createUser = async (req, res) => {
   }
 };
 
-// 🔍 Get all users
+
+//  Get all users
+
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -64,7 +74,7 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-// 🔍 Get a single user by ID
+//  Get a single user by ID
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -72,6 +82,7 @@ const getUserById = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     res.json({ user });
   } catch (error) {
     console.error("Error in getUserById:", error);
@@ -79,7 +90,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-// 🔄 Update user by ID
+//  Update user by ID
 const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { firstName, lastName, email, password } = req.body;
@@ -106,7 +117,7 @@ const updateUser = async (req, res, next) => {
   }
 };
 
-// ❌ Delete user by ID
+//  Delete user by ID
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {

@@ -1,28 +1,52 @@
+// backend/controllers/productController.js
 const Product = require("../models/productModel");
+const cloudinary = require("../configarations/cloudinary");
+const streamifier = require("streamifier");
 const { sendNotification } = require("../services/notificationService");
 
 // Create a new product
 const createProduct = async (req, res) => {
   try {
-    const { name, category, price, stockQuantity, imageUrl, description } = req.body;
+    const { name, category, price, stockQuantity, description } = req.body;
 
-    // Check if required fields are provided
-    if (!name || !category || !price || !stockQuantity || !imageUrl || !description) {
+    // Validate required text fields
+    if (!name || !category || !price || !stockQuantity || !description) {
       return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    let imageUrl = "";
+    if (req.file) {
+      // Upload the file buffer to Cloudinary using a stream
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+      imageUrl = result.secure_url;
+    } else {
+      return res.status(400).json({ message: "Image file is required" });
     }
 
     const newProduct = new Product({
       name,
       category,
-      price,
-      stockQuantity,
+      price: Number(price),
+      stockQuantity: Number(stockQuantity),
       imageUrl,
       description,
     });
 
     await newProduct.save();
-    res.status(201).json({ message: "Product created successfully", newProduct });
+    res
+      .status(201)
+      .json({ message: "Product created successfully", newProduct });
   } catch (error) {
+    console.error("Error creating product:", error);
     res.status(400).json({ message: "Error creating product", error });
   }
 };
@@ -41,30 +65,60 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) {
+    if (!product)
       return res.status(404).json({ message: "Product not found" });
-    }
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: "Error fetching product", error });
   }
 };
 
-// Update product
+// Update product (edit)
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    // Prepare updateData from text fields (coming via FormData)
+    let updateData = { ...req.body };
+
+    // Convert numeric fields explicitly (if provided)
+    if (updateData.price) {
+      updateData.price = Number(updateData.price);
+    }
+    if (updateData.stockQuantity) {
+      updateData.stockQuantity = Number(updateData.stockQuantity);
     }
 
-    // Check stock and trigger alert if necessary
-    if (product.stockQuantity <= product.minimumStockLevel) {
-      sendNotification(product);
+    // If a new image file is provided, upload it to Cloudinary and add the secure URL
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+      updateData.imageUrl = result.secure_url;
     }
+
+    // Update the product document
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+    if (!product)
+      return res.status(404).json({ message: "Product not found" });
+
+    // Optionally trigger notifications if stock is low (if applicable)
+    // if (product.stockQuantity <= (product.minimumStockLevel || 0)) {
+    //   sendNotification(product);
+    // }
 
     res.status(200).json({ message: "Product updated successfully", product });
   } catch (error) {
+    console.error("Error updating product:", error);
     res.status(400).json({ message: "Error updating product", error });
   }
 };
@@ -73,9 +127,8 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) {
+    if (!product)
       return res.status(404).json({ message: "Product not found" });
-    }
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting product", error });
@@ -87,5 +140,5 @@ module.exports = {
   getProducts,
   getProductById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };

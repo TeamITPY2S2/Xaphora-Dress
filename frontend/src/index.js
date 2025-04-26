@@ -59,7 +59,8 @@ if ("serviceWorker" in navigator) {
 // 7) (Optional) Listen for messages while the app is in the foreground
 onMessage(messaging, (payload) => {
   console.log("Received foreground message:", payload);
-  // You could show a toast, an alert, or other custom UI here
+  // Here you can use your own UI toast or modal component instead of alert.
+  alert(`${payload.notification.title}\n${payload.notification.body}`);
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

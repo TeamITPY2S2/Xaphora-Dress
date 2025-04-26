@@ -7,6 +7,7 @@ const {
   changePassword,
 } = require("../controllers/authController");
 
+
 const authMiddleware = require("../Middleware/authMiddleware");
 
 // Public Routes
@@ -16,5 +17,9 @@ router.put("/reset-password/:token", resetPassword);
 
 // Protected Route
 router.put("/change-password", authMiddleware, changePassword);
+
+// Universal login
+router.post("/api/auth/login", login);
+
 
 module.exports = router;
