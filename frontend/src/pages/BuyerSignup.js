@@ -93,7 +93,7 @@ function BuyerSignup() {
 
         <p className="signup-footer">
           Already registered?{" "}
-          <Link to="/login" className="signup-link">
+          <Link to="/api/auth/login" className="signup-link">
             Login here
           </Link>
         </p>
