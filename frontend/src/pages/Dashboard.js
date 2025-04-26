@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import AccountDrawer from "../components/AccountDrawer";
 import Footer from "../components/Footer";
 import "./Dashboard.css";
 
@@ -112,11 +111,6 @@ function Dashboard() {
           <div className="buyer-account-page">
             <header className="buyer-header">
               <h1>My Account</h1>
-              {/* Profile icon opens the drawer */}
-              <FaBars
-                style={{ fontSize: "1.5rem", cursor: "pointer" }}
-                onClick={() => setDrawerOpen(true)}
-              />
             </header>
             <div className="buyer-content buyer-content-stacked">
               <section className="buyer-section buyer-history">
@@ -153,19 +147,7 @@ function Dashboard() {
     <>
       <Navbar />
       {content}
-      <AccountDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        userName={`${dashboardData?.firstName || ""} ${
-          dashboardData?.lastName || ""
-        }`.trim()}
-        onLogout={handleLogout}
-        onAccountDetails={() => setDrawerOpen(false)}
-        onAddresses={() => navigate("/address")}
-        onChangePassword={handleChangePassword}
-        onUpdateProfile={() => navigate("/update-profile")}
-        onDeleteProfile={handleDeleteProfile}
-      />
+      
       <Footer />
     </>
   );
