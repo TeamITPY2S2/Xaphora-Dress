@@ -1,41 +1,68 @@
 // src/components/Navbar.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaBars, FaHeart, FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa';
-import './Navbar.css'; // create and style this CSS file
-
-const AccountLink = () => {
-  const token = localStorage.getItem("token");
-  const userType = localStorage.getItem("userType");
-
-  let route = "/api/auth/login";
-  if (token) {
-    switch (userType) {
-      case "super-admin":
-        route = "/superadmin";
-        break;
-      case "admin":
-      case "buyer":
-        route = "/dashboard";
-        break;
-      case "seller":
-        route = "/seller-dashboard";
-        break;
-      default:
-        route = "/dashboard";
-    }
-  }
-
-  return (
-    <Link to={route}>
-      <FaUser />
-    </Link>
-  );
-};
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  FaBars,
+  FaHeart,
+  FaSearch,
+  FaShoppingCart,
+  FaUser
+} from 'react-icons/fa';
+import AccountDrawer from './AccountDrawer';
+import './Navbar.css';
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen]   = useState(false);
+  const [drawerOpen, setDrawerOpen]   = useState(false);
+  const navigate = useNavigate();
+
+  // grab token and userName from storage
+  const token    = localStorage.getItem('token');
+  const userType = localStorage.getItem('userType');
+  const userName = localStorage.getItem('userName') || '';
+
+  // drawer action handlers
+  const handleAccountDetails = () => {
+    navigate('/dashboard');
+    setDrawerOpen(false);
+  };
+  const handleAddresses      = () => {
+    navigate('/address');
+    setDrawerOpen(false);
+  };
+  const handleChangePassword = () => {
+    navigate('/change-password');
+    setDrawerOpen(false);
+  };
+  const handleUpdateProfile  = () => {
+    navigate('/update-profile');
+    setDrawerOpen(false);
+  };
+  const handleDeleteProfile  = async () => {
+    if (!window.confirm('Delete your profile?')) return;
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch('http://localhost:8070/api/users', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        alert('Profile deleted');
+        handleLogout();
+      } else {
+        const { message } = await res.json();
+        alert(message || 'Failed to delete');
+      }
+    } catch {
+      alert('Error deleting profile');
+    }
+  };
+  const handleLogout        = () => {
+    localStorage.clear();
+    setDrawerOpen(false);
+    navigate('/api/auth/login');
+  };
 
   return (
     <>
@@ -45,9 +72,7 @@ const Navbar = () => {
       {/* Header */}
       <header className="header">
         <div className="header-content">
-          <Link to="/" className="logo">
-            Xaphora Dress
-          </Link>
+          <Link to="/" className="logo">Xaphora Dress</Link>
 
           <div className="search-bar">
             <input
@@ -55,7 +80,7 @@ const Navbar = () => {
               className="search-input"
               placeholder="Search products..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
             <button className="search-button">
               <FaSearch />
@@ -66,7 +91,24 @@ const Navbar = () => {
             <Link to="/wishlist">
               <FaHeart />
             </Link>
-            <AccountLink />
+
+            {/* Profile icon: open drawer if logged in, else go to login */}
+            {token ? (
+              <span
+                className="header-icon"
+                onClick={() => setDrawerOpen(true)}
+                role="button"
+                tabIndex={0}
+                onKeyPress={e => e.key === 'Enter' && setDrawerOpen(true)}
+              >
+                <FaUser />
+              </span>
+            ) : (
+              <Link to="/api/auth/login" className="header-icon">
+                <FaUser />
+              </Link>
+            )}
+
             <Link to="/cart">
               <FaShoppingCart />
             </Link>
@@ -79,7 +121,7 @@ const Navbar = () => {
         <div className="nav-container">
           <button
             className="mobile-menu-btn"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen(o => !o)}
           >
             <FaBars />
           </button>
@@ -95,6 +137,19 @@ const Navbar = () => {
           </ul>
         </div>
       </nav>
+
+      {/* Account Drawer */}
+      <AccountDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        userName={userName}
+        onAccountDetails={handleAccountDetails}
+        onAddresses={handleAddresses}
+        onChangePassword={handleChangePassword}
+        onUpdateProfile={handleUpdateProfile}
+        onDeleteProfile={handleDeleteProfile}
+        onLogout={handleLogout}
+      />
     </>
   );
 };

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./UpdateBuyerProfile.css"; // Shared styling
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import AccountDrawer from "../components/AccountDrawer";
 import { FaBars, FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -108,14 +107,11 @@ const ChangePassword = () => {
       <ToastContainer />
       <div className="update-profile-wrapper">
         <div className="update-header">
-          <h1>Change Password</h1>
-          <button className="btn-menu" onClick={() => setDrawerOpen(true)}>
-            <FaBars /> Menu
-          </button>
+
         </div>
 
         <form onSubmit={handleSubmit} className="update-form">
-          <h2>Enter Your Password</h2>
+          <h2>Change Password</h2>
           {message && <p className="error">{message}</p>}
 
           {/* Current Password */}
@@ -184,18 +180,6 @@ const ChangePassword = () => {
           </div>
         </form>
       </div>
-
-      <AccountDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        userName="My Account"
-        onLogout={handleLogout}
-        onAccountDetails={() => navigate("/dashboard")}
-        onAddresses={() => navigate("/address")}
-        onChangePassword={handleChangePassword}
-        onUpdateProfile={() => navigate("/update-profile")}
-        onDeleteProfile={handleDeleteProfile}
-      />
 
       <Footer />
     </>

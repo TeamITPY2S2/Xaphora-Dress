@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./UpdateBuyerProfile.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import AccountDrawer from "../components/AccountDrawer";
 import { FaBars } from "react-icons/fa";
 
 const UpdateBuyerProfile = () => {
@@ -112,10 +111,6 @@ const UpdateBuyerProfile = () => {
 
       <div className="update-profile-wrapper">
         <div className="update-header">
-          <h1>My Account</h1>
-          <button className="btn-menu" onClick={() => setDrawerOpen(true)}>
-            <FaBars /> Menu
-          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="update-form">
@@ -157,18 +152,6 @@ const UpdateBuyerProfile = () => {
           </div>
         </form>
       </div>
-
-      <AccountDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        userName={`${formData.firstName} ${formData.lastName}`}
-        onLogout={handleLogout}
-        onAccountDetails={() => navigate("/dashboard")}
-        onAddresses={() => navigate("/address")}
-        onChangePassword={handleChangePassword}
-        onUpdateProfile={() => navigate("/update-profile")}
-        onDeleteProfile={handleDeleteProfile}
-      />
 
       <Footer />
     </>
