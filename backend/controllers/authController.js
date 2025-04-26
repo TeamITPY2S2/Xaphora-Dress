@@ -1,8 +1,9 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const Admin = require("../models/adminModel");
-const User = require("../models/UserModel");
-const crypto = require("crypto");
+// backend/controllers/authController.js
+const jwt        = require("jsonwebtoken");
+const bcrypt     = require("bcryptjs");
+const Admin      = require("../models/adminModel");
+const User       = require("../models/UserModel");
+const crypto     = require("crypto");
 const nodemailer = require("nodemailer");
 
 // Send Reset Email
@@ -33,62 +34,40 @@ const sendResetEmail = async (email, token) => {
 // Login
 const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
+    // 1) Try Admin
+    let user     = await Admin.findOne({ email });
+    let userType = user ? "admin" : "user";
 
-    let user = await Admin.findOne({ email }) || await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    // 2) If not Admin, try regular User
+    if (!user) {
+      user = await User.findOne({ email });
+    }
 
+    // 3) If still no user → invalid
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // 4) Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-    const payload = user.adminType
+    // 5) Build JWT payload
+    const payload = userType === "admin"
       ? { adminId: user._id, adminType: user.adminType }
       : { userId: user._id, role: user.role };
 
+    // 6) Sign & return
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const userType = user.adminType ? "admin" : "user";
-    res.status(200).json({ token, userType, user });
-
-    // check the email exists
-    let user = await Admin.findOne({ email });
-    if (user) {
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-      // generate a JWT token
-      const token = jwt.sign(
-        { adminId: user._id, adminType: user.adminType },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      return res.status(200).json({ token, userType: "admin", user });
-    }
-
-    // If not in Admin, check the User collection
-    user = await User.findOne({ email });
-    if (user) {
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-      // Generate a JWT token
-      const token = jwt.sign(
-        { userId: user._id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      return res.status(200).json({ token, userType: "user", user });
-    }
-
-    // If the email does not exist show error msg
-    return res.status(400).json({ message: "Invalid credentials" });
+    return res.status(200).json({ token, userType, user });
 
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -96,29 +75,29 @@ const login = async (req, res) => {
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    let user = await Admin.findOne({ email }) || await User.findOne({ email });
+    const user = await Admin.findOne({ email }) || await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Email not found" });
 
     const token = crypto.randomBytes(20).toString("hex");
-    user.resetPasswordToken = token;
+    user.resetPasswordToken   = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
     await user.save();
 
     await sendResetEmail(email, token);
-    res.json({ message: "Password reset link sent to your email" });
+    return res.json({ message: "Password reset link sent to your email" });
   } catch (err) {
     console.error("Forgot Password Error:", err);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 // Reset Password
 const resetPassword = async (req, res) => {
-  const { token } = req.params;
+  const { token }    = req.params;
   const { password } = req.body;
 
   try {
-    let user = await Admin.findOne({
+    const user = await Admin.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
     }) || await User.findOne({
@@ -126,17 +105,19 @@ const resetPassword = async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() },
     });
 
-    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
 
-    user.password = await bcrypt.hash(password, 10);
-    user.resetPasswordToken = undefined;
+    user.password             = await bcrypt.hash(password, 10);
+    user.resetPasswordToken   = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.json({ message: "Password has been reset successfully" });
+    return res.json({ message: "Password has been reset successfully" });
   } catch (err) {
     console.error("Reset Password Error:", err);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -146,19 +127,21 @@ const changePassword = async (req, res) => {
 
   try {
     const userId = req.user?.adminId || req.user?.userId;
-    const user = await Admin.findById(userId) || await User.findById(userId);
+    const user   = await Admin.findById(userId) || await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    res.json({ message: "Password changed successfully" });
+    return res.json({ message: "Password changed successfully" });
   } catch (err) {
     console.error("Change Password Error:", err);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
