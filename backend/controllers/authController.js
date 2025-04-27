@@ -10,14 +10,8 @@ const nodemailer = require("nodemailer");
 /**
  * Send a password-reset email with a one-hour token.
  */
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+const sendResetEmail = async (email, token) => {
+  const transporter = createTransporter();
 
   const resetLink = `http://localhost:3000/reset-password/${token}`;
 
@@ -26,13 +20,27 @@ const createTransporter = () => {
     from: "support@xaphoradress.com",
     subject: "Password Reset Request",
     html: `
-      <h2>Password Reset</h2>
-      <p>You requested a password reset. Click the link below:</p>
-      <a href="${resetLink}">${resetLink}</a>
-      <p>This link expires in 1 hour.</p>
+      <div style="max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="text-align: center; color: #333;">Reset Your Password</h2>
+        <p>Hello,</p>
+        <p>We received a request to reset your password. Click the button below to reset it:</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetLink}" target="_blank" style="background-color: #4CAF50; color: white; padding: 14px 24px; text-decoration: none; font-size: 16px; border-radius: 5px;">
+            Reset Password
+          </a>
+        </div>
+
+        <p>If you didn't request a password reset, you can safely ignore this email.</p>
+        <p style="color: gray; font-size: 12px;">This link will expire in 1 hour.</p>
+
+        <hr style="margin: 20px 0;">
+        <p style="text-align: center; font-size: 12px; color: #999;">Xaphora Dress Team</p>
+      </div>
     `,
   });
 };
+
 
 /**
  * Login handler: checks Admin first, then User;
