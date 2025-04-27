@@ -22,11 +22,6 @@ function ProductListPage() {
     }
   };
 
-  // Filter products based on search term (case-insensitive)
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
@@ -37,6 +32,10 @@ function ProductListPage() {
       }
     }
   };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="product-list-container">
@@ -58,9 +57,9 @@ function ProductListPage() {
           filteredProducts.map((product) => (
             <div className="product-card" key={product._id}>
               {product.imageUrl && (
-                <img 
-                  src={product.imageUrl} 
-                  alt={product.name} 
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
                   style={{ width: '200px', height: 'auto', objectFit: 'cover' }}
                 />
               )}

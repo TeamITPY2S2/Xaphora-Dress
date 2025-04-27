@@ -58,9 +58,15 @@ const SellerLogin = () => {
         });
       }
 
-      // Store the authentication token
+      // Store the authentication token and seller information
       localStorage.setItem('seller_token', 'your_jwt_token_here'); // Replace with actual JWT token
       localStorage.setItem('seller_id', seller._id);
+      localStorage.setItem('seller_info', JSON.stringify({
+        name: seller.name,
+        storeName: seller.storeName,
+        email: seller.email,
+        joinDate: seller.createdAt
+      }));
 
       // Navigate to dashboard
       navigate('/seller-dashboard');
