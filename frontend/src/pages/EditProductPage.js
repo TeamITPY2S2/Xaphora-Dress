@@ -48,24 +48,31 @@ export default function EditProductPage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    // Create FormData and add updated fields
     const formData = new FormData();
-    formData.append('name', product.name);
-    formData.append('category', product.category);
-    formData.append('price', product.price);
-    formData.append('stockQuantity', product.stockQuantity);
-    formData.append('description', product.description);
-    if (newImage) formData.append('image', newImage);
+    formData.append("name", product.name);
+    formData.append("category", product.category);
+    formData.append("price", product.price);
+    formData.append("stockQuantity", product.stockQuantity);
+    formData.append("description", product.description);
+
+    // If a new image file is selected, append it to FormData
+    if (newImage) {
+      formData.append("image", newImage);
+    }
 
     try {
-      const res = await axios.put(
-        `http://localhost:8070/api/products/${id}`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-      setMessage(res.data.message);
-      setTimeout(() => navigate('/products'), 1500);
-    } catch (err) {
-      console.error(err);
+      const response = await axios.put(`http://localhost:8070/api/products/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setMessage(response.data.message);
+      // Optionally navigate back after a short delay
+      setTimeout(() => {
+        navigate('/products');
+      }, 1500);
+    } catch (error) {
+      console.error('Error updating product:', error);
       setMessage('Error updating product');
     }
   };

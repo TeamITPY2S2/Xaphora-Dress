@@ -1,311 +1,195 @@
 // src/pages/SellerDashboard.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-
+import { useNavigate, useLocation} from 'react-router-dom';
 import SellerOverview from '../components/SellerOverview';
 import SellerOrders   from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
-import SellerReports  from '../components/SellerReports';
-
-import './SellerDashboard.css';
+import SellerReports from '../components/SellerReports';
+import { Link } from 'react-router-dom';
 
 function SellerDashboard() {
-  const navigate = useNavigate();
-  const [lowStockItems, setLowStockItems] = useState([]);
-  const [activeTab, setActiveTab]         = useState('overview');
-  const [searchQuery, setSearchQuery]     = useState('');
-  const [category, setCategory]           = useState('');
-  const [sortOrder, setSortOrder]         = useState('newest');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [category, setCategory] = useState('');
+  const [sortOrder, setSortOrder] = useState('newest');
   const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching]     = useState(false);
-  const [sellerInfo, setSellerInfo]       = useState({
-    name: '', storeName: '', email: '', joinDate: ''
-  });
-  const [loading, setLoading]             = useState(true);
-  const [error, setError]                 = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const seller = location.state?.seller || JSON.parse(localStorage.getItem('user') || 'null');
 
 
-  const handleLogout = () => {
-    localStorage.removeItem('seller_token');
-    localStorage.removeItem('seller_info');
-    localStorage.removeItem('seller_id');
-    navigate('/seller/login');
-  };
-
-  // low-stock alert
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get('http://localhost:8070/api/products');
-        const low = data.filter(p => p.stockQuantity < 3);
-        setLowStockItems(low);
-        if (low.length) {
-          alert(
-            `⚠️ Low stock on ${low.length} item${low.length>1?'s':''}: ` +
-            low.map(p=>`${p.name} (${p.stockQuantity})`).join(', ')
+    if (isSearching) {
+      const fetchProducts = async () => {
+        try {
+          console.log(`Searching for: "${searchQuery}" in category: ${category || 'All'} sorted by: ${sortOrder}`);
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const mockResults = [
+            { id: 1, name: 'Product 1', price: 19.99, category: 'electronics', createdAt: '2025-01-15' },
+            { id: 2, name: 'Product 2', price: 29.99, category: 'clothing', createdAt: '2025-02-20' },
+            { id: 3, name: 'Product 3', price: 39.99, category: 'home', createdAt: '2025-03-10' },
+          ];
+          let filteredResults = mockResults.filter(product =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
           );
+          if (category) {
+            filteredResults = filteredResults.filter(product => product.category === category);
+          }
+          switch (sortOrder) {
+            case 'newest':
+              filteredResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+              break;
+            case 'oldest':
+              filteredResults.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+              break;
+            case 'price-asc':
+              filteredResults.sort((a, b) => a.price - b.price);
+              break;
+            case 'price-desc':
+              filteredResults.sort((a, b) => b.price - a.price);
+              break;
+            default:
+              break;
+          }
+          setSearchResults(filteredResults);
+          setActiveTab('listings');
+          setIsSearching(false);
+        } catch (error) {
+          console.error('Error searching products:', error);
+          setIsSearching(false);
         }
-      } catch(err) {
-        console.error('Failed low-stock check:', err);
-      }
-    })();
-  }, []);
-
-  // auth + seller info
-  useEffect(() => {
-    const token = localStorage.getItem('seller_token');
-    if (!token) return navigate('/seller/login');
-
-    const stored = localStorage.getItem('seller_info');
-    if (stored) {
-      const s = JSON.parse(stored);
-      setSellerInfo({
-        name: s.name,
-        storeName: s.storeName,
-        email: s.email,
-        joinDate: new Date(s.joinDate).toLocaleDateString()
-      });
-      setLoading(false);
-    } else {
-      fetchSellerData(token);
+      };
+      fetchProducts();
     }
-  }, [navigate]);
+  }, [isSearching, searchQuery, category, sortOrder]);
 
-  const fetchSellerData = async (token) => {
-    try {
-      const sellerId = localStorage.getItem('seller_id');
-      if (!sellerId) throw new Error('No seller ID found');
-      const resp = await fetch(`http://localhost:8070/api/sellers/${sellerId}`, {
-        headers: {
-          'Content-Type':'application/json',
-          'Authorization':`Bearer ${token}`
-        }
-      });
-      if (!resp.ok) throw new Error('Failed to fetch seller data');
-      const d = await resp.json();
-      localStorage.setItem('seller_info', JSON.stringify({
-        name: d.name,
-        storeName: d.storeName,
-        email: d.email,
-        joinDate: d.createdAt
-      }));
-      setSellerInfo({
-        name: d.name,
-        storeName: d.storeName,
-        email: d.email,
-        joinDate: new Date(d.createdAt).toLocaleDateString()
-      });
-      setLoading(false);
-    } catch(err) {
-      console.error(err);
-      setError('Could not load seller info.');
-      setLoading(false);
-    }
-  };
-
-  // mock search flow
-  useEffect(() => {
-    if (!isSearching) return;
-    (async () => {
-      try {
-        await new Promise(r=>setTimeout(r,500));
-        const mock = [
-          { id:1, name:'Product 1', price:19.99, category:'electronics', createdAt:'2025-01-15' },
-          { id:2, name:'Product 2', price:29.99, category:'clothing',    createdAt:'2025-02-20' },
-          { id:3, name:'Product 3', price:39.99, category:'home',        createdAt:'2025-03-10' },
-        ];
-        let res = mock.filter(p=>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (category) res = res.filter(p=>p.category===category);
-        if (sortOrder==='newest')  res.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-        if (sortOrder==='oldest')  res.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
-        if (sortOrder==='price-asc')  res.sort((a,b)=>a.price-b.price);
-        if (sortOrder==='price-desc') res.sort((a,b)=>b.price-a.price);
-        setSearchResults(res);
-        setActiveTab('listings');
-      } catch(err) {
-        console.error(err);
-      } finally {
-        setIsSearching(false);
-      }
-    })();
-  }, [isSearching]);
-
-  const handleSearch = e => {
+  const handleSearch = (e) => {
     e.preventDefault();
     setIsSearching(true);
   };
 
   const renderContent = () => {
-    switch(activeTab) {
-      case 'overview': return <SellerOverview />;
-      case 'orders':   return <SellerOrders />;
-      case 'listings': return (
-        <SellerListings
-          searchQuery={searchQuery}
-          searchResults={searchResults}
-          isSearching={isSearching}
-        />
-      );
-      case 'reports':  return <SellerReports />;
-      default:         return <SellerOverview />;
+    switch (activeTab) {
+      case 'overview':
+        return <SellerOverview />;
+      case 'orders':
+        return <SellerOrders />;
+      case 'listings':
+        return <SellerListings 
+                 searchQuery={searchQuery} 
+                 searchResults={searchResults} 
+                 isSearching={isSearching} 
+               />;
+      case 'reports':
+        return <SellerReports />;
+      default:
+        return <SellerOverview />;
     }
   };
 
   return (
-    <div className="dashboard-bg d-flex">
+    <div
+      className="dashboard-bg d-flex"
+      style={{
+        backgroundImage: 'url(/images/coreui_1200_630.jpg)',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+        minHeight: '100vh'
+      }}
+    >
       {/* Sidebar */}
-      <aside className="sidebar bg-dark text-white">
-        <div className="sidebar-header border-bottom d-flex align-items-center justify-content-between">
-          <Link to="/home" className="text-decoration-none text-white">
-            <h5>Xaphora Dress</h5>
-          </Link>
-          <button className="btn btn-sm text-white">
-            <i className="bi bi-list"></i>
-          </button>
+      <div className="bg-dark text-white" style={{ width: '200px',
+    minHeight: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.09)', // 60% opaque black
+    color: '#fff' }}>
+        <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+
+
+  {/* <Link to="http://localhost:3000/home" className="text-decoration-none">
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link> */}
+
+  <Link
+    to="/home"
+    state={{ seller }}
+    className="text-decoration-none"
+  >
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link>
+
+ {/* above */}
+
+  <button className="btn btn-sm text-white">
+    <i className="bi bi-list"></i>
+  </button>
+</div>
+        <div className="mt-3">
+          <div className="px-3 py-2 small text-muted">CORE</div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-speedometer2 me-2"></i> Dashboard
+          </div>
+          <div className="px-3 py-2 mt-3 small text-muted">STORE</div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-box me-2"></i> Products
+          </div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-cart me-2"></i> Orders
+          </div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-list me-2"></i> Categories
+          </div>
+          <div className="px-3 py-2 mt-3 small text-muted">ACCOUNTS</div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-people me-2"></i> Clients
+          </div>
+          <div className="px-3 py-2 d-flex align-items-center">
+            <i className="bi bi-chat me-2"></i> Messages
+          </div>
         </div>
-        <div className="sidebar-profile border-bottom p-3">
-          {loading
-            ? <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading…</span>
-              </div>
-            : error
-              ? <div className="text-danger">{error}</div>
-              : (
-                <div className="d-flex align-items-center">
-                  <div className="rounded-circle bg-primary p-3 me-2">
-                    <i className="bi bi-person-fill text-white"></i>
-                  </div>
-                  <div>
-                    <h6 className="mb-0">{sellerInfo.name}</h6>
-                    <small>{sellerInfo.storeName}</small>
-                  </div>
-                </div>
-              )
-          }
-          <button
-            className="btn btn-outline-light w-100"
-            onClick={handleLogout}
-          >
-            <i className="bi bi-box-arrow-right me-2" />
-            Logout
-          </button>
-        </div>
-        <nav className="sidebar-nav flex-grow-1">
-          <div className="nav-section">
-            <small className="text-muted px-3">CORE</small>
-            <button
-              className={`nav-item px-3 py-2 d-flex align-items-center ${activeTab==='overview'?'active':''}`}
-              onClick={()=>setActiveTab('overview')}
-            >
-              <i className="bi bi-speedometer2 me-2"></i> Dashboard
-            </button>
-          </div>
-          <div className="nav-section mt-3">
-            <small className="text-muted px-3">STORE</small>
-            <button
-              className={`nav-item px-3 py-2 d-flex align-items-center ${activeTab==='listings'?'active':''}`}
-              onClick={()=>setActiveTab('listings')}
-            >
-              <i className="bi bi-box me-2"></i> Products
-            </button>
-            <button
-              className={`nav-item px-3 py-2 d-flex align-items-center ${activeTab==='orders'?'active':''}`}
-              onClick={()=>setActiveTab('orders')}
-            >
-              <i className="bi bi-cart me-2"></i> Orders
-            </button>
-            <button className="nav-item px-3 py-2 d-flex align-items-center">
-              <i className="bi bi-list me-2"></i> Categories
-            </button>
-          </div>
-          <div className="nav-section mt-3">
-            <small className="text-muted px-3">ACCOUNTS</small>
-            <button className="nav-item px-3 py-2 d-flex align-items-center">
-              <i className="bi bi-people me-2"></i> Clients
-            </button>
-            <button className="nav-item px-3 py-2 d-flex align-items-center">
-              <i className="bi bi-chat me-2"></i> Messages
-            </button>
-          </div>
-        </nav>
-        <div className="sidebar-footer border-top p-3">
-          {!loading && !error && (
-            <div className="d-flex align-items-center">
-              <div className="rounded-circle bg-primary p-2 me-2">
-                <i className="bi bi-person-fill text-white"></i>
-              </div>
-              <div>
-                <small>Logged in as:</small>
-                <div>{sellerInfo.name}</div>
-                <small className="text-muted">Store: {sellerInfo.storeName}</small>
-              </div>
-            </div>
-          )}
+        <div className="mt-auto p-3 border-top" style={{ position: 'absolute', bottom: 0, width: '200px' }}>
+          <small>Logged in as:<br />John Smith</small>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow-1">
-        {lowStockItems.length > 0 && (
-          <div className="alert alert-warning text-center mx-3">
-            ⚠️ Low stock on {lowStockItems.length} item{lowStockItems.length>1?'s':''}:&nbsp;
-            {lowStockItems.map(p=>`${p.name} (${p.stockQuantity})`).join(', ')}
-          </div>
-        )}
-
+      <div className="flex-grow-1">
         {/* Top Navbar */}
-        <nav className="navbar navbar-expand navbar-light bg-white border-bottom seller-nav">
-          <div className="navbar-container d-flex align-items-center justify-content-between">
+        <nav className="navbar navbar-expand navbar-light bg-white border-bottom">
+          <div className="container-fluid">
             <button className="navbar-toggler">
               <span className="navbar-toggler-icon"></span>
             </button>
-            <form className="d-flex ms-auto align-items-center" onSubmit={handleSearch}>
+            <div className="d-flex ms-auto">
               <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search for…"
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Search for..." 
                   value={searchQuery}
-                  onChange={e=>setSearchQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="btn btn-primary" type="submit" disabled={isSearching}>
+                <button className="btn btn-primary" onClick={handleSearch}>
                   <i className="bi bi-search"></i>
                 </button>
               </div>
-              <div className="dropdown ms-3">
-                <button
-                  className="btn btn-light dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                >
-                  <i className="bi bi-person-circle me-2"></i>
-                  {loading ? 'Loading…' : sellerInfo.name}
+              <div className="dropdown ms-2">
+                <button className="btn btn-light dropdown-toggle">
+                  <i className="bi bi-person"></i>
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li><Link className="dropdown-item" to="#"><i className="bi bi-person me-2"></i>Profile</Link></li>
-                  <li><Link className="dropdown-item" to="#"><i className="bi bi-gear me-2"></i>Settings</Link></li>
-                  <li><hr className="dropdown-divider"/></li>
-                  <li>
-                    <button 
-                      className="dropdown-item"
-                      onClick={()=>navigate('/seller/login')}
-                    >
-                      <i className="bi bi-box-arrow-right me-2"></i>Logout
-                    </button>
-                  </li>
-                </ul>
               </div>
             </form>
           </div>
         </nav>
-
+        
+        {/* Dashboard Content */}
         <div className="p-4">
           <h1 className="mb-1">Dashboard</h1>
-          <p className="text-muted">Overview of your store</p>
-
-          {/* Search Card */}
+          <p className="text-muted">Dashboard</p>
+          
+          {/* Product Search Card */}
           <div className="card mb-4">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Product Search</h5>
@@ -315,26 +199,36 @@ function SellerDashboard() {
                 <div className="row g-3">
                   <div className="col-md-6">
                     <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search products…"
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        placeholder="Search products..." 
                         value={searchQuery}
-                        onChange={e=>setSearchQuery(e.target.value)}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                       />
-                      <button className="btn btn-primary" type="submit" disabled={isSearching}>
-                        {isSearching
-                          ? <><span className="spinner-border spinner-border-sm me-1" role="status" /></>
-                          : <><i className="bi bi-search me-1" />Search</>
-                        }
+                      <button 
+                        type="submit" 
+                        className="btn btn-primary"
+                        disabled={isSearching}
+                      >
+                        {isSearching ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Searching...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-search me-1"></i> Search
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
                   <div className="col-md-3">
-                    <select
+                    <select 
                       className="form-select"
                       value={category}
-                      onChange={e=>setCategory(e.target.value)}
+                      onChange={(e) => setCategory(e.target.value)}
                     >
                       <option value="">All Categories</option>
                       <option value="electronics">Electronics</option>
@@ -343,10 +237,10 @@ function SellerDashboard() {
                     </select>
                   </div>
                   <div className="col-md-3">
-                    <select
+                    <select 
                       className="form-select"
                       value={sortOrder}
-                      onChange={e=>setSortOrder(e.target.value)}
+                      onChange={(e) => setSortOrder(e.target.value)}
                     >
                       <option value="newest">Newest First</option>
                       <option value="oldest">Oldest First</option>
@@ -358,49 +252,74 @@ function SellerDashboard() {
               </form>
             </div>
           </div>
-
-          {/* Tabs */}
+          
+          {/* Tab Navigation Card */}
           <div className="card mb-4">
-            <div className="card-header p-0">
+            <div className="card-header bg-light">
               <ul className="nav nav-tabs card-header-tabs">
-                {['overview','orders','listings','reports'].map(tab => (
-                  <li className="nav-item" key={tab}>
-                    <button
-                      className={`nav-link ${activeTab===tab?'active':''}`}
-                      onClick={()=>setActiveTab(tab)}
-                    >
-                      {/* you can swap out icons per tab */}
-                      {tab.charAt(0).toUpperCase()+tab.slice(1)}
-                      {tab==='listings' && searchResults.length>0 && (
-                        <span className="badge bg-primary ms-1">{searchResults.length}</span>
-                      )}
-                    </button>
-                  </li>
-                ))}
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('overview')}
+                  >
+                    <i className="bi bi-bar-chart me-1"></i> Overview
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'orders' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('orders')}
+                  >
+                    <i className="bi bi-cart me-1"></i> Orders
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'listings' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('listings')}
+                  >
+                    <i className="bi bi-list-ul me-1"></i> Listings
+                    {searchResults.length > 0 && (
+                      <span className="badge bg-primary ms-1">{searchResults.length}</span>
+                    )}
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'reports' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('reports')}
+                  >
+                    <i className="bi bi-file-earmark-bar-graph me-1"></i> Reports
+                  </button>
+                </li>
               </ul>
             </div>
             <div className="card-body">
               {renderContent()}
             </div>
           </div>
-
-          {/* Actions */}
-          <div className="d-flex justify-content-between mb-4">
-            <button
-              className="btn btn-success"
-              onClick={()=>navigate('/add-product')}
-            >
-              <i className="bi bi-plus-circle me-1" /> Add Product
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={()=>navigate('/products')}
-            >
-              <i className="bi bi-card-list me-1" /> View Products
-            </button>
+          
+          {/* Action Buttons */}
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <button className="btn btn-success me-2" onClick={() => navigate('/add-product')}>
+                <i className="bi bi-plus-circle me-1"></i> Add Product
+              </button>
+              <button className="btn btn-primary" onClick={() => navigate('/products')}>
+                <i className="bi bi-card-list me-1"></i> View Products
+              </button>
+            </div>
+            <div>
+            <button 
+        className="btn btn-danger ms-2" 
+        onClick={() => navigate('/api/auth/login')}
+      >
+        <i className="bi bi-box-arrow-right"></i> Logout
+      </button>
+            </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

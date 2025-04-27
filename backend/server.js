@@ -28,6 +28,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const fcmRoutes = require('./routes/fcmRoutes');
+//const pdfTemplate = require('./documents');
 
 // Route Usage
 app.use("/api/products", productRoutes);
