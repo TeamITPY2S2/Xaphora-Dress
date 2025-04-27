@@ -1,49 +1,226 @@
-/* src/pages/AdminsList.css */
-.admins-container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 40px auto;
-    font-family: Arial, sans-serif;
-    color: #000;
-  }
-  
-  .admins-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .back-button,
-  .add-admin-button,
-  .edit-button,
-  .delete-button {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin: 0 5px;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-  }
-  
-  .back-button:hover,
-  .add-admin-button:hover,
-  .edit-button:hover,
-  .delete-button:hover {
-    background-color: #333;
-  }
-  
-  .admins-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .admins-table th,
-  .admins-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-  }
+/* AdminsList.css - Advanced Dashboard Style */
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+}
+
+.container-fluid {
+  padding: 30px 40px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.row.mb-3 {
+  margin-bottom: 2rem;
+}
+
+.btn-back,
+.btn-add {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-back:hover,
+.btn-add:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.table {
+  width: 100%;
+  border-spacing: 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+}
+
+.table thead {
+  background-color: #f3f4f6;
+}
+
+.table th,
+.table td {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table th {
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.table tbody tr:hover {
+  background-color: #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.btn-update,
+.btn-delete {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-update {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-update:hover {
+  background-color: #059669;
+  transform: scale(1.05);
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+.alert {
+  font-size: 0.95rem;
+  padding: 14px 20px;
+  margin-top: 20px;
+  border-radius: 6px;
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  text-align: center;
+}
+
+.alert-info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+/* Sidebar Layout Additions */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #111827;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  font-size: 1.5rem;
+  color: #3b82f6;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.sidebar h1:hover {
+  color: #ffffff;
+  background-color: #1f2937;
+  padding: 5px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 20px;
+}
+
+.sidebar ul li a {
+  color: #d1d5db;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  color: #ffffff;
+}
+
+.sidebar .logged-in {
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+/* .download-pdf-button{
+  background-color: #f1f5fa;
+  color: #000000;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-transform: uppercase;
+  transition: background-color 0.6s ease, transform 0.4s ease;
+  box-shadow: 0 4px 12px rgba(65, 62, 61, 0.25);
+}
+.download-pdf-button:hover {
+  background-color: #babbbd;
+  transform: translateY(-2px);
+} */
+.download-pdf {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}
+.download-pdf:hover {
+  opacity: 0.8;
+}

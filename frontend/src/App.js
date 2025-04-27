@@ -36,6 +36,10 @@ import AddBuyer from './pages/AddBuyer';
 import SellersList from "./pages/SellersList";
 import UpdateSeller from './pages/UpdateSeller';
 import AddSeller from './pages/AddSeller';
+import UpdateBuyerProfile from './pages/UpdateBuyerProfile'; // Added
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
+import ChangePassword from "./pages/ChangePassword";
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -88,6 +92,7 @@ function App() {
             <Route path="/api/auth/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/signup" element={<BuyerSignup />} />
+            <Route path="/update-profile" element={<UpdateBuyerProfile />} /> {/* Added */}
 
             {/* Super admin routes */}
             <Route path="/superadmin" element={<SuperAdminDashboard />} />
@@ -100,14 +105,17 @@ function App() {
             <Route path="/superadmin/sellers" element={<SellersList />} />
             <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
             <Route path="/superadmin/add-seller" element={<AddSeller />} />
-            
 
             {/* Additional pages */}
             <Route path="/home" element={<Home />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
-
             
+            {/* Forgot password */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path = "/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+
           </Routes>
         </div>
       </div>

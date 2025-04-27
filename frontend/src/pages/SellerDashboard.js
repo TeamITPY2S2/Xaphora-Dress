@@ -1,6 +1,6 @@
 // src/pages/SellerDashboard.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import SellerOverview from '../components/SellerOverview';
 import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
@@ -41,86 +41,11 @@ function SellerDashboard() {
   const [sortOrder, setSortOrder] = useState('newest');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [sellerInfo, setSellerInfo] = useState({
-    name: '',
-    storeName: '',
-    email: '',
-    joinDate: ''
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    const token = localStorage.getItem('seller_token');
-    if (!token) {
-      navigate('/seller/login');
-    } else {
-      // Get seller info from localStorage
-      const storedSellerInfo = localStorage.getItem('seller_info');
-      if (storedSellerInfo) {
-        const sellerData = JSON.parse(storedSellerInfo);
-        setSellerInfo({
-          name: sellerData.name,
-          storeName: sellerData.storeName,
-          email: sellerData.email,
-          joinDate: new Date(sellerData.joinDate).toLocaleDateString()
-        });
-        setLoading(false);
-      } else {
-        // If no stored info, fetch from API
-        fetchSellerData(token);
-      }
-    }
-  }, [navigate]);
+  const seller = location.state?.seller || JSON.parse(localStorage.getItem('user') || 'null');
 
-  const fetchSellerData = async (token) => {
-    try {
-      const sellerId = localStorage.getItem('seller_id');
-      if (!sellerId) {
-        throw new Error('No seller ID found');
-      }
-
-      const response = await fetch(`http://localhost:8070/api/sellers/${sellerId}`, {
-        headers:{
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch seller data');
-      }
-
-      const data = await response.json();
-      
-      // Update localStorage with fresh data
-      localStorage.setItem('seller_info', JSON.stringify({
-        name: data.name,
-        storeName: data.storeName,
-        email: data.email,
-        joinDate: data.createdAt
-      }));
-
-      setSellerInfo({
-        name: data.name,
-        storeName: data.storeName,
-        email: data.email,
-        joinDate: new Date(data.createdAt).toLocaleDateString()
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching seller data:', error);
-      setError('Failed to load seller information. Please try again later.');
-      setLoading(false);
-    }
-  };
-
-  // Add a useEffect to log the current state
-  useEffect(() => {
-    console.log('Current sellerInfo:', sellerInfo);
-    console.log('Current loading state:', loading);
-    console.log('Current error state:', error);
-  }, [sellerInfo, loading, error]);
 
   useEffect(() => {
     if (isSearching) {
@@ -208,37 +133,26 @@ function SellerDashboard() {
         boxShadow: '2px 0 5px rgba(0,0,0,0.1)'
       }}>
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-          <Link to="/home" className="text-decoration-none">
-            <h5 className="mb-0 text-white">Xaphora Dress</h5>
-          </Link>
-          <button className="btn btn-sm text-white">
-            <i className="bi bi-list"></i>
-          </button>
-        </div>
 
-        {/* Seller Profile Section */}
-        <div className="p-3 border-bottom">
-          {loading ? (
-            <div className="d-flex justify-content-center">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="text-danger">{error}</div>
-          ) : (
-            <div className="d-flex align-items-center mb-3">
-              <div className="rounded-circle bg-primary p-3 me-2">
-                <i className="bi bi-person-fill text-white"></i>
-              </div>
-              <div>
-                <h6 className="mb-0 text-white">{sellerInfo.name}</h6>
-                <small className="text-muted">{sellerInfo.storeName}</small>
-              </div>
-            </div>
-          )}
-        </div>
 
+  {/* <Link to="http://localhost:3000/home" className="text-decoration-none">
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link> */}
+
+  <Link
+    to="/home"
+    state={{ seller }}
+    className="text-decoration-none"
+  >
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link>
+
+ {/* above */}
+
+  <button className="btn btn-sm text-white">
+    <i className="bi bi-list"></i>
+  </button>
+</div>
         <div className="mt-3">
           <div className="px-3 py-2 small text-muted">CORE</div>
           <div className={`px-3 py-2 d-flex align-items-center ${activeTab === 'overview' ? 'bg-primary' : ''}`}>

@@ -1,49 +1,128 @@
-/* src/pages/BuyersList.css */
+/* BuyersList.css */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+}
+
 .buyers-container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 40px auto;
-    font-family: Arial, sans-serif;
-    color: #000;
-  }
-  
-  .buyers-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .back-button,
-  .add-buyer-button,
-  .edit-button,
-  .delete-button {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin: 0 5px;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-  }
-  
-  .back-button:hover,
-  .add-buyer-button:hover,
-  .edit-button:hover,
-  .delete-button:hover {
-    background-color: #333;
-  }
-  
-  .buyers-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .buyers-table th,
-  .buyers-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-  }
+  padding: 30px 40px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  margin-left: 250px; /* To make room for sidebar */
+}
+
+.buyers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  background-color: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buyers-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.back-button,
+.add-buyer-button {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.back-button:hover,
+.add-buyer-button:hover {
+  background-color: #2563eb;
+}
+
+.buyers-table {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.buyers-table th,
+.buyers-table td {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.buyers-table th {
+  background-color: #f3f4f6;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.buyers-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.buyers-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.edit-button,
+.delete-button {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.edit-button {
+  background-color: #10b981;
+  color: #ffffff;
+  margin-right: 10px;
+}
+
+.edit-button:hover {
+  background-color: #059669;
+}
+
+.delete-button {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.delete-button:hover {
+  background-color: #dc2626;
+}
+
+.alert {
+  font-size: 0.95rem;
+  padding: 14px 20px;
+  margin-top: 20px;
+  border-radius: 6px;
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  text-align: center;
+}

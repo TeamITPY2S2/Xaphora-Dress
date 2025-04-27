@@ -1,7 +1,7 @@
 /* Global Styles */
 :root {
   --primary-color: #00bcd4;
-  --secondary-color: #333;
+  --secondary-color:  #333;
   --text-color: #666;
   --light-bg: #f8f9fa;
   --border-color: #e0e0e0;
@@ -43,6 +43,10 @@ body {
   font-size: 0.9rem;
   width: 100%;
 }
+/* profile icon use the primary color */
+.header-actions .header-icon {
+  color: #2979FF;
+}
 
 /* Header */
 .header {
@@ -64,6 +68,7 @@ body {
   font-weight: 600;
   color: var(--secondary-color);
   text-decoration: none;
+  color: black;
 }
 
 .search-bar {
@@ -104,11 +109,13 @@ body {
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--border-color);
   width: 100%;
+  
 }
 
 .nav-container {
   padding: 0 1rem;
   position: relative;
+  
 }
 
 .mobile-menu-btn {
@@ -117,6 +124,7 @@ body {
   border: none;
   font-size: 1.25rem;
   cursor: pointer;
+  
 }
 
 .nav-list {
@@ -125,6 +133,7 @@ body {
   margin: 0;
   padding: 0;
   gap: 2rem;
+  
 }
 
 .nav-link {
@@ -135,6 +144,7 @@ body {
   text-transform: uppercase;
   padding: 0.5rem 0;
   transition: color 0.3s ease;
+  color: black;
 }
 
 .nav-link:hover {
@@ -453,6 +463,7 @@ body {
   .footer-content {
     grid-template-columns: 1fr;
   }
+
 }
 
 @media (max-width: 480px) {

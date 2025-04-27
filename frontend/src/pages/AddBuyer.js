@@ -1,94 +1,142 @@
-// src/pages/AddBuyer.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import SuperAdminSidebar from "../components/SuperAdminSidebar";
+
+// import the global layout/css from AdminsList (contains .superadmin-layout, .superadmin-main, etc)
+import "./AdminsList.css";
+// import just the AddBuyer page styles
 import "./AddBuyer.css";
 
-function AddBuyer() {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+const BACKEND_URL = "http://localhost:8070/api";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const AddBuyer = () => {
+  const navigate = useNavigate();
+  const [buyers, setBuyers] = useState([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // fetch existing buyers for the summary panel
+  const fetchBuyers = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8070/users", { 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email,
-          firstName,
-          lastName,
-          password,
-          role: "buyer" // explicitly set role as buyer
-        })
+      const res = await axios.get(`${BACKEND_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Buyer created successfully");
-        navigate("/superadmin/buyers");
-      } else {
-        setMessage(data.message || "Failed to create buyer");
-      }
-    } catch (error) {
-      console.error("Error creating buyer:", error);
-      setMessage("Error creating buyer");
+      const buyersOnly = res.data.users.filter((u) => u.role === "buyer");
+      setBuyers(buyersOnly);
+    } catch {
+      console.error("Error fetching buyers");
     }
   };
 
-  const handleBack = () => {
-    navigate("/superadmin/buyers");
+  useEffect(() => {
+    fetchBuyers();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await axios.post(
+        `${BACKEND_URL}/users`,
+        { ...formData, role: "buyer" },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      alert("Buyer added!");
+      navigate("/superadmin/buyers");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="add-buyer-container">
-      <button onClick={handleBack} className="back-button">Back</button>
-      <h2>Add New Buyer</h2>
-      {message && <p style={{ color: "red" }}>{message}</p>}
+    <div className="superadmin-layout">
+      <SuperAdminSidebar />
 
-      <form onSubmit={handleSubmit} className="add-buyer-form">
-        <label>Email</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <main className="superadmin-main">
+        <div className="add-buyer-content">
+          <form className="formCard" onSubmit={handleSubmit}>
+            <h2 className="title">Add New Buyer</h2><br/>
+           
 
-        <label>First Name</label>
-        <input
-          type="text"
-          required
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
+            {error && <div className="error">{error}</div>}
 
-        <label>Last Name</label>
-        <input
-          type="text"
-          required
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-        />
+            <div className="inputGroup">
+              <label>First Name</label>
+              <input
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Enter buyer's first name"
+                required
+              />
+            </div>
+            <div className="inputGroup">
+              <label>Last Name</label>
+              <input
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter buyer's last name"
+                required
+              />
+            </div>
+            <div className="inputGroup">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter buyer's email"
+                required
+              />
+            </div>
+            <div className="inputGroup">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Create a password"
+                required
+              />
+            </div>
 
-        <label>Password</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+            <button type="submit" className="button" disabled={loading}>
+              {loading ? "Creating..." : "Create Buyer"}
+            </button>
+          </form>
 
-        <button type="submit" className="create-buyer-button">Create Buyer</button>
-      </form>
+          <div className="buyers-summary">
+            <h3>📊 Total Buyers: {buyers.length}</h3>
+            <ol>
+              {buyers.map((b) => (
+                <li key={b._id}>
+                  {b.firstName} {b.lastName}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </main>
     </div>
   );
-}
+};
 
 export default AddBuyer;

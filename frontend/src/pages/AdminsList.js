@@ -1,6 +1,7 @@
-// src/pages/AdminsList.js
-import React, { useEffect, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SuperAdminSidebar from "../components/SuperAdminSidebar";
+import { FaDownload } from 'react-icons/fa';
 import "./AdminsList.css";
 
 function AdminsList() {
@@ -10,6 +11,10 @@ function AdminsList() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     fetchAdmins(token);
   }, [navigate]);
 
@@ -23,7 +28,9 @@ function AdminsList() {
       });
       const data = await res.json();
       if (res.ok) {
+
         // super-admins first, then descending order
+
         const sorted = data.sort((a, b) => {
           if (a.adminType === "super-admin" && b.adminType !== "super-admin") {
             return -1;
@@ -41,10 +48,6 @@ function AdminsList() {
       console.error("Error fetching admins:", err);
       setMessage("Error fetching admins");
     }
-  };
-
-  const handleBack = () => {
-    navigate("/superadmin");
   };
 
   const handleAddAdmin = () => {
@@ -68,7 +71,9 @@ function AdminsList() {
       const data = await res.json();
       if (res.ok) {
         alert("Admin deleted successfully");
+
         fetchAdmins(token); 
+
       } else {
         alert(data.message || "Failed to delete admin");
       }
@@ -78,49 +83,78 @@ function AdminsList() {
     }
   };
 
+  class App extends Component{
+    state ={
+      email : '',
+      firstName : '',
+      lastName : '',
+      adminType : '',
+      createdAt : ''
+    }
+    handleChange = ({ target:{value, name}}) => this.setState({ [name]: value})
+
+    }
+  
+
   return (
-    <div className="admins-container">
-      <div className="admins-header">
-        <button onClick={handleBack} className="back-button">Back</button>
-        <h2>All Admins</h2>
-        <button onClick={handleAddAdmin} className="add-admin-button">Add Admin</button>
-      </div>
+    <div className="superadmin-layout">
+      <SuperAdminSidebar />
+      <main className="superadmin-main">
+        <div className="buyers-header">
+        
+        <a href="/path/to/your.pdf" download className="download-pdf">
+          <FaDownload style={{ fontSize: '1.5rem', marginRight: '0.5rem' }} />
+          Download PDF
+        </a>
+          <h2>All Admins</h2>
+          
+          <button onClick={handleAddAdmin} className="add-buyer-button">
+            Add Admin
+          </button>
+        </div>
 
-      {message && <p style={{ color: "red" }}>{message}</p>}
+        {message && <p style={{ color: "red" }}>{message}</p>}
 
-      {admins.length > 0 ? (
-        <table className="admins-table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Full Name</th>
-              <th>Admin Type</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map((admin) => (
-              <tr key={admin._id}>
-                <td>{admin.email}</td>
-                <td>{`${admin.firstName} ${admin.lastName}`}</td>
-                <td>{admin.adminType}</td>
-                <td>{new Date(admin.createdAt).toLocaleString()}</td>
-                <td>
-                  <button onClick={() => handleUpdate(admin._id)} className="edit-button">
-                    Update
-                  </button>
-                  <button onClick={() => handleDelete(admin._id)} className="delete-button">
-                    Delete
-                  </button>
-                </td>
+        {admins.length > 0 ? (
+          <table className="buyers-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Full Name</th>
+                <th>Admin Type</th>
+                <th>Created At</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No admins found.</p>
-      )}
+            </thead>
+            <tbody>
+              {admins.map((admin) => (
+                <tr key={admin._id}>
+                  <td>{admin.email}</td>
+                  <td>{`${admin.firstName} ${admin.lastName}`}</td>
+                  <td>{admin.adminType}</td>
+                  <td>{new Date(admin.createdAt).toLocaleString()}</td>
+                  <td>
+                    <button
+                      onClick={() => handleUpdate(admin._id)}
+                      className="edit-button"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(admin._id)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No admins found.</p>
+        )}
+      </main>
     </div>
   );
 }
