@@ -66,3 +66,136 @@
     border-radius: 5px;
   }
   
+  .dashboard-bg {
+    background-color: #f8f9fa;
+  }
+  
+  /* Sidebar Styles */
+  .bg-dark {
+    transition: all 0.3s ease;
+  }
+  
+  .bg-dark .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    margin: 2px 0;
+  }
+  
+  .bg-dark .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .bg-dark .nav-link.active {
+    background-color: #0d6efd;
+    color: #fff;
+  }
+  
+  /* Profile Section */
+  .seller-profile {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .profile-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Main Content Area */
+  .main-content {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+  }
+  
+  /* Card Styles */
+  .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1rem;
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    position: relative;
+  }
+  
+  .search-bar .form-control {
+    border-radius: 1.5rem;
+    padding-left: 1.5rem;
+    border: 1px solid #dee2e6;
+  }
+  
+  .search-bar .btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 1.5rem;
+    padding: 0 1.5rem;
+  }
+  
+  /* Action Buttons */
+  .action-buttons .btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+  }
+  
+  /* Dropdown Menu */
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+  }
+  
+  .dropdown-item {
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      position: fixed;
+      z-index: 1000;
+    }
+    
+    .main-content {
+      margin-left: 0;
+    }
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .card {
+    animation: fadeIn 0.3s ease-out;
+  }
+  

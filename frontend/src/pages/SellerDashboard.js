@@ -6,15 +6,121 @@ import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
 import SellerReports from '../components/SellerReports';
 import { Link } from 'react-router-dom';
+import axios from 'axios'; 
 
 function SellerDashboard() {
+  const navigate = useNavigate();
+
+  // ← NEW: track any low-stock items
+  const [lowStockItems, setLowStockItems] = useState([]);
+
+  useEffect(() => {
+    const notifyLowStock = async () => {
+      try {
+        // fetch all products
+        const { data } = await axios.get('http://localhost:8070/api/products');
+        // front-end filter to only those with stockQuantity < 3
+        const low = data.filter(p => p.stockQuantity < 3);
+        setLowStockItems(low);
+        if (low.length > 0) {
+          alert(
+            `⚠️ Low stock on ${low.length} item${low.length > 1 ? 's' : ''}: ` +
+            low.map(p => `${p.name} (${p.stockQuantity})`).join(', ')
+          );
+        }
+      } catch (err) {
+        console.error('Failed low-stock check:', err);
+      }
+    };
+    notifyLowStock();
+  }, []);
+
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const navigate = useNavigate();
+  const [sellerInfo, setSellerInfo] = useState({
+    name: '',
+    storeName: '',
+    email: '',
+    joinDate: ''
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('seller_token');
+    if (!token) {
+      navigate('/seller/login');
+    } else {
+      // Get seller info from localStorage
+      const storedSellerInfo = localStorage.getItem('seller_info');
+      if (storedSellerInfo) {
+        const sellerData = JSON.parse(storedSellerInfo);
+        setSellerInfo({
+          name: sellerData.name,
+          storeName: sellerData.storeName,
+          email: sellerData.email,
+          joinDate: new Date(sellerData.joinDate).toLocaleDateString()
+        });
+        setLoading(false);
+      } else {
+        // If no stored info, fetch from API
+        fetchSellerData(token);
+      }
+    }
+  }, [navigate]);
+
+  const fetchSellerData = async (token) => {
+    try {
+      const sellerId = localStorage.getItem('seller_id');
+      if (!sellerId) {
+        throw new Error('No seller ID found');
+      }
+
+      const response = await fetch(`http://localhost:8070/api/sellers/${sellerId}`, {
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch seller data');
+      }
+
+      const data = await response.json();
+      
+      // Update localStorage with fresh data
+      localStorage.setItem('seller_info', JSON.stringify({
+        name: data.name,
+        storeName: data.storeName,
+        email: data.email,
+        joinDate: data.createdAt
+      }));
+
+      setSellerInfo({
+        name: data.name,
+        storeName: data.storeName,
+        email: data.email,
+        joinDate: new Date(data.createdAt).toLocaleDateString()
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching seller data:', error);
+      setError('Failed to load seller information. Please try again later.');
+      setLoading(false);
+    }
+  };
+
+  // Add a useEffect to log the current state
+  useEffect(() => {
+    console.log('Current sellerInfo:', sellerInfo);
+    console.log('Current loading state:', loading);
+    console.log('Current error state:', error);
+  }, [sellerInfo, loading, error]);
 
   useEffect(() => {
     if (isSearching) {
@@ -24,8 +130,8 @@ function SellerDashboard() {
           await new Promise(resolve => setTimeout(resolve, 500));
           const mockResults = [
             { id: 1, name: 'Product 1', price: 19.99, category: 'electronics', createdAt: '2025-01-15' },
-            { id: 2, name: 'Product 2', price: 29.99, category: 'clothing', createdAt: '2025-02-20' },
-            { id: 3, name: 'Product 3', price: 39.99, category: 'home', createdAt: '2025-03-10' },
+            { id: 2, name: 'Product 2', price: 29.99, category: 'clothing',    createdAt: '2025-02-20' },
+            { id: 3, name: 'Product 3', price: 39.99, category: 'home',        createdAt: '2025-03-10' },
           ];
           let filteredResults = mockResults.filter(product =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -86,39 +192,63 @@ function SellerDashboard() {
   };
 
   return (
-    <div
-      className="dashboard-bg d-flex"
-      style={{
-        backgroundImage: 'url(/images/coreui_1200_630.jpg)',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center center',
-        minHeight: '100vh'
-      }}
-    >
+    <div className="dashboard-bg d-flex" style={{
+      backgroundImage: 'url(/images/coreui_1200_630.jpg)',
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+      minHeight: '100vh'
+    }}>
       {/* Sidebar */}
-      <div className="bg-dark text-white" style={{ width: '200px',
-    minHeight: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.09)', // 60% opaque black
-    color: '#fff' }}>
+      <div className="bg-dark text-white" style={{ 
+        width: '250px',
+        minHeight: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        color: '#fff',
+        boxShadow: '2px 0 5px rgba(0,0,0,0.1)'
+      }}>
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-  <Link to="http://localhost:3000/home" className="text-decoration-none">
-    <h5 className="mb-0">Xaphora Dress</h5>
-  </Link>
-  <button className="btn btn-sm text-white">
-    <i className="bi bi-list"></i>
-  </button>
-</div>
+          <Link to="/home" className="text-decoration-none">
+            <h5 className="mb-0 text-white">Xaphora Dress</h5>
+          </Link>
+          <button className="btn btn-sm text-white">
+            <i className="bi bi-list"></i>
+          </button>
+        </div>
+
+        {/* Seller Profile Section */}
+        <div className="p-3 border-bottom">
+          {loading ? (
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="text-danger">{error}</div>
+          ) : (
+            <div className="d-flex align-items-center mb-3">
+              <div className="rounded-circle bg-primary p-3 me-2">
+                <i className="bi bi-person-fill text-white"></i>
+              </div>
+              <div>
+                <h6 className="mb-0 text-white">{sellerInfo.name}</h6>
+                <small className="text-muted">{sellerInfo.storeName}</small>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="mt-3">
           <div className="px-3 py-2 small text-muted">CORE</div>
-          <div className="px-3 py-2 d-flex align-items-center">
+          <div className={`px-3 py-2 d-flex align-items-center ${activeTab === 'overview' ? 'bg-primary' : ''}`}>
             <i className="bi bi-speedometer2 me-2"></i> Dashboard
           </div>
           <div className="px-3 py-2 mt-3 small text-muted">STORE</div>
-          <div className="px-3 py-2 d-flex align-items-center">
+          <div className={`px-3 py-2 d-flex align-items-center ${activeTab === 'listings' ? 'bg-primary' : ''}`}>
             <i className="bi bi-box me-2"></i> Products
           </div>
-          <div className="px-3 py-2 d-flex align-items-center">
+          <div className={`px-3 py-2 d-flex align-items-center ${activeTab === 'orders' ? 'bg-primary' : ''}`}>
             <i className="bi bi-cart me-2"></i> Orders
           </div>
           <div className="px-3 py-2 d-flex align-items-center">
@@ -132,25 +262,43 @@ function SellerDashboard() {
             <i className="bi bi-chat me-2"></i> Messages
           </div>
         </div>
-        <div className="mt-auto p-3 border-top" style={{ position: 'absolute', bottom: 0, width: '200px' }}>
-          <small>Logged in as:<br />John Smith</small>
+
+        <div className="mt-auto p-3 border-top" style={{ position: 'absolute', bottom: 0, width: '250px' }}>
+          {!loading && !error && (
+            <div className="d-flex align-items-center">
+              <div className="rounded-circle bg-primary p-2 me-2">
+                <i className="bi bi-person-fill text-white"></i>
+              </div>
+              <div>
+                <small className="text-white">Logged in as:</small>
+                <div className="text-white">{sellerInfo.name}</div>
+                <small className="text-muted">Store: {sellerInfo.storeName}</small>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       
       {/* Main Content */}
       <div className="flex-grow-1">
+        {/* ← NEW: low-stock banner */}
+        {lowStockItems.length > 0 && (
+          <div className="alert alert-warning text-center m-3">
+            ⚠️ Low stock on {lowStockItems.length} item{lowStockItems.length > 1 ? 's' : ''}: {lowStockItems.map(p => `${p.name} (${p.stockQuantity})`).join(', ')}
+          </div>
+        )}
         {/* Top Navbar */}
         <nav className="navbar navbar-expand navbar-light bg-white border-bottom">
           <div className="container-fluid">
             <button className="navbar-toggler">
               <span className="navbar-toggler-icon"></span>
             </button>
-            <div className="d-flex ms-auto">
-              <div className="input-group">
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="Search for..." 
+            <div className="d-flex ms-auto align-items-center">
+              <div className="input-group me-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search for..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -158,10 +306,17 @@ function SellerDashboard() {
                   <i className="bi bi-search"></i>
                 </button>
               </div>
-              <div className="dropdown ms-2">
-                <button className="btn btn-light dropdown-toggle">
-                  <i className="bi bi-person"></i>
+              <div className="dropdown">
+                <button className="btn btn-light dropdown-toggle" data-bs-toggler="dropdown">
+                  <i className="bi bi-person-circle me-2"></i>
+                  {loading ? 'Loading...' : sellerInfo.name}
                 </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li><a className="dropdown-item" href="#"><i className="bi bi-person me-2"></i>Profile</a></li>
+                  <li><a className="dropdown-item" href="#"><i className="bi bi-gear me-2"></i>Settings</a></li>
+                  <li><hr className="dropdown-divider"/></li>
+                  <li><a className="dropdown-item" href="#" onClick={() => navigate('/api/auth/login')}><i className="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                </ul>
               </div>
             </div>
           </div>
@@ -277,29 +432,17 @@ function SellerDashboard() {
                 </li>
               </ul>
             </div>
-            <div className="card-body">
-              {renderContent()}
-            </div>
+            <div className="card-body">{renderContent()}</div>
           </div>
           
           {/* Action Buttons */}
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <button className="btn btn-success me-2" onClick={() => navigate('/add-product')}>
-                <i className="bi bi-plus-circle me-1"></i> Add Product
-              </button>
-              <button className="btn btn-primary" onClick={() => navigate('/products')}>
-                <i className="bi bi-card-list me-1"></i> View Products
-              </button>
-            </div>
-            <div>
-            <button 
-        className="btn btn-danger ms-2" 
-        onClick={() => navigate('/api/auth/login')}
-      >
-        <i className="bi bi-box-arrow-right"></i> Logout
-      </button>
-            </div>
+            <button className="btn btn-success me-2" onClick={() => navigate('/add-product')}>
+              <i className="bi bi-plus-circle me-1"></i> Add Product
+            </button>
+            <button className="btn btn-primary" onClick={() => navigate('/products')}>
+              <i className="bi bi-card-list me-1"></i> View Products
+            </button>
           </div>
         </div>
       </div>
