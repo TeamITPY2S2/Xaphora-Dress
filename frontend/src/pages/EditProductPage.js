@@ -15,7 +15,7 @@ function EditProductPage() {
     imageUrl: '',
     description: ''
   });
-  const [newImage, setNewImage] = useState(null); // optional new file
+  const [newImage, setNewImage] = useState(null);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -48,25 +48,37 @@ function EditProductPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create FormData and add updated fields
+    // build FormData exactly as before
     const formData = new FormData();
     formData.append("name", product.name);
     formData.append("category", product.category);
     formData.append("price", product.price);
     formData.append("stockQuantity", product.stockQuantity);
     formData.append("description", product.description);
-
-    // If a new image file is selected, append it to FormData
     if (newImage) {
       formData.append("image", newImage);
     }
 
     try {
-      const response = await axios.put(`http://localhost:8070/api/products/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await axios.put(
+        `http://localhost:8070/api/products/${id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
       setMessage(response.data.message);
-      // Optionally navigate back after a short delay
+
+      // ‹‹ LOW-STOCK NOTIFICATION ››
+      // fetch all products, then only alert those with stock < 3
+      const all = await axios.get('http://localhost:8070/api/products');
+      const low = all.data.filter(p => p.stockQuantity < 3);
+      if (low.length > 0) {
+        alert(
+          '⚠️ Low stock on: ' +
+          low.map(p => `${p.name} (${p.stockQuantity})`).join(', ')
+        );
+      }
+
+      // back to list after 1.5s
       setTimeout(() => {
         navigate('/products');
       }, 1500);

@@ -1,23 +1,17 @@
 // backend/controllers/authController.js
 
-const jwt        = require("jsonwebtoken");
-const bcrypt     = require("bcryptjs");
-const Admin      = require("../models/adminModel");
-const User       = require("../models/UserModel");
-const crypto     = require("crypto");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const Admin = require("../models/adminModel");
+const User = require("../models/UserModel");
+const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
 /**
  * Send a password-reset email with a one-hour token.
  */
 const sendResetEmail = async (email, token) => {
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  const transporter = createTransporter();
 
   const resetLink = `http://localhost:3000/reset-password/${token}`;
 
@@ -26,13 +20,27 @@ const sendResetEmail = async (email, token) => {
     from: "support@xaphoradress.com",
     subject: "Password Reset Request",
     html: `
-      <h2>Password Reset</h2>
-      <p>You requested a password reset. Click the link below:</p>
-      <a href="${resetLink}">${resetLink}</a>
-      <p>This link expires in 1 hour.</p>
+      <div style="max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="text-align: center; color: #333;">Reset Your Password</h2>
+        <p>Hello,</p>
+        <p>We received a request to reset your password. Click the button below to reset it:</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetLink}" target="_blank" style="background-color: #4CAF50; color: white; padding: 14px 24px; text-decoration: none; font-size: 16px; border-radius: 5px;">
+            Reset Password
+          </a>
+        </div>
+
+        <p>If you didn't request a password reset, you can safely ignore this email.</p>
+        <p style="color: gray; font-size: 12px;">This link will expire in 1 hour.</p>
+
+        <hr style="margin: 20px 0;">
+        <p style="text-align: center; font-size: 12px; color: #999;">Xaphora Dress Team</p>
+      </div>
     `,
   });
 };
+
 
 /**
  * Login handler: checks Admin first, then User;
@@ -46,10 +54,11 @@ const login = async (req, res) => {
 let user     = await Admin.findOne({ email });
 let userType = "admin";
 
-if (!user) {
-  user     = await User.findOne({ email });
-  userType = "user";
-}
+    if (!user) {
+      user = await User.findOne({ email });
+      userType = "user";
+    }
+
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -71,10 +80,7 @@ if (!user) {
 
     // 6) Sign & return
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-    return res.status(200).json({ token, userType, user });
 
-
-    // 5) Send response
     return res.status(200).json({ token, userType, user });
   } catch (err) {
     console.error("Login error:", err);
@@ -89,9 +95,8 @@ const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-
-    // Find admin or user
     const user = await Admin.findOne({ email }) || await User.findOne({ email });
+
     if (!user) {
       return res.status(404).json({ message: "Email not found" });
     }
@@ -105,6 +110,7 @@ const forgotPassword = async (req, res) => {
 
     // Send email
     await sendResetEmail(email, token);
+
     return res.json({ message: "Password reset link sent to your email" });
   } catch (err) {
     console.error("Forgot Password Error:", err);
@@ -116,16 +122,15 @@ const forgotPassword = async (req, res) => {
  * Reset password: verifies token + expiry, updates password.
  */
 const resetPassword = async (req, res) => {
-  const { token }    = req.params;
+  const { token } = req.params;
   const { password } = req.body;
 
   try {
     const user = await Admin.findOne({
-      resetPasswordToken:   token,
-
+      resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
     }) || await User.findOne({
-      resetPasswordToken:   token,
+      resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
     });
 
@@ -156,7 +161,7 @@ const changePassword = async (req, res) => {
 
   try {
     const userId = req.user?.adminId || req.user?.userId;
-    const user   = await Admin.findById(userId) || await User.findById(userId);
+    const user = await Admin.findById(userId) || await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -169,7 +174,6 @@ const changePassword = async (req, res) => {
       return res.status(400).json({ message: "Current password is incorrect" });
     }
 
-    // Save new password
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
@@ -184,5 +188,5 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
-  changePassword
+  changePassword,
 };
