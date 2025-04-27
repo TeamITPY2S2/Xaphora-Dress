@@ -1,68 +1,96 @@
-/* src/pages/SellerDashboard.css */
-.seller-dashboard {
-    padding: 20px;
-    background-color: #f7f7f7;
-    min-height: 100vh;
-    text-align: center;
-  }
-  
-  .seller-dashboard h1 {
-    margin-bottom: 20px;
-  }
-  
-  /* Styles for the new action buttons */
-  .action-buttons {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .action-buttons button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .action-buttons button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Styles for the tab navigation */
-  .dashboard-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-tabs button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #e0e0e0;
-    transition: background-color 0.3s ease;
-  }
-  
-  .dashboard-tabs button:hover {
-    background-color: #d0d0d0;
-  }
-  
-  .dashboard-tabs button.active {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  /* Dashboard content container */
-  .dashboard-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
+/*----------------------
+  Navbar fix: no more container-fluid bleed
+------------------------*/
+.seller-nav .navbar-container {
+  width: 100%;
+  padding: 0 1.5rem;
+  min-height: auto;
+}
+
+/* Root theme vars */
+:root {
+  --primary: #1abc9c;
+  --primary-dark: #16a085;
+  --bg-light: #f7f8fa;
+  --sidebar-bg: rgba(0,0,0,0.85);
+  --text-light: #fff;
+  --text-dark: #333;
+}
+
+/* Layout */
+.dashboard-bg { display: flex; min-height: 100vh; font-family: 'Segoe UI',sans-serif; }
+.sidebar  { width: 250px; background: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; }
+main      { flex: 1; background: var(--bg-light); color: var(--text-dark); }
+
+/* Sidebar */
+.sidebar-header { padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-profile { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-nav { flex: 1; overflow-y: auto; }
+.sidebar-nav .nav-section + .nav-section { margin-top: 1rem; }
+.nav-item {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 0.375rem;
+  transition: background .2s;
+  background: transparent;
+  color: var(--text-light);
+}
+.nav-item i { margin-right: .5rem; }
+.nav-item:hover { background: rgba(26,188,156,0.15); }
+.nav-item.active { background: var(--primary); }
+
+/* Sidebar footer */
+.sidebar-footer { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+
+/* Low-stock banner */
+.alert-warning {
+  background: #f9e79f;
+  border: none;
+  border-radius: .5rem;
+  font-weight: 500;
+}
+
+/* Navbar & Topbar */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.seller-nav { background: #fff; border-bottom: 1px solid #e5e5e5; }
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: .75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.card-header {
+  background: var(--bg-light);
+  padding: 1rem 1.5rem;
+  border-bottom: none;
+}
+.card-body { padding: 1.5rem; }
+
+/* Forms & Inputs */
+.form-control, .form-select {
+  border-radius: .5rem;
+  border: 1px solid #dcdcdc;
+}
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 .2rem rgba(26,188,156,0.25);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  border: none;
+  transition: background .2s;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: #27ae60; border: none; }
+.btn-success:hover { filter: brightness(.9); }
+
+/* Utility overrides */
+.mx-3 { margin-left: 1rem!important; margin-right: 1rem!important; }
+.p-4  { padding: 1.5rem!important; }
