@@ -1,9 +1,8 @@
-// backend/routes/productRoutes.js
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
-// Use memory storage so that files are available in req.file without saving locally.
+// Use memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -16,19 +15,21 @@ const {
   deleteProduct,
 } = require("../controllers/productController");
 
-// Create Product: expects a file input with field name "image"
-router.post("/products", upload.single("image"), createProduct);
+// IMPORTANT: correct routes
+
+// Create Product
+router.post("/", upload.single("image"), createProduct);
 
 // Get All Products
-router.get("/products", getProducts);
+router.get("/", getProducts);
 
 // Get Product by ID
-router.get("/products/:id", getProductById);
+router.get("/:id", getProductById);
 
-// Update Product: supports a new file upload (if provided) and text fields via FormData
-router.put("/products/:id", upload.single("image"), updateProduct);
+// Update Product
+router.put("/:id", upload.single("image"), updateProduct);
 
 // Delete Product
-router.delete("/products/:id", deleteProduct);
+router.delete("/:id", deleteProduct);
 
 module.exports = router;

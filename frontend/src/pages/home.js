@@ -1,27 +1,24 @@
-// src/pages/Home.js
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate }    from 'react-router-dom';
-import axios                     from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
-import XaphoraChatbot            from './XaphoraChatbot';
-import AccountDrawer             from '../components/AccountDrawer';
+import XaphoraChatbot from './XaphoraChatbot';
+import AccountDrawer from '../components/AccountDrawer';
 
 const Home = () => {
-  const navigate      = useNavigate();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMenuOpen,  setIsMenuOpen]  = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [newArrivals, setNewArrivals] = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [error,       setError]       = useState(null);
-  const [drawerOpen,  setDrawerOpen]  = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Grab stored user info
-  const token    = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const userType = localStorage.getItem('userType');
   const userName = localStorage.getItem('userName');
 
-  // Fetch products on mount
   useEffect(() => {
     fetchNewArrivals();
   }, []);
@@ -43,21 +40,18 @@ const Home = () => {
     }
   };
 
-  // Open the drawer if logged in, otherwise go to login
   const handleProfileClick = () => {
     if (token) setDrawerOpen(true);
-    else       navigate('/api/auth/login');
+    else navigate('/api/auth/login');
   };
 
-  // Drawer action handlers
-  const handleAccountDetails   = () => navigate('/dashboard');
-  const handleAddresses        = () => navigate('/addresses');
-  const handleChangePassword   = () => navigate('/change-password');
-  const handleUpdateProfile    = () => navigate('/update-profile');
+  const handleAccountDetails = () => navigate('/dashboard');
+  const handleAddresses = () => navigate('/addresses');
+  const handleChangePassword = () => navigate('/change-password');
+  const handleUpdateProfile = () => navigate('/update-profile');
+
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile?")) return;
-    const token = localStorage.getItem("token");
-  
     try {
       const res = await fetch("http://localhost:8070/api/users", {
         method: "DELETE",
@@ -65,11 +59,10 @@ const Home = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
       const data = await res.json();
       if (res.ok) {
         alert("Your account has been deleted successfully.");
-        handleLogout(); // Clean up and redirect
+        handleLogout();
       } else {
         alert(data.message || "Failed to delete your account.");
       }
@@ -78,17 +71,17 @@ const Home = () => {
       alert("Error deleting your profile.");
     }
   };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     navigate("/home");
   };
 
-  // Featured categories data
   const categories = [
-    { id: 1, title: "Women's Fashion",  image: '/images/womenf.webp' },
+    { id: 1, title: "Women's Fashion", image: '/images/womenf.webp' },
     { id: 2, title: "Men's Collection", image: '/images/mensfassion.avif' },
-    { id: 3, title: "Kids & Baby",      image: '/images/baby.avif' },
+    { id: 3, title: "Kids & Baby", image: '/images/baby.avif' },
   ];
 
   return (
@@ -111,7 +104,7 @@ const Home = () => {
                 className="search-input"
                 placeholder="Search products..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button className="search-button">
                 <FaSearch />
@@ -123,14 +116,13 @@ const Home = () => {
                 <FaHeart />
               </Link>
 
-              {/* profile icon: keep styling, conditionally open drawer or go to login */}
               {token ? (
                 <span
                   className="header-icon"
                   onClick={handleProfileClick}
                   role="button"
                   tabIndex={0}
-                  onKeyPress={e => e.key === 'Enter' && handleProfileClick()}
+                  onKeyPress={(e) => e.key === 'Enter' && handleProfileClick()}
                 >
                   <FaUser />
                 </span>
@@ -152,19 +144,19 @@ const Home = () => {
           <div className="nav-container">
             <button
               className="mobile-menu-btn"
-              onClick={() => setIsMenuOpen(open => !open)}
+              onClick={() => setIsMenuOpen((open) => !open)}
             >
               <FaBars />
             </button>
             <ul className={`nav-list ${isMenuOpen ? 'show' : ''}`}>
               <li><Link to="/women" className="nav-link">Women</Link></li>
-              <li><Link to="/men"   className="nav-link">Men</Link></li>
-              <li><Link to="/kids"  className="nav-link">Kids & Baby</Link></li>
+              <li><Link to="/men" className="nav-link">Men</Link></li>
+              <li><Link to="/kids" className="nav-link">Kids & Baby</Link></li>
               <li><Link to="/beauty" className="nav-link">Beauty & Health</Link></li>
-              <li><Link to="/shoes"  className="nav-link">Shoes & Bags</Link></li>
+              <li><Link to="/shoes" className="nav-link">Shoes & Bags</Link></li>
               <li><Link to="/watches" className="nav-link">Watches</Link></li>
-              <li><Link to="/toys"    className="nav-link">Toys</Link></li>
-              <li><Link to="/home"    className="nav-link">Home & Living</Link></li>
+              <li><Link to="/toys" className="nav-link">Toys</Link></li>
+              <li><Link to="/home" className="nav-link">Home & Living</Link></li>
             </ul>
           </div>
         </nav>
@@ -173,10 +165,7 @@ const Home = () => {
         <section className="hero-section">
           <div className="hero-slider">
             <div className="hero-slide">
-              <video
-                className="background-video"
-                autoPlay loop muted playsInline
-              >
+              <video className="background-video" autoPlay loop muted playsInline>
                 <source src="/images/fashion2.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -192,14 +181,12 @@ const Home = () => {
         {/* Featured Categories */}
         <section className="featured-categories">
           <div className="category-grid">
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <div key={cat.id} className="category-card">
                 <img src={cat.image} alt={cat.title} className="category-image" />
                 <div className="category-content">
                   <h2 className="category-title">{cat.title}</h2>
-                  <Link to={`/category/${cat.id}`} className="shop-now-btn">
-                    Shop Now
-                  </Link>
+                  <Link to={`/category/${cat.id}`} className="shop-now-btn">Shop Now</Link>
                 </div>
               </div>
             ))}
@@ -219,7 +206,7 @@ const Home = () => {
             <div className="error-message">{error}</div>
           ) : (
             <div className="products-grid">
-              {newArrivals.map(prod => (
+              {newArrivals.map((prod) => (
                 <div key={prod._id} className="product-card">
                   <Link to={`/product/${prod._id}`} className="product-link">
                     <div className="product-image-container">
@@ -240,7 +227,8 @@ const Home = () => {
           )}
         </section>
 
-        <XaphoraChatbot/>
+        {/* Chatbot */}
+        <XaphoraChatbot />
 
         {/* Footer */}
         <footer className="footer">
@@ -254,14 +242,14 @@ const Home = () => {
             <div className="footer-column">
               <h3>Help</h3>
               <Link to="/shipping" className="footer-link">Shipping Information</Link>
-              <Link to="/returns"  className="footer-link">Returns & Exchanges</Link>
-              <Link to="/faq"      className="footer-link">FAQ</Link>
+              <Link to="/returns" className="footer-link">Returns & Exchanges</Link>
+              <Link to="/faq" className="footer-link">FAQ</Link>
             </div>
             <div className="footer-column">
               <h3>Shop</h3>
               <Link to="/women" className="footer-link">Women's Fashion</Link>
-              <Link to="/men"   className="footer-link">Men's Fashion</Link>
-              <Link to="/kids"  className="footer-link">Kids & Baby</Link>
+              <Link to="/men" className="footer-link">Men's Fashion</Link>
+              <Link to="/kids" className="footer-link">Kids & Baby</Link>
             </div>
             <div className="footer-column">
               <h3>Contact</h3>
@@ -284,7 +272,6 @@ const Home = () => {
           onDeleteProfile={handleDeleteProfile}
           onLogout={handleLogout}
         />
-
       </div>
     </div>
   );
