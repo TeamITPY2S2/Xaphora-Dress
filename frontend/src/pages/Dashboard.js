@@ -1,10 +1,9 @@
 // src/pages/Dashboard.js
-import { FaBars } from 'react-icons/fa';
 import React, { useEffect, useState } from "react";
+import { FaBars } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import AccountDrawer from "../components/AccountDrawer";
-import Navbar from "../components/Navbar"; 
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -17,7 +16,7 @@ function Dashboard() {
     const fetchDashboardData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/login");
+        navigate("/api/auth/login");
         return;
       }
       try {
@@ -52,23 +51,28 @@ function Dashboard() {
     navigate("/change-password");
   };
 
-
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile?")) return;
     const token = localStorage.getItem("token");
-  
+    const userId = dashboardData?._id;
+    if (!userId) {
+      alert("Cannot delete: user ID not found.");
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:8070/api/users", {
+      const res = await fetch(`http://localhost:8070/api/users/${userId}`, {
         method: "DELETE",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const data = await res.json();
       if (res.ok) {
         alert("Your account has been deleted successfully.");
-        handleLogout(); // Clean up and redirect
+        handleLogout();
       } else {
         alert(data.message || "Failed to delete your account.");
       }
@@ -80,7 +84,6 @@ function Dashboard() {
 
   let content;
   if (message) {
-
     content = <div className="dashboard-message">{message}</div>;
   } else if (!dashboardData) {
     content = <div className="dashboard-loading">Loading dashboard...</div>;
@@ -93,36 +96,27 @@ function Dashboard() {
         content = (
           <div className="generic-dashboard">
             <h2>Admin Dashboard</h2>
-            <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+            <p>
+              Welcome, {dashboardData.firstName} {dashboardData.lastName}!
+            </p>
             <button onClick={handleLogout}>Logout</button>
           </div>
         );
         break;
       case "seller":
-        content = (
-          <div className="generic-dashboard">
-            <h2>Seller Dashboard</h2>
-            <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        );
-        break;
+        navigate("/seller-dashboard");
+        return null;
       case "buyer":
         content = (
           <div className="buyer-account-page">
             <header className="buyer-header">
               <h1>My Account</h1>
-              <button className="btn-menu" onClick={() => setDrawerOpen(true)}>
-                <FaBars style={{ fontSize: "1.2rem" }} /> Menu
-              </button>
             </header>
-
             <div className="buyer-content buyer-content-stacked">
               <section className="buyer-section buyer-history">
                 <h3>Order History</h3>
                 <p>You haven't placed any orders yet.</p>
               </section>
-
               <section className="buyer-section buyer-details">
                 <h3>Account Details</h3>
                 <div className="info">
@@ -131,9 +125,10 @@ function Dashboard() {
                 <div className="info">
                   {dashboardData.address?.country || "Sri Lanka"}
                 </div>
-                <Link to="/address" className="info-link">View Address</Link>
+                <Link to="/address" className="info-link">
+                  View Address
+                </Link>
               </section>
-
             </div>
           </div>
         );
@@ -152,17 +147,7 @@ function Dashboard() {
     <>
       <Navbar />
       {content}
-      <AccountDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        userName={`${dashboardData?.firstName || ""} ${dashboardData?.lastName || ""}`}
-        onLogout={handleLogout}
-        onAccountDetails={() => setDrawerOpen(false)}
-        onAddresses={() => navigate("/address")}
-        onChangePassword={handleChangePassword} 
-        onUpdateProfile={() => navigate("/update-profile")}
-        onDeleteProfile={handleDeleteProfile}
-      />
+      
       <Footer />
     </>
   );

@@ -43,6 +43,10 @@ body {
   font-size: 0.9rem;
   width: 100%;
 }
+/* profile icon use the primary color */
+.header-actions .header-icon {
+  color: #2979FF;
+}
 
 /* Header */
 .header {

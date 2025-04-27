@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SuperAdminSidebar from "../components/SuperAdminSidebar";
+import { FaDownload } from 'react-icons/fa';
 import "./AdminsList.css";
 
 function AdminsList() {
@@ -82,12 +83,31 @@ function AdminsList() {
     }
   };
 
+  class App extends Component{
+    state ={
+      email : '',
+      firstName : '',
+      lastName : '',
+      adminType : '',
+      createdAt : ''
+    }
+    handleChange = ({ target:{value, name}}) => this.setState({ [name]: value})
+
+    }
+  
+
   return (
     <div className="superadmin-layout">
       <SuperAdminSidebar />
       <main className="superadmin-main">
         <div className="buyers-header">
+        
+        <a href="/path/to/your.pdf" download className="download-pdf">
+          <FaDownload style={{ fontSize: '1.5rem', marginRight: '0.5rem' }} />
+          Download PDF
+        </a>
           <h2>All Admins</h2>
+          
           <button onClick={handleAddAdmin} className="add-buyer-button">
             Add Admin
           </button>

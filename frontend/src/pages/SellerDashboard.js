@@ -1,6 +1,6 @@
 // src/pages/SellerDashboard.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import SellerOverview from '../components/SellerOverview';
 import SellerOrders from '../components/SellerOrders';
 import SellerListings from '../components/SellerListings';
@@ -15,6 +15,10 @@ function SellerDashboard() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const seller = location.state?.seller || JSON.parse(localStorage.getItem('user') || 'null');
+
 
   useEffect(() => {
     if (isSearching) {
@@ -102,9 +106,22 @@ function SellerDashboard() {
     backgroundColor: 'rgba(0, 0, 0, 0.09)', // 60% opaque black
     color: '#fff' }}>
         <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-  <Link to="http://localhost:3000/home" className="text-decoration-none">
+
+
+  {/* <Link to="http://localhost:3000/home" className="text-decoration-none">
+    <h5 className="mb-0">Xaphora Dress</h5>
+  </Link> */}
+
+  <Link
+    to="/home"
+    state={{ seller }}
+    className="text-decoration-none"
+  >
     <h5 className="mb-0">Xaphora Dress</h5>
   </Link>
+
+ {/* above */}
+
   <button className="btn btn-sm text-white">
     <i className="bi bi-list"></i>
   </button>

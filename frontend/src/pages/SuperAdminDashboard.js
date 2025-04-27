@@ -73,15 +73,7 @@ function SuperAdminDashboard() {
     } catch (error) {
       console.error("User fetch error:", error);
     }
-// =======
-//   const handleHome = () => {
-//     navigate("/home");
-//     // Or alert("Fetch buyers logic here");
-//   };
 
-//   const handleUpdateProfile = () => {
-//     alert("Update profile logic here");
-// >>>>>>> dev
   };
 
   const handleSearch = () => {
@@ -101,7 +93,6 @@ function SuperAdminDashboard() {
   };
 
   return (
-//<<<<<<< frontend/admin-dashboards
     <div className="superadmin-layout">
       <SuperAdminSidebar />
       <main className="superadmin-main">
