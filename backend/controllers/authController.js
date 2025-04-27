@@ -8,7 +8,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
 /**
- * Create a reusable transporter for nodemailer
+ * Send a password-reset email with a one-hour token.
  */
 const createTransporter = () => {
   return nodemailer.createTransport({
@@ -17,17 +17,7 @@ const createTransporter = () => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      rejectUnauthorized: false, // <-- Important fix for self-signed certs
-    },
   });
-};
-
-/**
- * Send a password-reset email with a one-hour token.
- */
-const sendResetEmail = async (email, token) => {
-  const transporter = createTransporter();
 
   const resetLink = `http://localhost:3000/reset-password/${token}`;
 
@@ -38,8 +28,8 @@ const sendResetEmail = async (email, token) => {
     html: `
       <h2>Password Reset</h2>
       <p>You requested a password reset. Click the link below:</p>
-      <a href="${resetLink}" target="_blank">${resetLink}</a>
-      <p>This link will expire in 1 hour.</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>This link expires in 1 hour.</p>
     `,
   });
 };
@@ -52,9 +42,9 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1) Lookup admin or user
-    let user = await Admin.findOne({ email });
-    let userType = "admin";
+// 1) Lookup admin or user
+let user     = await Admin.findOne({ email });
+let userType = "admin";
 
     if (!user) {
       user = await User.findOne({ email });
@@ -65,18 +55,22 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // 2) Check password
+    // 4) Check password
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // 3) Build JWT payload
+
+    // 5) Build JWT payload
+
     const payload = userType === "admin"
       ? { adminId: user._id, adminType: user.adminType }
       : { userId: user._id, role: user.role };
 
-    // 4) Sign & return
+
+    // 6) Sign & return
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     return res.status(200).json({ token, userType, user });
@@ -99,13 +93,14 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "Email not found" });
     }
 
-    // Generate reset token
+
+    // Generate and save reset token
     const token = crypto.randomBytes(20).toString("hex");
-    user.resetPasswordToken = token;
+    user.resetPasswordToken   = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
     await user.save();
 
-    // Send reset email
+    // Send email
     await sendResetEmail(email, token);
 
     return res.json({ message: "Password reset link sent to your email" });
@@ -135,9 +130,11 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Update password
-    user.password = await bcrypt.hash(password, 10);
-    user.resetPasswordToken = undefined;
+
+    // Update password & clear reset fields
+
+    user.password             = await bcrypt.hash(password, 10);
+    user.resetPasswordToken   = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
@@ -162,13 +159,13 @@ const changePassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+
     // Verify current password
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Current password is incorrect" });
     }
 
-    // Save new password
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
