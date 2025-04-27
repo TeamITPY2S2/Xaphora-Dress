@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// Routes
+// Route imports
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/UserRoutes");
 const deliveryRoutes = require("./routes/deliveryRoutes");
@@ -28,6 +28,9 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const fcmRoutes = require('./routes/fcmRoutes');
+const cardInfoRoutes = require("./routes/cardInfoRoutes"); 
+const addressRoutes = require("./routes/addressRoutes");
+
 
 // Route Usage
 app.use("/api/products", productRoutes);
@@ -42,10 +45,10 @@ app.use("/api/sellers", sellerRoutes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
-
 app.use("/api/dashboard", dashboardRoutes);
-app.use('/api/fcm', fcmRoutes);
-
+app.use("/api/fcm", fcmRoutes);
+app.use("/api/cardinfo", cardInfoRoutes); 
+app.use("/api/address", addressRoutes);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 8070;

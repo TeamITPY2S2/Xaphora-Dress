@@ -1,5 +1,5 @@
 // controllers/deliveHistoryController.js
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 
 // For customers: get delivery history for a specific customer
 exports.getUserDeliveryHistory = async (req, res) => {

@@ -1,7 +1,7 @@
 // routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 const { updateOrderStatus } = require('../controllers/deliveStatusController');
 
 // Create a new order using the updated Order model fields

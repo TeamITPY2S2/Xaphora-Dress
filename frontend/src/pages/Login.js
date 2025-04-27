@@ -14,20 +14,27 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
     try {
       const response = await fetch("http://localhost:8070/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
 
       if (response.ok) {
-        // store token & role
+        // ⭐ store token & role
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
 
-        // <-- NEW: store full name for drawer greeting
+        // ⭐ NEW: store userId for Cart and Profile
+        if (data.user && data.user._id) {
+          localStorage.setItem("userId", data.user._id);
+        }
+
+        // ⭐ store full name for greeting
         if (data.user?.firstName) {
           const fullName = `${data.user.firstName} ${data.user.lastName || ""}`.trim();
           localStorage.setItem("userName", fullName);
@@ -35,15 +42,16 @@ function Login() {
 
         setMessage("Login successful!");
 
-        // Redirect based on role
+        // ⭐ Redirect based on role
         if (data.userType === "super-admin") {
           navigate("/superadmin");
         } else if (data.userType === "admin") {
           navigate("/dashboard");
         } else {
-          // for both "user" (buyer) and any other fallback
+          // Buyer / user
           navigate("/home");
         }
+
       } else {
         setMessage(data.message || "Invalid email or password");
       }

@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import './ProductDetail.css';
+// src/pages/ProductDetail.jsx
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./ProductDetail.css";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -41,12 +44,30 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    // Add to cart logic here
-    console.log('Adding to cart:', {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      alert("Please login first!");
+      navigate("/api/auth/login");
+      return;
+    }
+
+    const cartItem = {
+      userId: userId,
       productId: product._id,
+      productName: product.name,
+      price: product.price,
+      quantity,
       size: selectedSize,
-      quantity
-    });
+      imageUrl: product.imageUrl,
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    existingCart.push(cartItem);
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    alert("Product added to cart!");
+    navigate("/cart"); // after adding, go to cart directly
   };
 
   if (loading) {
@@ -65,11 +86,10 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
-      {/* Breadcrumb */}
       <div className="breadcrumb">
         <Link to="/">Home</Link>
         <span>/</span>
-        <Link to="/men">Men</Link>
+        <Link to="/products">Products</Link>
         <span>/</span>
         <span>{product.name}</span>
       </div>
@@ -161,4 +181,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail; 
+export default ProductDetail;

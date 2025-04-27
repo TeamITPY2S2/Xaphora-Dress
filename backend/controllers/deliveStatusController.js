@@ -1,5 +1,5 @@
 // controllers/deliveStatusController.js
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 
 exports.updateOrderStatus = async (req, res) => {
   try {

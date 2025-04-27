@@ -116,6 +116,10 @@ function Dashboard() {
               <section className="buyer-section buyer-history">
                 <h3>Order History</h3>
                 <p>You haven't placed any orders yet.</p>
+                <button onClick={() => navigate('/my-orders')}>
+  View My Orders
+</button>
+
               </section>
               <section className="buyer-section buyer-details">
                 <h3>Account Details</h3>

@@ -1,5 +1,5 @@
 // controllers/deliveMonitoringController.js
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 const DeliveryAgent = require('../models/DeliveryAgent');
 
 // Generates a report that groups orders by their status (e.g., Ordered, Packed, Shipped, Delivered)
