@@ -103,7 +103,8 @@ const UserOrderDetails = () => {
           <ul>
             {order.items.map((item, idx) => (
               <li key={idx} style={{ marginBottom: '5px' }}>
-                <strong>Product ID:</strong> {item.shippingRegion} |{' '}
+                <strong>Product:</strong> {item.productName} |{' '}
+                <strong>Size:</strong> {item.size} |{' '}
                 <strong>Quantity:</strong> {item.quantity} |{' '}
                 <strong>Price:</strong> ${item.price}
               </li>

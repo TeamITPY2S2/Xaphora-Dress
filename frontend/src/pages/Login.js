@@ -46,7 +46,9 @@ function Login() {
         if (data.userType === "super-admin") {
           navigate("/superadmin");
         } else if (data.userType === "admin") {
-          navigate("/dashboard");
+          navigate("/admin/dashboard");
+        } else if (data.userType === "order-management") {
+          navigate("/admin-orders");
         } else {
           // Buyer / user
           navigate("/home");

@@ -1,18 +1,53 @@
+// src/pages/OrderConfirmationPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const OrderConfirmationPage = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const latestOrder = JSON.parse(localStorage.getItem("latestOrderDetails"));
-    if (latestOrder) {
-      setOrder(latestOrder);
-    } else {
-      navigate("/"); // Redirect if no order
+    try {
+      const latestOrder = JSON.parse(localStorage.getItem("latestOrderDetails"));
+      console.log("Retrieved order from localStorage:", latestOrder); // Debug log
+      
+      if (latestOrder && latestOrder.customerName && latestOrder.items) {
+        setOrder(latestOrder);
+      } else {
+        console.error("Invalid order data:", latestOrder); // Debug log
+        setError("Invalid order data");
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Error parsing order data:", err); // Debug log
+      setError("Error loading order details");
+      navigate("/");
     }
   }, [navigate]);
+
+  if (error) {
+    return (
+      <div style={{ padding: "30px", textAlign: "center" }}>
+        <h1 style={{ color: "red" }}>Error</h1>
+        <p>{error}</p>
+        <button
+          onClick={() => navigate("/")}
+          style={{
+            marginTop: "20px",
+            padding: "10px 20px",
+            backgroundColor: "#3498db",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
@@ -41,17 +76,21 @@ const OrderConfirmationPage = () => {
             <p><strong>Shipping Address:</strong> {order.shippingAddress}</p>
 
             <h3 style={{ marginTop: "20px", fontSize: "1.5rem" }}>Items Ordered:</h3>
-            <ul style={{ paddingLeft: "20px" }}>
-              {order.items.map((item, index) => (
-                <li key={index} style={{ marginBottom: "8px" }}>
-                  {item.productName} ({item.size}) × {item.quantity} 
-                  — Rs {(item.price * item.quantity).toFixed(2)}
-                </li>
-              ))}
-            </ul>
+            {order.items && order.items.length > 0 ? (
+              <ul style={{ paddingLeft: "20px" }}>
+                {order.items.map((item, index) => (
+                  <li key={index} style={{ marginBottom: "8px" }}>
+                    {item.productName} {item.size ? `(${item.size})` : ''} × {item.quantity} 
+                    — Rs {(item.price * item.quantity).toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No items found in this order.</p>
+            )}
 
             <h3 style={{ marginTop: "20px", fontSize: "1.5rem" }}>
-              Total Paid: Rs {order.totalAmount.toFixed(2)}
+              Total Paid: Rs {order.totalAmount?.toFixed(2) || '0.00'}
             </h3>
           </div>
 

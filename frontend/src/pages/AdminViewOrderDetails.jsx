@@ -69,6 +69,7 @@ const AdminViewOrderDetails = () => {
           <thead style={{ backgroundColor: "#2ecc71", color: "white" }}>
             <tr>
               <th style={{ padding: "10px" }}>Product ID</th>
+              <th>Size</th>
               <th>Quantity</th>
               <th>Price (LKR)</th>
               <th>Subtotal (LKR)</th>
@@ -79,6 +80,7 @@ const AdminViewOrderDetails = () => {
             {order.items.map((item, index) => (
               <tr key={index} style={{ textAlign: "center" }}>
                 <td style={{ padding: "10px" }}>{item.productId}</td>
+                <td>{item.size}</td>
                 <td>{item.quantity}</td>
                 <td>{item.price.toFixed(2)}</td>
                 <td>{(item.price * item.quantity).toFixed(2)}</td>

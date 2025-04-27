@@ -65,7 +65,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Something went wrong!" });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is up and running on port: ${PORT}`);
-});
+// Start server with port conflict handling
+const startServer = (port) => {
+  app.listen(port, () => {
+    console.log(`Server is up and running on port: ${port}`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is busy, trying port ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+};
+
+startServer(PORT);

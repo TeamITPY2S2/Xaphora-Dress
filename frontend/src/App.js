@@ -5,6 +5,7 @@ import SellerSignup from './components/SellerSignup';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import AdminLogin from './components/AdminLogin';
 
 // Pages
 import AddProductPage from './pages/AddProductPage';
@@ -136,7 +137,16 @@ function App() {
             <Route path="/admin-orders" element={<AdminOrdersDashboard />} />
             <Route path="/admin/orders/:orderId" element={<AdminViewOrderDetails />} />
 
-
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
 
           </Routes>
         </div>

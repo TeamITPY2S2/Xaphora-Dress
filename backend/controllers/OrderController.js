@@ -1,6 +1,7 @@
 // controllers/orderController.js
 
 const Order = require("../models/OrderModel");
+const User = require("../models/UserModel");
 
 exports.createOrder = async (req, res) => {
   try {

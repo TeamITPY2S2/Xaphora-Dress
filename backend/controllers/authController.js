@@ -70,10 +70,18 @@ let userType = "admin";
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // Set userType based on adminType for admin users
+    if (userType === "admin") {
+      if (user.adminType === "super-admin") {
+        userType = "super-admin";
+      } else if (user.adminType === "order-management") {
+        userType = "order-management";
+      }
+    }
 
     // 5) Build JWT payload
 
-    const payload = userType === "admin"
+    const payload = userType === "admin" || userType === "super-admin" || userType === "order-management"
       ? { adminId: user._id, adminType: user.adminType }
       : { userId: user._id, role: user.role };
 
