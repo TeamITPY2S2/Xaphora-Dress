@@ -5,41 +5,36 @@ import "./Auth.css";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { token } = useParams();
   const navigate = useNavigate();
+  const { token } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-    setLoading(true);
 
-    if (password.length < 6) {
-      setMessage("Password must be at least 6 characters long.");
-      setLoading(false);
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match");
       return;
     }
 
     try {
-      const res = await fetch(`http://localhost:8070/api/auth/reset-password/${token}`, {
-        method: "PUT",
+      const res = await fetch("http://localhost:8070/api/auth/reset-password", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ token, password }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        alert("Password updated successfully");
+        alert("Password reset successful");
         navigate("/api/auth/login");
       } else {
-        setMessage(data.message || "Invalid or expired token");
+        setMessage(data.message || "Failed to reset password");
       }
     } catch (err) {
-      console.error("Reset error:", err);
-      setMessage("Server error. Please try again.");
-    } finally {
-      setLoading(false);
+      setMessage("Server error");
     }
   };
 
@@ -48,17 +43,23 @@ function ResetPassword() {
       <h2>Reset Password</h2>
       {message && <p className="auth-message">{message}</p>}
       <form onSubmit={handleSubmit}>
-        <label htmlFor="new-password">New Password:</label>
+        <label>New Password:</label>
         <input
-          id="new-password"
           type="password"
-          required
-          placeholder="Enter new password"
           value={password}
+          required
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Updating..." : "Reset Password"}
+        <label>Confirm Password:</label>
+        <input
+          type="password"
+          value={confirmPassword}
+          required
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <button type="submit">Reset Password</button>
+        <button type="button" onClick={() => navigate("/api/auth/login")}>
+          Back to Login
         </button>
       </form>
     </div>

@@ -22,10 +22,8 @@ function ForgotPassword() {
 
       const data = await res.json();
       if (res.ok) {
-        //toast.error(data.message || "Check your email for the reset link.");
         alert("Check your email for the reset link.");
         navigate("/api/auth/login");
-       // setMessage("Check your email for the reset link.");
       } else {
         setMessage(data.message || "Failed to send reset email.");
       }

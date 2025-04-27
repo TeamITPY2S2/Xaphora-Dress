@@ -25,16 +25,11 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // ⭐ store token & role
+        // Store user data
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
-
-        // ⭐ NEW: store userId for Cart and Profile
-        if (data.user && data.user._id) {
-          localStorage.setItem("userId", data.user._id);
-        }
-
-        // ⭐ store full name for greeting
+        localStorage.setItem("userId", data.user._id);
+        
         if (data.user?.firstName) {
           const fullName = `${data.user.firstName} ${data.user.lastName || ""}`.trim();
           localStorage.setItem("userName", fullName);
@@ -42,7 +37,7 @@ function Login() {
 
         setMessage("Login successful!");
 
-        // ⭐ Redirect based on role
+        // Redirect based on user type
         if (data.userType === "super-admin") {
           navigate("/superadmin");
         } else if (data.userType === "admin") {
@@ -53,7 +48,6 @@ function Login() {
           // Buyer / user
           navigate("/home");
         }
-
       } else {
         setMessage(data.message || "Invalid email or password");
       }
@@ -98,8 +92,8 @@ function Login() {
           Create Account <Link to="/signup" className="login-link">Sign Up</Link>
         </p>
         <p className="login-footer">
-          <Link to="/seller/login" className="login-link">
-            Log in as a <b>Seller</b>
+          <Link to="/admin/login" className="login-link">
+            Log in as an <b>Admin</b>
           </Link>
         </p>
       </div>
