@@ -1,80 +1,89 @@
-.superadmin-sidebar {
+/* ─── Container ───────────────────────────────────────────────────────── */
+.sidebar {
   width: 250px;
-  background-color: #111827;
-  color: white;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   height: 100vh;
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
+  background-color: #111827;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: #fff;
 }
 
-.home-logo {
-  color: #3b82f6;
-  text-decoration: none;
-  font-size: 1.5rem;
+/* ─── Top Section (Logo + Role) ───────────────────────────────────────── */
+.sidebar-top {
+  margin-bottom: 2rem;
+}
+.sidebar-brand {
+  font-size: 1.75rem;
   font-weight: bold;
-  display: block;
-  margin-bottom: 30px;
-  transition: color 0.3s;
+  color: #3b82f6;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
 }
-
-.home-logo:hover {
-  color: #60a5fa;
+.sidebar-brand:hover {
   text-decoration: underline;
 }
-
-.admin-title {
+.sidebar-role {
+  font-size: 1.125rem;
   color: #60a5fa;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-list li {
-  padding: 12px 10px;
-  margin-bottom: 12px;
   cursor: pointer;
-  font-weight: 500;
+  white-space: nowrap;
+}
+.sidebar-role:hover {
+  color: #93c5fd;
+}
+
+/* ─── Navigation Links ─────────────────────────────────────────────────── */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1; /* push logout to bottom */
+}
+.sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   color: #d1d5db;
+  text-decoration: none;
+  padding: 10px 12px;
   border-radius: 6px;
   transition: background-color 0.3s, color 0.3s;
 }
-
-.nav-list li.active,
-.nav-list li:hover {
-  background-color: #1f2937;
-  color: white;
+.sidebar-link:hover {
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+}
+/* NavLink adds "active" class when route matches */
+.sidebar-link.active {
+  background-color: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.sidebar-icon {
+  font-size: 1.1rem;
 }
 
-.logout-btn {
+/* ─── Logout Button ─────────────────────────────────────────────────────── */
+.sidebar-logout {
   background-color: #ef4444;
-  color: white;
-  padding: 12px 20px;
+  color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: auto;
-  width: 100%;
   justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: auto; /* stick to bottom */
 }
-
-.logout-btn:hover {
+.sidebar-logout:hover {
   background-color: #dc2626;
 }

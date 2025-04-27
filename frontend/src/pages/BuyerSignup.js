@@ -21,14 +21,14 @@ function BuyerSignup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, password }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType || "buyer");
         setMessage("Signup successful!");
+
         navigate("/api/auth/login");
+
       } else {
         setMessage(data.message || "Signup failed");
       }
@@ -89,7 +89,9 @@ function BuyerSignup() {
 
         <p className="signup-footer">
           Already registered?{" "}
+
           <Link to="/api/auth/login" className="signup-link">
+
             Login here
           </Link>
         </p>
