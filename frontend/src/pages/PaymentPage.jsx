@@ -24,14 +24,28 @@ const PaymentPage = () => {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/api/auth/login");
+      return;
+    }
+
+    // Get cart items from user-specific cart
+    const storedCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
     const storedDetails = JSON.parse(localStorage.getItem("checkoutDetails")) || {};
+    
+    if (storedCart.length === 0) {
+      alert("Cart is empty!");
+      navigate("/cart");
+      return;
+    }
+    
     setCart(storedCart);
     setCheckoutDetails(storedDetails);
 
     fetchUserPoints();
     fetchDefaultAddress();
-  }, []);
+  }, [navigate]);
 
   const fetchUserPoints = async () => {
     try {
@@ -151,7 +165,10 @@ const PaymentPage = () => {
       return;
     }
 
-    if (cart.length === 0) {
+    const userId = localStorage.getItem("userId");
+    const cartItems = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
+
+    if (cartItems.length === 0) {
       alert("Cart is empty!");
       return;
     }
@@ -163,27 +180,27 @@ const PaymentPage = () => {
         customerName: checkoutDetails.customerName || address.contactName,
         shippingAddress: {
           fullName: checkoutDetails.customerName || address.contactName,
-          address: `${address.addressLine1}, ${address.city}, ${address.state}, ${address.zipCode}`,
-          phone: address.phone || "Not provided"
+          address: `${checkoutDetails.shippingAddress.addressLine1}, ${checkoutDetails.shippingAddress.city}, ${checkoutDetails.shippingAddress.state}, ${checkoutDetails.shippingAddress.zipCode}`,
+          phone: checkoutDetails.shippingAddress.phoneNumber || "Not provided"
         },
-        items: cart.map(item => ({
+        items: cartItems.map(item => ({
           productId: item.productId,
-          productName: item.productName || "", // fallback if missing
+          productName: item.productName || "",
           size: item.size || "N/A",
           quantity: item.quantity,
           price: item.price,
-          imageUrl: item.imageUrl || "https://via.placeholder.com/150" // Add default image if missing
+          imageUrl: item.imageUrl || "https://via.placeholder.com/150"
         })),
         totalAmount: finalTotal,
-        paymentMethod: "credit_card", // Changed from "Card" to "credit_card"
-        status: "pending", // Changed from "Ordered" to "pending"
+        paymentMethod: "credit_card",
+        status: "pending",
         paymentStatus: "completed"
       };
 
-      console.log("Sending order payload:", orderPayload); // Debug log
+      console.log("Sending order payload:", orderPayload);
 
       const saveOrderRes = await axios.post("http://localhost:8070/api/orders", orderPayload);
-      console.log("Order save response:", saveOrderRes.data); // Debug log
+      console.log("Order save response:", saveOrderRes.data);
       
       // Save the complete order details to localStorage
       const orderDetails = {
@@ -195,67 +212,9 @@ const PaymentPage = () => {
       };
       
       localStorage.setItem("latestOrderDetails", JSON.stringify(orderDetails));
-      console.log("Saved to localStorage:", orderDetails); // Debug log
-
-      // If user wants to save card details, check if it's already saved first
-      if (saveCard) {
-        try {
-          // Validate card details before saving
-          if (!cardNumber || !cardholderName || !expiryDate || !cvv) {
-            throw new Error("Missing card details");
-          }
-
-          // Check if this card is already saved for this user
-          const savedCardsResponse = await axios.get(`http://localhost:8070/api/cardinfo/user/${userId}`);
-          const savedCards = savedCardsResponse.data;
-          
-          // Check if this card number is already saved (comparing last 4 digits)
-          const cardLast4 = cardNumber.slice(-4);
-          const isCardAlreadySaved = savedCards.some(card => card.cardLast4 === cardLast4);
-          
-          if (isCardAlreadySaved) {
-            console.log("Card already saved, skipping save operation");
-          } else {
-            const cardInfoPayload = {
-              userId,
-              orderId: saveOrderRes.data._id,
-              cardNumber,
-              cardLast4: cardNumber.slice(-4),
-              cardholderName,
-              customerName: cardholderName,
-              expiryDate,
-              cvv,
-              saveCardDetails: true
-            };
-            
-            console.log("Saving card info:", {
-              ...cardInfoPayload,
-              cardNumber: "****" + cardNumber.slice(-4),
-              cvv: "***"
-            }); // Debug log with masked sensitive data
-            
-            try {
-              const cardInfoRes = await axios.post("http://localhost:8070/api/cardinfo", cardInfoPayload);
-              console.log("Card info saved:", cardInfoRes.data); // Debug log
-              
-              if (cardInfoRes.data) {
-                alert("Card details saved successfully!");
-              } else {
-                throw new Error("Failed to save card details");
-              }
-            } catch (apiError) {
-              console.error("API error saving card details:", apiError.response?.data || apiError.message);
-              throw new Error("API error: " + (apiError.response?.data?.error || apiError.message));
-            }
-          }
-        } catch (cardError) {
-          console.error("Error saving card details:", cardError.message);
-          alert("Payment successful but failed to save card details: " + cardError.message);
-        }
-      }
-
-      // Clear cart after successful payment
-      localStorage.removeItem("cart");
+      
+      // Clear cart from localStorage
+      localStorage.removeItem(`cart_${userId}`);
       
       // Navigate to order confirmation
       navigate("/order-confirmation");

@@ -7,12 +7,25 @@ const CartPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart);
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+    
+    // Get user-specific cart from localStorage
+    const userCart = localStorage.getItem(`cart_${userId}`);
+    setCartItems(userCart ? JSON.parse(userCart) : []);
     setLoading(false);
-  }, []);
+  }, [navigate]);
 
   const handleQuantityChange = (productId, size, delta) => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
     const updatedItems = cartItems.map((item) => {
       if (item.productId === productId && item.size === size) {
         const newQuantity = item.quantity + delta;
@@ -23,16 +36,26 @@ const CartPage = () => {
       }
       return item;
     });
+
     setCartItems(updatedItems);
-    localStorage.setItem("cart", JSON.stringify(updatedItems));
+    // Save to user-specific cart
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedItems));
   };
 
   const handleRemove = (productId, size) => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
     const updatedItems = cartItems.filter(
       (item) => !(item.productId === productId && item.size === size)
     );
+
     setCartItems(updatedItems);
-    localStorage.setItem("cart", JSON.stringify(updatedItems));
+    // Save to user-specific cart
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedItems));
   };
 
   const handleCheckout = () => {

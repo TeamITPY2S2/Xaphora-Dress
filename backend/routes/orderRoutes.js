@@ -4,6 +4,7 @@ const router = express.Router();
 const Order = require('../models/OrderModel');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const orderController = require('../controllers/OrderController');
 
 // Create a new order using the updated Order model fields
 router.post('/', async (req, res) => {
@@ -39,6 +40,9 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
+// Get orders for a specific user
+router.get('/user/:userId', orderController.getUserOrders);
+
 // Get a specific order by ID
 router.get('/:orderId', async (req, res) => {
   try {
@@ -70,6 +74,9 @@ router.put('/:id/status', adminAuth, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Update order item details (size, quantity)
+router.put('/:orderId/items/:itemId', orderController.updateOrderItem);
 
 // Get order by ID (admin only)
 router.get('/:id', adminAuth, async (req, res) => {

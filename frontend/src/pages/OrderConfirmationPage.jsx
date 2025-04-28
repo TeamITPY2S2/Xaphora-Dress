@@ -1,11 +1,27 @@
 // src/pages/OrderConfirmationPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderConfirmationPage = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
+
+  const clearCart = async (userId) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/cart/${userId}/clear`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      // Also clear local storage as backup
+      localStorage.removeItem(`cart_${userId}`);
+      console.log("Cart cleared successfully for user:", userId);
+    } catch (err) {
+      console.error("Error clearing cart:", err);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -14,6 +30,12 @@ const OrderConfirmationPage = () => {
       
       if (latestOrder && latestOrder.customerName && latestOrder.items) {
         setOrder(latestOrder);
+        
+        // Clear the user's cart after successful order
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          clearCart(userId);
+        }
       } else {
         console.error("Invalid order data:", latestOrder); // Debug log
         setError("Invalid order data");

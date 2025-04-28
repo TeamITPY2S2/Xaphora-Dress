@@ -84,23 +84,25 @@ function ProductListPage() {
       imageUrl: product.imageUrl,
     };
     
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    // Get user-specific cart
+    const userCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
     
     // Check if item with same productId and size already exists
-    const existingItemIndex = existingCart.findIndex(
+    const existingItemIndex = userCart.findIndex(
       item => item.productId === product._id && item.size === selectedSize[product._id]
     );
 
     if (existingItemIndex !== -1) {
       // Update quantity of existing item, capped at 10
-      const newQuantity = Math.min(existingCart[existingItemIndex].quantity + quantity[product._id], 10);
-      existingCart[existingItemIndex].quantity = newQuantity;
+      const newQuantity = Math.min(userCart[existingItemIndex].quantity + quantity[product._id], 10);
+      userCart[existingItemIndex].quantity = newQuantity;
     } else {
       // Add new item
-      existingCart.push(cartItem);
+      userCart.push(cartItem);
     }
     
-    localStorage.setItem("cart", JSON.stringify(existingCart));
+    // Save to user-specific cart
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(userCart));
     alert("Product added to cart!");
   };
 

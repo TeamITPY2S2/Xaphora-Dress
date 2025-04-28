@@ -62,15 +62,28 @@ const ProductDetail = () => {
       imageUrl: product.imageUrl,
     };
 
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    existingCart.push(cartItem);
-    localStorage.setItem("cart", JSON.stringify(existingCart));
+    // Get user-specific cart
+    const userCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
+    
+    // Check if item with same productId and size already exists
+    const existingItemIndex = userCart.findIndex(
+      item => item.productId === product._id && item.size === selectedSize
+    );
 
+    if (existingItemIndex !== -1) {
+      // Update quantity of existing item, capped at 10
+      const newQuantity = Math.min(userCart[existingItemIndex].quantity + quantity, 10);
+      userCart[existingItemIndex].quantity = newQuantity;
+    } else {
+      // Add new item
+      userCart.push(cartItem);
+    }
+
+    // Save to user-specific cart
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(userCart));
     alert("Product added to cart!");
-    navigate("/cart"); // after adding, go to cart directly
+    navigate("/cart");
   };
-
- 
 
   if (loading) {
     return <div className="loading">Loading product details...</div>;

@@ -23,11 +23,17 @@ const CheckoutPage = () => {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (storedCart.length === 0) {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
+    const userCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
+    if (userCart.length === 0) {
       navigate("/cart");
     } else {
-      setCart(storedCart);
+      setCart(userCart);
     }
 
     if (userId) {
@@ -111,12 +117,14 @@ const CheckoutPage = () => {
     const orderDetails = {
       userId,
       customerName: selectedAddress.contactName,
-      shippingAddress: selectedAddress.addressLine1,
+      shippingAddress: selectedAddress,
       cartItems: cart,
       totalAmount: totalPrice,
     };
 
+    // Store both cart and checkout details
     localStorage.setItem("checkoutDetails", JSON.stringify(orderDetails));
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
     navigate("/payment");
   };
 
