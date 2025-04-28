@@ -73,7 +73,9 @@ const OrderConfirmationPage = () => {
             <h2 style={{ fontSize: "1.8rem", marginBottom: "10px" }}>Order Summary</h2>
 
             <p><strong>Customer Name:</strong> {order.customerName}</p>
-            <p><strong>Shipping Address:</strong> {order.shippingAddress}</p>
+            <p><strong>Shipping Address:</strong> {typeof order.shippingAddress === 'object' 
+              ? `${order.shippingAddress.fullName}, ${order.shippingAddress.address}, Phone: ${order.shippingAddress.phone}`
+              : order.shippingAddress}</p>
 
             <h3 style={{ marginTop: "20px", fontSize: "1.5rem" }}>Items Ordered:</h3>
             {order.items && order.items.length > 0 ? (

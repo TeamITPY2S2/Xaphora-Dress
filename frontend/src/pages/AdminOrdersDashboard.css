@@ -1,1 +1,105 @@
- 
+/* src/pages/AdminOrdersDashboard.css */
+
+.admin-orders-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-orders-content {
+  margin-left: 250px;
+  padding: 30px;
+  width: 100%;
+  background-color: #f8f9fa;
+}
+
+.admin-orders-heading {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  color: #34495e;
+}
+
+.orders-table-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table thead tr {
+  background-color: #3498db;
+  color: white;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: #ffeeba;
+  color: #856404;
+}
+
+.status-processing {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-shipped {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-delivered {
+  background-color: #d1e7dd;
+  color: #155724;
+}
+
+.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.payment-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.payment-pending {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.loading {
+  padding: 50px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.error {
+  padding: 50px;
+  font-size: 1.5rem;
+  text-align: center;
+  color: red;
+}

@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const CartPage = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const userId = localStorage.getItem("userId");
-
   useEffect(() => {
-    // Load cart from localStorage instead of API
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
     setLoading(false);
   }, []);
 
-  const handleQuantityChange = (productId, delta) => {
+  const handleQuantityChange = (productId, size, delta) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.productId === productId) {
+      if (item.productId === productId && item.size === size) {
         const newQuantity = item.quantity + delta;
         return {
           ...item,
-          quantity: newQuantity < 1 ? 1 : newQuantity > 10 ? 10 : newQuantity,
+          quantity: Math.max(1, Math.min(newQuantity, 10)),
         };
       }
       return item;
@@ -31,16 +27,13 @@ const CartPage = () => {
     localStorage.setItem("cart", JSON.stringify(updatedItems));
   };
 
-  const handleRemove = (productId) => {
-    const updatedItems = cartItems.filter((item) => item.productId !== productId);
+  const handleRemove = (productId, size) => {
+    const updatedItems = cartItems.filter(
+      (item) => !(item.productId === productId && item.size === size)
+    );
     setCartItems(updatedItems);
     localStorage.setItem("cart", JSON.stringify(updatedItems));
   };
-
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
 
   const handleCheckout = () => {
     navigate("/checkout");
@@ -50,8 +43,10 @@ const CartPage = () => {
     navigate("/products");
   };
 
+  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
   if (loading) {
-    return <p>Loading cart...</p>;
+    return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading cart...</p>;
   }
 
   return (
@@ -79,9 +74,9 @@ const CartPage = () => {
         </div>
       ) : (
         <>
-          <table style={{ width: "100%", marginBottom: "20px" }}>
+          <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
             <thead>
-              <tr>
+              <tr style={{ borderBottom: "2px solid #ccc" }}>
                 <th>Product</th>
                 <th>Size</th>
                 <th>Price (LKR)</th>
@@ -92,30 +87,30 @@ const CartPage = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => (
-                <tr key={item.productId}>
+                <tr key={`${item.productId}-${item.size || "default"}`}>
                   <td>{item.productName}</td>
                   <td>{item.size || "N/A"}</td>
                   <td>{item.price.toFixed(2)}</td>
                   <td>
                     <button
-                      onClick={() => handleQuantityChange(item.productId, -1)}
+                      onClick={() => handleQuantityChange(item.productId, item.size, -1)}
                       disabled={item.quantity <= 1}
                       style={{
                         padding: "5px 10px",
                         margin: "0 5px",
-                        cursor: "pointer"
+                        cursor: item.quantity > 1 ? "pointer" : "not-allowed"
                       }}
                     >
                       -
                     </button>
                     {item.quantity}
                     <button
-                      onClick={() => handleQuantityChange(item.productId, 1)}
+                      onClick={() => handleQuantityChange(item.productId, item.size, 1)}
                       disabled={item.quantity >= 10}
                       style={{
                         padding: "5px 10px",
                         margin: "0 5px",
-                        cursor: "pointer"
+                        cursor: item.quantity < 10 ? "pointer" : "not-allowed"
                       }}
                     >
                       +
@@ -124,7 +119,7 @@ const CartPage = () => {
                   <td>{(item.price * item.quantity).toFixed(2)}</td>
                   <td>
                     <button 
-                      onClick={() => handleRemove(item.productId)}
+                      onClick={() => handleRemove(item.productId, item.size)}
                       style={{
                         padding: "5px 10px",
                         backgroundColor: "#ff4444",
@@ -142,9 +137,11 @@ const CartPage = () => {
             </tbody>
           </table>
 
-          <h3>Total: LKR {totalPrice.toFixed(2)}</h3>
+          <h3 style={{ textAlign: "right", marginTop: "20px" }}>
+            Total: LKR {totalPrice.toFixed(2)}
+          </h3>
 
-          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+          <div style={{ display: "flex", gap: "10px", marginTop: "20px", justifyContent: "center" }}>
             <button
               onClick={handleAddMoreItems}
               style={{

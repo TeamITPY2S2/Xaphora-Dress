@@ -6,10 +6,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 function Login() {
-  const [email, setEmail]       = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage]   = useState("");
-  const navigate                = useNavigate();
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
         localStorage.setItem("userId", data.user._id);
-        
+
         if (data.user?.firstName) {
           const fullName = `${data.user.firstName} ${data.user.lastName || ""}`.trim();
           localStorage.setItem("userName", fullName);
@@ -40,10 +40,12 @@ function Login() {
         // Redirect based on user type
         if (data.userType === "super-admin") {
           navigate("/superadmin");
-        } else if (data.userType === "admin") {
-          navigate("/admin/dashboard");
         } else if (data.userType === "order-management") {
           navigate("/admin-orders");
+        } else if (data.userType === "admin") {
+          navigate("/dashboard");
+        } else if (data.userType === "seller") {
+          navigate("/seller-dashboard");
         } else {
           // Buyer / user
           navigate("/home");
@@ -70,7 +72,7 @@ function Login() {
             className="login-input"
             required
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <label className="login-label password-label">PASSWORD</label>
@@ -79,7 +81,7 @@ function Login() {
             className="login-input"
             required
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button type="submit" className="login-button">LOG IN</button>
@@ -90,11 +92,6 @@ function Login() {
         </p>
         <p className="login-footer">
           Create Account <Link to="/signup" className="login-link">Sign Up</Link>
-        </p>
-        <p className="login-footer">
-          <Link to="/admin/login" className="login-link">
-            Log in as an <b>Admin</b>
-          </Link>
         </p>
       </div>
       <Footer />

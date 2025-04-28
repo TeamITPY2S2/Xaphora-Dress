@@ -70,6 +70,8 @@ const ProductDetail = () => {
     navigate("/cart"); // after adding, go to cart directly
   };
 
+ 
+
   if (loading) {
     return <div className="loading">Loading product details...</div>;
   }
@@ -165,6 +167,7 @@ const ProductDetail = () => {
           >
             Add to Cart
           </button>
+         
 
           <div className="product-details">
             <h3>Product Details</h3>

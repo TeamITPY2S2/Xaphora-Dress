@@ -8,7 +8,7 @@ const CardInfoPage = () => {
     expiryDate: "",
     cvv: "",
     saveCardDetails: false,
-    userId: "6621234567890abcdef1234", // <-- Replace with real user ID
+    userId: localStorage.getItem("userId"), // Get userId from localStorage
   });
   const [editMode, setEditMode] = useState(false);
   const [editCardId, setEditCardId] = useState(null);
@@ -122,6 +122,11 @@ const CardInfoPage = () => {
     setCards(updatedCards);
   };
 
+  // Function to mask card number
+  const maskCardNumber = (cardNumber) => {
+    return "**** **** **** " + cardNumber.slice(-4);
+  };
+
   return (
     <div className="card-info-page" style={{ padding: "20px" }}>
       <h2>{editMode ? "Edit Card" : "Save Your Card Information"}</h2>
@@ -135,6 +140,8 @@ const CardInfoPage = () => {
             value={cardData.cardNumber}
             onChange={handleChange}
             required
+            maxLength="16"
+            placeholder="Enter 16-digit card number"
           />
         </div>
 
@@ -157,6 +164,8 @@ const CardInfoPage = () => {
             value={cardData.expiryDate}
             onChange={handleChange}
             required
+            placeholder="MM/YY"
+            maxLength="5"
           />
         </div>
 
@@ -168,6 +177,7 @@ const CardInfoPage = () => {
             value={cardData.cvv}
             onChange={handleChange}
             required
+            maxLength="4"
           />
         </div>
 
@@ -195,21 +205,55 @@ const CardInfoPage = () => {
       {cards.length === 0 ? (
         <p>No saved cards found.</p>
       ) : (
-        <ul>
+        <div className="saved-cards-list">
           {cards.map((card) => (
-            <li key={card._id} style={{ marginBottom: "10px" }}>
-              <strong>{card.cardholderName}</strong> - **** **** **** {card.cardNumber.slice(-4)}<br />
-              Expiry: {card.expiryDate}
-              <br />
-              <button onClick={() => handleEdit(card)} style={{ marginTop: "5px", marginRight: "5px" }}>
-                Edit
-              </button>
-              <button onClick={() => handleDelete(card._id)} style={{ marginTop: "5px" }}>
-                Delete
-              </button>
-            </li>
+            <div key={card._id} className="card-item" style={{ 
+              marginBottom: "20px", 
+              padding: "15px", 
+              border: "1px solid #ddd", 
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9"
+            }}>
+              <div style={{ marginBottom: "10px" }}>
+                <strong>Cardholder:</strong> {card.cardholderName}
+              </div>
+              <div style={{ marginBottom: "10px" }}>
+                <strong>Card Number:</strong> {maskCardNumber(card.cardNumber)}
+              </div>
+              <div style={{ marginBottom: "10px" }}>
+                <strong>Expiry Date:</strong> {card.expiryDate}
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button 
+                  onClick={() => handleEdit(card)}
+                  style={{
+                    padding: "5px 15px",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => handleDelete(card._id)}
+                  style={{
+                    padding: "5px 15px",
+                    backgroundColor: "#f44336",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

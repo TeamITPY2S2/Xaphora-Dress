@@ -1,6 +1,5 @@
 // src/pages/Dashboard.js
 import React, { useEffect, useState } from "react";
-import { FaBars } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -9,7 +8,6 @@ import "./Dashboard.css";
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [message, setMessage] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,14 +39,23 @@ function Dashboard() {
     fetchDashboardData();
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userType");
-    navigate("/home");
-  };
+  useEffect(() => {
+    if (dashboardData) {
+      const { userType } = dashboardData;
 
-  const handleChangePassword = () => {
-    navigate("/change-password");
+      if (userType === "super-admin") {
+        navigate("/superadmin");
+      } else if (userType === "order-management") {
+        navigate("/admin-orders");
+      } else if (userType === "seller") {
+        navigate("/seller-dashboard");
+      }
+    }
+  }, [dashboardData, navigate]); // 👈 new separate useEffect for redirection
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/home");
   };
 
   const handleDeleteProfile = async () => {
@@ -88,62 +95,50 @@ function Dashboard() {
   } else if (!dashboardData) {
     content = <div className="dashboard-loading">Loading dashboard...</div>;
   } else {
-    switch (dashboardData.userType) {
-      case "super-admin":
-        navigate("/superadmin");
-        return null;
-      case "admin":
-        content = (
-          <div className="generic-dashboard">
-            <h2>Admin Dashboard</h2>
-            <p>
-              Welcome, {dashboardData.firstName} {dashboardData.lastName}!
-            </p>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        );
-        break;
-      case "seller":
-        navigate("/seller-dashboard");
-        return null;
-      case "buyer":
-        content = (
-          <div className="buyer-account-page">
-            <header className="buyer-header">
-              <h1>My Account</h1>
-            </header>
-            <div className="buyer-content buyer-content-stacked">
-              <section className="buyer-section buyer-history">
-                <h3>Order History</h3>
-                <p>You haven't placed any orders yet.</p>
-                <button onClick={() => navigate('/my-orders')}>
-  View My Orders
-</button>
+    const { userType } = dashboardData;
 
-              </section>
-              <section className="buyer-section buyer-details">
-                <h3>Account Details</h3>
-                <div className="info">
-                  {dashboardData.firstName} {dashboardData.lastName}
-                </div>
-                <div className="info">
-                  {dashboardData.address?.country || "Sri Lanka"}
-                </div>
-                <Link to="/address" className="info-link">
-                  View Address
-                </Link>
-              </section>
-            </div>
+    if (userType === "admin") {
+      content = (
+        <div className="generic-dashboard">
+          <h2>Admin Dashboard</h2>
+          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      );
+    } else if (userType === "buyer") {
+      content = (
+        <div className="buyer-account-page">
+          <header className="buyer-header">
+            <h1>My Account</h1>
+          </header>
+          <div className="buyer-content buyer-content-stacked">
+            <section className="buyer-section buyer-history">
+              <h3>Order History</h3>
+              <p>You haven't placed any orders yet.</p>
+              <button onClick={() => navigate('/my-orders')}>View My Orders</button>
+            </section>
+            <section className="buyer-section buyer-details">
+              <h3>Account Details</h3>
+              <div className="info">
+                {dashboardData.firstName} {dashboardData.lastName}
+              </div>
+              <div className="info">
+                {dashboardData.address?.country || "Sri Lanka"}
+              </div>
+              <Link to="/address" className="info-link">
+                View Address
+              </Link>
+            </section>
           </div>
-        );
-        break;
-      default:
-        content = (
-          <div className="generic-dashboard">
-            <h2>Unknown Role</h2>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        );
+        </div>
+      );
+    } else {
+      content = (
+        <div className="generic-dashboard">
+          <h2>Unknown Role</h2>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      );
     }
   }
 
@@ -151,7 +146,6 @@ function Dashboard() {
     <>
       <Navbar />
       {content}
-      
       <Footer />
     </>
   );

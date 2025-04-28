@@ -85,11 +85,28 @@ function ProductListPage() {
     };
     
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    existingCart.push(cartItem);
-    localStorage.setItem("cart", JSON.stringify(existingCart));
     
+    // Check if item with same productId and size already exists
+    const existingItemIndex = existingCart.findIndex(
+      item => item.productId === product._id && item.size === selectedSize[product._id]
+    );
+
+    if (existingItemIndex !== -1) {
+      // Update quantity of existing item, capped at 10
+      const newQuantity = Math.min(existingCart[existingItemIndex].quantity + quantity[product._id], 10);
+      existingCart[existingItemIndex].quantity = newQuantity;
+    } else {
+      // Add new item
+      existingCart.push(cartItem);
+    }
+    
+    localStorage.setItem("cart", JSON.stringify(existingCart));
     alert("Product added to cart!");
   };
+
+  const handleCartPage = () => {
+    navigate("/cart"); 
+  }
 
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -169,6 +186,13 @@ function ProductListPage() {
                     >
                       Add to Cart
                     </button>
+                    <button
+            className="add-to-cart-button"
+            onClick={handleCartPage}
+            disabled={!selectedSize}
+          >
+            Checkout Cart
+          </button>
                   </>
                 )}
               </div>

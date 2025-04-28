@@ -161,17 +161,22 @@ const PaymentPage = () => {
       const orderPayload = {
         userId,
         customerName: checkoutDetails.customerName || address.contactName,
-        shippingAddress: `${address.addressLine1}, ${address.city}, ${address.state}, ${address.zipCode}`,
+        shippingAddress: {
+          fullName: checkoutDetails.customerName || address.contactName,
+          address: `${address.addressLine1}, ${address.city}, ${address.state}, ${address.zipCode}`,
+          phone: address.phone || "Not provided"
+        },
         items: cart.map(item => ({
           productId: item.productId,
           productName: item.productName || "", // fallback if missing
           size: item.size || "N/A",
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
+          imageUrl: item.imageUrl || "https://via.placeholder.com/150" // Add default image if missing
         })),
         totalAmount: finalTotal,
-        paymentMethod: "Card",
-        status: "Ordered",
+        paymentMethod: "credit_card", // Changed from "Card" to "credit_card"
+        status: "pending", // Changed from "Ordered" to "pending"
         paymentStatus: "completed"
       };
 
