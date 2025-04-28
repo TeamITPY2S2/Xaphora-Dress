@@ -1,6 +1,7 @@
 // src/components/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -23,7 +24,7 @@ const AdminDashboard = () => {
     fetchAgents();
   }, []);
 
-  // Handler to load one agent’s performance
+  // Handler to load one agent's performance
   const handleAgentChange = async (e) => {
     const agentId = e.target.value;
     setSelectedAgent(agentId);
@@ -68,11 +69,55 @@ const AdminDashboard = () => {
     return lines.join('\n');
   }, [performance, selectedAgent]);
 
+  // PDF download handler
+  const handleDownloadReport = () => {
+    if (!performance) return;
+
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.text('Agent Performance Report', 10, 15);
+
+    // Agent Info
+    doc.setFontSize(12);
+    doc.text(`ID: ${performance._id}`, 10, 30);
+    doc.text(`Name: ${performance.name}`, 10, 38);
+    doc.text(`Region: ${performance.assignedRegion}`, 10, 46);
+    doc.text(`Total Orders: ${performance.totalOrders}`, 10, 54);
+    doc.text(`Delivered Orders: ${performance.deliveredOrders}`, 10, 62);
+
+    // Order Details Table
+    if (performance.orderDetails && performance.orderDetails.length > 0) {
+      doc.setFontSize(14);
+      doc.text('Order Details:', 10, 75);
+      doc.setFontSize(12);
+
+      let y = 83;
+      doc.text('Order ID', 10, y);
+      doc.text('Customer Name', 70, y);
+
+      y += 7;
+      performance.orderDetails.forEach((order, idx) => {
+        doc.text(String(order.orderId), 10, y);
+        doc.text(String(order.customerName), 70, y);
+        y += 7;
+        // Add new page if needed
+        if (y > 280) {
+          doc.addPage();
+          y = 15;
+        }
+      });
+    }
+
+    doc.save(`agent_performance_${performance.name || selectedAgent}.pdf`);
+  };
+
   return (
     <div className="admin-dashboard">
       {/* Top Bar */}
       <div className="top">
-        <button className="assign-order-button">
+        <button className="assign-order-button" onClick={() => navigate('/assign-orders')}>
           Assign Order
         </button>
         <div className="top-right-buttons">
@@ -112,6 +157,15 @@ const AdminDashboard = () => {
           value={performanceText}
           placeholder="Agent performance details will be displayed here..."
         />
+        {performance && (
+          <button
+            className="download-report-button"
+            onClick={handleDownloadReport}
+            style={{ marginTop: '10px' }}
+          >
+            Download report
+          </button>
+        )}
       </div>
 
       {/* View Order & Tracking */}

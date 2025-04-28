@@ -19,22 +19,24 @@ import ViewAgents from './pages/ViewAgents';
 import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent';
 import DeliveOrdersTable from './components/DeliveOrdersTable';
 import UserOrderDetails from './pages/UserOrderDetails';
-
 import Home from './pages/home';
-import XaphoraChatbot from './pages/XaphoraChatbot'; 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import BuyerSignup from "./pages/BuyerSignup";
+import XaphoraChatbot from './pages/XaphoraChatbot';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import BuyerSignup from './pages/BuyerSignup';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import AdminsList from "./pages/AdminsList";
-import AddAdmin from "./pages/AddAdmin";
-import UpdateAdmin from "./pages/UpdateAdmin";
+import AdminsList from './pages/AdminsList';
+import AddAdmin from './pages/AddAdmin';
+import UpdateAdmin from './pages/UpdateAdmin';
 import BuyersList from './pages/BuyersList';
 import UpdateBuyer from './pages/UpdateBuyer';
 import AddBuyer from './pages/AddBuyer';
-import SellersList from "./pages/SellersList";
+import SellersList from './pages/SellersList';
 import UpdateSeller from './pages/UpdateSeller';
 import AddSeller from './pages/AddSeller';
+
+// **NEW** Assign Orders page
+import AssignOrderPage from './pages/AssignOrderPage';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {
@@ -59,19 +61,23 @@ function App() {
             <Route path="/products" element={<ProductListPage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
 
-            {/* Seller login & signup */}
+            {/* Seller dashboard & delivery-agent routes */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/addDeliveryAgent" element={<AddDeliveryAgent />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
             <Route path="/Order" element={<DeliveOrdersTable />} />
             <Route path="/agents" element={<ViewAgents />} />
-            {/* Updated route: now matches the URL pattern used in ViewAgents.js */}
             <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
             <Route path="/Order/:orderId" element={<UserOrderDetails />} />
+
+            {/* **NEW** Assign Orders */}
+            <Route path="/assign-orders" element={<AssignOrderPage />} />
+
+            {/* Seller auth */}
             <Route path="/seller/login" element={<SellerLogin />} />
             <Route path="/seller/signup" element={<SellerSignup />} />
-
+            
             {/* Protected seller route */}
             <Route 
               path="/seller/dashboard/*"
@@ -82,12 +88,12 @@ function App() {
               }
             />
 
-            {/* Auth & user routes */}
+            {/* General auth & user routes */}
             <Route path="/api/auth/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/signup" element={<BuyerSignup />} />
 
-            {/* Super admin routes */}
+            {/* Super admin */}
             <Route path="/superadmin" element={<SuperAdminDashboard />} />
             <Route path="/superadmin/admins" element={<AdminsList />} />
             <Route path="/superadmin/add-admin" element={<AddAdmin />} />
@@ -98,14 +104,11 @@ function App() {
             <Route path="/superadmin/sellers" element={<SellersList />} />
             <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
             <Route path="/superadmin/add-seller" element={<AddSeller />} />
-            
 
             {/* Additional pages */}
             <Route path="/home" element={<Home />} />
             <Route path="/chatbot" element={<XaphoraChatbot />} />
             <Route path="/seller-login" element={<SellerLogin />} />
-
-            
           </Routes>
         </div>
       </div>

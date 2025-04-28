@@ -1,4 +1,3 @@
-
 const DeliveryAgent = require('../models/DeliveryAgent');
 const Order = require('../models/Order'); // Using our temporary Order model
 
@@ -105,31 +104,37 @@ exports.assignOrderToDeliveryAgent = async (req, res) => {
 };
 
 // Manually Assign an Order to a Delivery Agent 
+// Manually Assign an Order to a Delivery Agent 
 exports.assignAgentManually = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { agentId } = req.body;
+    let { agentId } = req.body;
 
-    // Retrieve order details
-    const order = await Order.findById(orderId);
-    if (!order) {
+    // If agentId is empty or null, set to null (unassign)
+    if (!agentId) agentId = null;
+
+    // If agentId is not null, check if agent exists
+    if (agentId) {
+      const agent = await DeliveryAgent.findById(agentId);
+      if (!agent) {
+        return res.status(404).json({ message: "Delivery agent not found" });
+      }
+    }
+
+    // Update order using findByIdAndUpdate
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { deliveryAgent: agentId },
+      { new: true, runValidators: false }
+    );
+
+    if (!updatedOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-   
-    const agent = await DeliveryAgent.findById(agentId);
-    if (!agent) {
-      return res.status(404).json({ message: "Delivery agent not found" });
-    }
-
-    
-    order.deliveryAgent = agentId;
-    await order.save();
-
     res.status(200).json({
-      message: "Agent manually assigned successfully",
-      order,
-      agent
+      message: agentId ? "Agent manually assigned successfully" : "Agent unassigned successfully",
+      order: updatedOrder,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

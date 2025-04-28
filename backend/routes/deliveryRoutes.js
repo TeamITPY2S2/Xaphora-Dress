@@ -21,7 +21,7 @@ router.put('/agents/:id', updateDeliveryAgent);
 
 router.delete('/agents/:id', deleteDeliveryAgent); 
 
-router.post('/orders/:orderId/assign', assignOrderToDeliveryAgent);
+//router.post('/orders/:orderId/assign', assignOrderToDeliveryAgent);
 router.put('/orders/:orderId/manual-assign', assignAgentManually);
 
 

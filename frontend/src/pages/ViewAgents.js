@@ -6,6 +6,7 @@ const ViewAgents = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   // Fetch agents 
@@ -53,9 +54,22 @@ const ViewAgents = () => {
   if (loading) return <p>Loading agents...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  // Filter agents by name
+  const filteredAgents = agents.filter(agent =>
+    agent.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="view-agents-container">
       <h2>Delivery Agents</h2>
+      {/* Search input */}
+      <input
+        type="text"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        style={{ marginBottom: "16px", padding: "8px", width: "250px" }}
+      />
       <table className="view-agents-table">
         <thead>
           <tr>
@@ -68,7 +82,7 @@ const ViewAgents = () => {
           </tr>
         </thead>
         <tbody>
-          {agents.map((agent) => (
+          {filteredAgents.map((agent) => (
             <tr key={agent._id}>
               <td>{agent.name}</td>
               <td>{agent.contact}</td>
