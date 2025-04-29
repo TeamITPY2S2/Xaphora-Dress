@@ -178,7 +178,7 @@ const OrdersPage = () => {
     <>
     <Navbar />
     <div className="orders-container">
-      <h1 className="orders-heading">Your Orders</h1>
+      <h1 className="orders-heading">My Orders</h1>
       
       {showConfirmation && (
         <div className="confirmation-modal">

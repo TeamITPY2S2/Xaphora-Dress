@@ -1,9 +1,70 @@
-
 // src/pages/AdminDashboardPage.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminDashboard from '../components/AdminDashboard';
 
 const AdminDashboardPage = () => {
+  // State management
+  const [orders, setOrders] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filteredOrders, setFilteredOrders] = useState([]);
+
+  // Helper functions
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const calculateTotal = (items) => {
+    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        const updatedOrders = orders.map(order => 
+          order._id === orderId ? { ...order, status: newStatus } : order
+        );
+        setOrders(updatedOrders);
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch('/api/orders');
+        const data = await response.json();
+        setOrders(data);
+        setFilteredOrders(data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+    fetchOrders();
+  }, []);
+
+  // Filter orders when filterStatus changes
+  useEffect(() => {
+    const filtered = filterStatus === 'all' 
+      ? orders 
+      : orders.filter(order => order.status === filterStatus);
+    setFilteredOrders(filtered);
+  }, [filterStatus, orders]);
+
   return (
     <div className="admin-dashboard">
       <h1>Order Management Dashboard</h1>
@@ -84,6 +145,6 @@ const AdminDashboardPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default AdminDashboard;
