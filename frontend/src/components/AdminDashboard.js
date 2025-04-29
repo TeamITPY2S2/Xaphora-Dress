@@ -8,7 +8,33 @@ const AdminDashboard = () => {
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
   const [performance, setPerformance] = useState(null);
+  const [activeTab, setActiveTab] = useState('total');
+  const [orders, setOrders] = useState({ total: 0, delivered: 0 });
+  const [recentOrders, setRecentOrders] = useState([]);
   const navigate = useNavigate();
+
+  // Fetch orders statistics and recent orders
+  useEffect(() => {
+    async function fetchOrderStats() {
+      try {
+        const statsRes = await fetch('http://localhost:8070/api/orders/stats');
+        if (!statsRes.ok) throw new Error('Failed to fetch order stats');
+        const stats = await statsRes.json();
+        setOrders({
+          total: stats.totalOrders || 0,
+          delivered: stats.deliveredOrders || 0
+        });
+
+        const recentRes = await fetch('http://localhost:8070/api/orders/recent');
+        if (!recentRes.ok) throw new Error('Failed to fetch recent orders');
+        const recent = await recentRes.json();
+        setRecentOrders(recent);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchOrderStats();
+  }, []);
 
   // Fetch agents list
   useEffect(() => {
@@ -117,28 +143,52 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       {/* Top Bar */}
       <div className="top">
-        <button className="assign-order-button" onClick={() => navigate('/assign-orders')}>
-          Assign Order
-        </button>
         <div className="top-right-buttons">
-          <button
-            className="add-agent-button"
-            onClick={() => navigate('/addDeliveryAgent')}
-          >
-            Add Agent
-          </button>
-          <button
-            className="view-agent-button"
-            onClick={() => navigate('/agents')}
-          >
-            View Agent
-          </button>
+         
+    
+        </div>
+      </div>
+
+      {/* Order Statistics Tabs */}
+      <div className="order-stats-tabs">
+        <div 
+          className={`tab ${activeTab === 'total' ? 'active' : ''}`}
+          onClick={() => setActiveTab('total')}
+        >
+          <h3>Total Orders</h3>
+          <div className="stat-number">{orders.total}</div>
+        </div>
+        <div 
+          className={`tab ${activeTab === 'delivered' ? 'active' : ''}`}
+          onClick={() => setActiveTab('delivered')}
+        >
+          <h3>Delivered Orders</h3>
+          <div className="stat-number">{orders.delivered}</div>
+        </div>
+      </div>
+
+      {/* Recent Orders Section */}
+      <div className="recent-orders">
+        <h3>Recent Orders</h3>
+        <div className="orders-list">
+          {recentOrders.map(order => (
+            <div key={order._id} className="order-item">
+              <div className="order-info">
+                <span className="order-id">Order #{order._id}</span>
+                <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="order-details">
+                <span className="customer-name">{order.customerName}</span>
+                <span className="order-status">{order.status}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Agent Performance Section */}
       <div className="agent-performance">
-        <label>Agent Performance:</label>
+        <h3>Agent Performance</h3>
         <select
           value={selectedAgent}
           onChange={handleAgentChange}
@@ -161,21 +211,11 @@ const AdminDashboard = () => {
           <button
             className="download-report-button"
             onClick={handleDownloadReport}
-            style={{ marginTop: '10px' }}
           >
-            Download report
+            <i className="fas fa-download"></i>
+            <span>Download Report</span>
           </button>
         )}
-      </div>
-
-      {/* View Order & Tracking */}
-      <div className="order-tracking">
-        <button
-          className="order-tracking-button"
-          onClick={() => navigate('/Order')}
-        >
-          View Order & Tracking
-        </button>
       </div>
     </div>
   );

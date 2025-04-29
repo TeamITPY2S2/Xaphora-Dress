@@ -4,6 +4,35 @@ const router = express.Router();
 const Order = require('../models/Order');
 const { updateOrderStatus } = require('../controllers/deliveStatusController');
 
+// Get order statistics
+router.get('/stats', async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const deliveredOrders = await Order.countDocuments({ status: 'Delivered' });
+    
+    res.status(200).json({
+      totalOrders,
+      deliveredOrders
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get recent orders
+router.get('/recent', async (req, res) => {
+  try {
+    const recentOrders = await Order.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select('_id customerName status createdAt');
+    
+    res.status(200).json(recentOrders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Create a new order using the updated Order model fields
 router.post('/', async (req, res) => {
   try {

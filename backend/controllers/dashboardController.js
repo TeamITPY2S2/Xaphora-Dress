@@ -1,6 +1,8 @@
 // controllers/dashboardController.js
 const Admin = require("../models/adminModel");
 const User = require("../models/UserModel");
+const Order = require('../models/Order');
+const DeliveryAgent = require('../models/DeliveryAgent');
 
 const getDashboardData = async (req, res) => {
   try {
@@ -40,4 +42,59 @@ const getDashboardData = async (req, res) => {
   }
 };
 
-module.exports = { getDashboardData };
+// Get delivery dashboard data
+const getDeliveryDashboardData = async (req, res) => {
+    try {
+        // Get total orders
+        const totalOrders = await Order.countDocuments();
+        
+        // Get delivered orders
+        const deliveredOrders = await Order.countDocuments({ status: 'Delivered' });
+        
+        // Get recent orders (last 10)
+        const recentOrders = await Order.find()
+            .sort({ createdAt: -1 })
+            .limit(10)
+            .select('_id customerName status totalAmount createdAt');
+            
+        // Get agent performance
+        const agents = await DeliveryAgent.find();
+        const agentPerformance = await Promise.all(
+            agents.map(async (agent) => {
+                const deliveredCount = await Order.countDocuments({
+                    deliveryAgent: agent._id,
+                    status: 'Delivered'
+                });
+                
+                // Calculate on-time delivery percentage
+                const totalDelivered = await Order.countDocuments({
+                    deliveryAgent: agent._id,
+                    status: 'Delivered'
+                });
+                
+                const onTimeDelivery = totalDelivered ? 
+                    Math.round((deliveredCount / totalDelivered) * 100) : 0;
+                
+                return {
+                    _id: agent._id,
+                    name: agent.firstName + ' ' + agent.lastName,
+                    ordersDelivered: deliveredCount,
+                    onTimeDelivery,
+                    rating: agent.rating || 0
+                };
+            })
+        );
+
+        res.json({
+            totalOrders,
+            deliveredOrders,
+            recentOrders,
+            agentPerformance
+        });
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.status(500).json({ message: 'Error fetching dashboard data' });
+    }
+};
+
+module.exports = { getDashboardData, getDeliveryDashboardData };

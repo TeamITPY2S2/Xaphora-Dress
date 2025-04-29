@@ -103,9 +103,10 @@ const UserOrderDetails = () => {
           <ul>
             {order.items.map((item, idx) => (
               <li key={idx} style={{ marginBottom: '5px' }}>
-                <strong>Product ID:</strong> {item.shippingRegion} |{' '}
+                <strong>Product Name:</strong> {item.productName} |{' '}
                 <strong>Quantity:</strong> {item.quantity} |{' '}
-                <strong>Price:</strong> ${item.price}
+                <strong>Price:</strong> ${item.price} |{' '}
+                <strong>Subtotal:</strong> ${(item.quantity * item.price).toFixed(2)}
               </li>
             ))}
           </ul>
