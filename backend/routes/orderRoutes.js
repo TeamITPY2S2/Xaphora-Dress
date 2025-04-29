@@ -35,7 +35,7 @@ router.post('/', auth, async (req, res) => {
       items,
       totalAmount,
       paymentMethod,
-      status: status || 'processing',
+      status: status || 'ordered',
       paymentStatus: paymentStatus || 'completed',
       loyaltyPointsUsed: loyaltyPointsUsed || 0,
       loyaltyPointsEarned: loyaltyPointsEarned || 0
@@ -85,17 +85,38 @@ router.get('/:orderId', auth, async (req, res) => {
   }
 });
 
-// Update order status (admin and order-management only)
-router.put('/:id/status', orderManagementAuth, async (req, res) => {
+// Update order details (admin and order-management only)
+router.put('/:id', orderManagementAuth, async (req, res) => {
   try {
-    const { status } = req.body;
+    const {
+      customerName,
+      shippingAddress,
+      items,
+      totalAmount,
+      paymentMethod,
+      status,
+      paymentStatus,
+      loyaltyPointsUsed,
+      loyaltyPointsEarned
+    } = req.body;
+
     const order = await Order.findById(req.params.id);
     
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    order.status = status;
+    // Update only the fields that are provided
+    if (customerName) order.customerName = customerName;
+    if (shippingAddress) order.shippingAddress = shippingAddress;
+    if (items) order.items = items;
+    if (totalAmount) order.totalAmount = totalAmount;
+    if (paymentMethod) order.paymentMethod = paymentMethod;
+    if (status) order.status = status;
+    if (paymentStatus) order.paymentStatus = paymentStatus;
+    if (loyaltyPointsUsed !== undefined) order.loyaltyPointsUsed = loyaltyPointsUsed;
+    if (loyaltyPointsEarned !== undefined) order.loyaltyPointsEarned = loyaltyPointsEarned;
+
     await order.save();
     
     res.json(order);
@@ -126,6 +147,19 @@ router.put('/:orderId/confirm-delivery', auth, async (req, res) => {
     await order.save();
     
     res.json({ message: 'Order confirmed as delivered', order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete an order (admin and order-management only)
+router.delete('/:id', orderManagementAuth, async (req, res) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.status(200).json({ message: 'Order deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

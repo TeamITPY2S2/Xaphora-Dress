@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
+import AdminSidebar from "../components/AdminSidebar.jsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "./AdminOrdersDashboard.css";
@@ -13,6 +13,18 @@ const AdminOrdersDashboard = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingOrder, setEditingOrder] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    customerName: "",
+    shippingAddress: {
+      fullName: "",
+      address: "",
+      phone: ""
+    },
+    status: "",
+    paymentStatus: ""
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -139,6 +151,108 @@ const AdminOrdersDashboard = () => {
     );
   };
 
+  const handleEditClick = (order) => {
+    setEditingOrder(order);
+    setEditFormData({
+      customerName: order.customerName,
+      shippingAddress: {
+        fullName: order.shippingAddress.fullName,
+        address: order.shippingAddress.address,
+        phone: order.shippingAddress.phone
+      },
+      status: order.status,
+      paymentStatus: order.paymentStatus
+    });
+    setShowEditModal(true);
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith("shippingAddress.")) {
+      const field = name.split(".")[1];
+      setEditFormData(prev => ({
+        ...prev,
+        shippingAddress: {
+          ...prev.shippingAddress,
+          [field]: value
+        }
+      }));
+    } else {
+      setEditFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleUpdateOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      await axios.put(
+        `http://localhost:8070/api/orders/${editingOrder._id}`,
+        editFormData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update the order in the state
+      setOrders(orders.map(order => 
+        order._id === editingOrder._id 
+          ? { ...order, ...editFormData }
+          : order
+      ));
+      
+      // Close the modal and reset form
+      setShowEditModal(false);
+      setEditingOrder(null);
+      setEditFormData({
+        customerName: "",
+        shippingAddress: {
+          fullName: "",
+          address: "",
+          phone: ""
+        },
+        status: "",
+        paymentStatus: ""
+      });
+    } catch (err) {
+      console.error("Update error:", err);
+      setError("Failed to update order");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setEditingOrder(null);
+    setEditFormData({
+      customerName: "",
+      shippingAddress: {
+        fullName: "",
+        address: "",
+        phone: ""
+      },
+      status: "",
+      paymentStatus: ""
+    });
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:8070/api/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Remove the deleted order from the state
+      setOrders(orders.filter(order => order._id !== orderId));
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError("Failed to delete order");
+    }
+  };
+
   if (loading) return <div className="loading">Loading orders...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -194,6 +308,7 @@ const AdminOrdersDashboard = () => {
                   <th>Payment</th>
                   <th>Status</th>
                   <th>Ordered On</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -203,24 +318,122 @@ const AdminOrdersDashboard = () => {
                     <td>{renderCustomerName(order)}</td>
                     <td>{renderShippingAddress(order.shippingAddress)}</td>
                     <td>{renderPhone(order.shippingAddress)}</td>
-                    <td>
-                      Rs {order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}
-                    </td>
+                    <td>Rs {order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</td>
                     <td>
                       <span className={`status-badge ${order.paymentStatus === 'completed' ? 'payment-completed' : 'payment-pending'}`}>
                         {order.paymentStatus}
                       </span>
                     </td>
-                    <td>
-                      <span className={`status-badge ${order.status}`}>
-                        {order.status}
-                      </span>
-                    </td>
+                    <td>{order.status}</td>
                     <td>{order.createdAt ? formatDate(order.createdAt) : 'N/A'}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          onClick={() => handleEditClick(order)}
+                          className="edit-btn"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteOrder(order._id)}
+                          className="delete-btn"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Edit Order Details</h2>
+              <div className="modal-form">
+                <div className="form-group">
+                  <label>Customer Name</label>
+                  <input
+                    type="text"
+                    name="customerName"
+                    value={editFormData.customerName}
+                    onChange={handleEditFormChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Full Name</label>
+                  <input
+                    type="text"
+                    name="shippingAddress.fullName"
+                    value={editFormData.shippingAddress.fullName}
+                    onChange={handleEditFormChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Address</label>
+                  <input
+                    type="text"
+                    name="shippingAddress.address"
+                    value={editFormData.shippingAddress.address}
+                    onChange={handleEditFormChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input
+                    type="text"
+                    name="shippingAddress.phone"
+                    value={editFormData.shippingAddress.phone}
+                    onChange={handleEditFormChange}
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Payment Status</label>
+                  <select
+                    name="paymentStatus"
+                    value={editFormData.paymentStatus}
+                    onChange={handleEditFormChange}
+                    className="form-select"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="failed">Failed</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Order Status</label>
+                  <select
+                    name="status"
+                    value={editFormData.status}
+                    onChange={handleEditFormChange}
+                    className="form-select"
+                  >
+                    <option value="ordered">Ordered</option>
+                    <option value="packed">Packed</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div className="modal-buttons">
+                  <button onClick={handleUpdateOrder} className="save-btn">
+                    Save Changes
+                  </button>
+                  <button onClick={handleCloseModal} className="cancel-btn">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
