@@ -69,7 +69,7 @@ const PaymentPage = () => {
   const calculateTotal = () => {
     if (!checkoutDetails) return 0;
     const subtotal = checkoutDetails.totalAmount;
-    const shippingFee = subtotal >= 5000 ? 0 : 450;
+    const shippingFee = subtotal >= 5000 ? 0 : 450; // Single delivery charge
     const pointsValue = usePoints ? pointsToUse * 0.01 : 0;
     return subtotal + shippingFee - pointsValue;
   };
@@ -77,7 +77,7 @@ const PaymentPage = () => {
   const calculateLoyaltyPoints = () => {
     if (!checkoutDetails) return 0;
     const subtotal = checkoutDetails.totalAmount;
-    return Math.floor(subtotal * 0.01); // 1% of subtotal only
+    return Math.floor(subtotal * 0.1); // 1% of subtotal only
   };
 
   const validateCard = () => {
@@ -102,40 +102,66 @@ const PaymentPage = () => {
     if (!validateCard()) return;
 
     try {
-      // First save the card if requested and not already saved
+      // Get the auth token
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Please login to continue");
+      }
+
+      // Save card if requested
       if (saveCard) {
         try {
-          // Check if card already exists
-          const existingCards = await axios.get(`http://localhost:8070/api/cardinfo/user/${userId}`);
-          const cardExists = existingCards.data.some(card => 
-            card.cardNumber === cardNumber && 
-            card.expiryDate === expiryDate
+          const { data: existingCards } = await axios.get(
+            `http://localhost:8070/api/cardinfo/user/${userId}`
+          );
+          const cardExists = existingCards.some(
+            card =>
+              card.cardNumber === cardNumber &&
+              card.expiryDate === expiryDate
           );
 
           if (!cardExists) {
-            await axios.post("http://localhost:8070/api/cardinfo", {
-              userId,
-              cardNumber,
-              cardholderName,
-              expiryDate,
-              cvv,
-              saveCardDetails: true
-            });
+            await axios.post(
+              "http://localhost:8070/api/cardinfo",
+              {
+                userId,
+                cardNumber,
+                cardholderName,
+                expiryDate,
+                cvv,
+                saveCardDetails: true,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
           }
-        } catch (error) {
-          console.error("Error saving card:", error);
-          // Continue with payment even if card saving fails
+        } catch (err) {
+          console.error("Error saving card:", err);
+          // proceed even if saving fails
         }
       }
 
-      // Format shipping address according to schema
+      // Format shipping address
+      const { shippingAddress } = checkoutDetails;
       const formattedShippingAddress = {
-        fullName: checkoutDetails.shippingAddress.contactName,
-        address: `${checkoutDetails.shippingAddress.addressLine1}${checkoutDetails.shippingAddress.addressLine2 ? ', ' + checkoutDetails.shippingAddress.addressLine2 : ''}, ${checkoutDetails.shippingAddress.city}, ${checkoutDetails.shippingAddress.state} ${checkoutDetails.shippingAddress.zipCode}`,
-        phone: checkoutDetails.shippingAddress.phoneNumber
+        fullName: shippingAddress.contactName,
+        address: `${shippingAddress.addressLine1}${
+          shippingAddress.addressLine2
+            ? ", " + shippingAddress.addressLine2
+            : ""
+        }, ${shippingAddress.city}, ${shippingAddress.state} ${
+          shippingAddress.zipCode
+        }`,
+        phone: shippingAddress.phoneNumber,
       };
 
-      // Create the order
+      // Calculate fees & totals
+      const subtotal = checkoutDetails.totalAmount;
+      const shippingFee = subtotal >= 5000 ? 0 : 450;
       const orderData = {
         userId,
         customerName: checkoutDetails.customerName,
@@ -146,41 +172,84 @@ const PaymentPage = () => {
           size: item.size,
           quantity: item.quantity,
           price: item.price,
-          imageUrl: item.imageUrl || "https://via.placeholder.com/150" // Add default image if not provided
+          imageUrl: item.imageUrl || "https://via.placeholder.com/150",
         })),
+        subtotal,
+        shippingFee,
         totalAmount: calculateTotal(),
-        paymentMethod: "credit_card", // Changed to match enum value
-        paymentStatus: "pending",
+        paymentMethod: "credit_card",
+        paymentStatus: "completed",
+        status: "processing",
         loyaltyPoints: {
           used: usePoints ? pointsToUse : 0,
-          earned: calculateLoyaltyPoints() // 1% of subtotal only
-        }
+          earned: calculateLoyaltyPoints(),
+        },
       };
 
-      // Create the order
-      const orderRes = await axios.post("http://localhost:8070/api/orders", orderData);
+      console.log("Sending order data:", orderData);
+      const orderRes = await axios.post(
+        "http://localhost:8070/api/orders",
+        orderData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      // Update user's loyalty points
+      // Update loyalty points if used
       if (usePoints) {
-        await axios.post("http://localhost:8070/api/users/update-points", {
-          userId,
-          pointsUsed: pointsToUse,
-          pointsEarned: calculateLoyaltyPoints()
-        });
+        await axios.post(
+          "http://localhost:8070/api/users/update-points",
+          {
+            userId,
+            pointsUsed: pointsToUse,
+            pointsEarned: calculateLoyaltyPoints(),
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       }
 
-      // Clear cart and checkout details
+      // Cleanup
       localStorage.removeItem(`cart_${userId}`);
       localStorage.removeItem("checkoutDetails");
+
+      // Prepare confirmation data
+      const orderDetails = {
+        orderId: orderRes.data._id,
+        customerName: orderRes.data.customerName,
+        shippingAddress: orderRes.data.shippingAddress,
+        items: orderRes.data.items,
+        subtotal: orderRes.data.subtotal,
+        shippingFee: orderRes.data.shippingFee,
+        totalAmount: orderRes.data.totalAmount,
+        paymentMethod: orderRes.data.paymentMethod,
+        paymentStatus: orderRes.data.paymentStatus,
+        status: orderRes.data.status,
+        loyaltyPoints: orderRes.data.loyaltyPoints,
+        createdAt: orderRes.data.createdAt,
+      };
+
+      // Store order details in localStorage
+      localStorage.setItem("latestOrder", JSON.stringify(orderDetails));
+      console.log("Stored order details:", orderDetails);
+
+      // Show success message and navigate
+      alert("Payment successful! Your order has been placed.");
       
-      // Store order details for confirmation page
-      localStorage.setItem("latestOrder", JSON.stringify(orderRes.data));
-      
-      navigate("/order-confirmation");
+      // Navigate to order confirmation with state
+      navigate("/order-confirmation", { 
+        state: { orderDetails },
+        replace: true 
+      });
+
+      // Fallback navigation if React Router navigation fails
+      setTimeout(() => {
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/order-confirmation") {
+          window.location.href = "/order-confirmation";
+        }
+      }, 1000);
     } catch (error) {
       console.error("Payment failed:", error);
-      const errorMessage = error.response?.data?.error || "Payment failed. Please try again.";
-      alert(errorMessage);
+      const msg = error.response?.data?.error || error.message || "Payment failed.";
+      alert(msg);
     }
   };
 
