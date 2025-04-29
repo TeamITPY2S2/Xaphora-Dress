@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import './AdminOrdersDashboard.css';
 
 const AdminOrdersDashboard = () => {
@@ -139,6 +141,62 @@ const AdminOrdersDashboard = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const downloadPDF = (ordersToDownload, title) => {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text(`Xaphora Dress - ${title}`, 14, 15);
+    
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+    
+    // Prepare data for the table
+    const tableData = ordersToDownload.map(order => [
+      order._id,
+      renderCustomerName(order),
+      renderShippingAddress(order.shippingAddress),
+      renderPhone(order.shippingAddress),
+      `Rs ${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}`,
+      order.paymentStatus || 'pending',
+      order.status || 'pending',
+      formatDate(order.createdAt)
+    ]);
+
+    // Add table using autoTable
+    autoTable(doc, {
+      startY: 30,
+      head: [['Order ID', 'Customer', 'Address', 'Phone', 'Total', 'Payment', 'Status', 'Order Date']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [52, 152, 219] },
+      styles: { fontSize: 8 },
+      columnStyles: {
+        0: { cellWidth: 30 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 20 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 20 },
+        7: { cellWidth: 30 }
+      }
+    });
+
+    // Save the PDF
+    doc.save(`Xaphora_Orders_${title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const handleDownload = () => {
+    if (filterStatus === "all") {
+      downloadPDF(filteredOrders, "All Orders");
+    } else {
+      const statusOrders = orders.filter(order => order.status === filterStatus);
+      downloadPDF(statusOrders, `${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Orders`);
+    }
+  };
+
   if (loading) return <div className="loading">Loading orders...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -170,6 +228,11 @@ const AdminOrdersDashboard = () => {
               <option value="shipped">Shipped</option>
               <option value="delivered">Delivered</option>
             </select>
+          </div>
+          <div className="download-controls">
+            <button onClick={handleDownload} className="download-btn">
+              Download {filterStatus === "all" ? "All Orders" : `${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Orders`}
+            </button>
           </div>
         </div>
 
