@@ -7,6 +7,17 @@ const User = require("../models/UserModel");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
+// Add createTransporter function
+function createTransporter() {
+  return nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+}
+
 /**
  * Send a password-reset email with a one-hour token.
  */
