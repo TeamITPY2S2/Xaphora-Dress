@@ -45,9 +45,9 @@ function Login() {
         } else if (data.userType === "order-management") {
           console.log(" order Done")
           navigate("/admin-orders");
-        } else if (data.userType === "admin") {
+        } else if (data.userType === "delivery-management") {
 
-          navigate("/dashboard");
+          navigate("/admin-dashboard");
         } else if (data.userType === "seller") {
           navigate("/seller-dashboard");
         } else {
