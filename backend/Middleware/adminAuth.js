@@ -1,30 +1,45 @@
+// middleware/adminAuth.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel');
 
+/**
+ * Grants access to users with role 'admin' or 'order-management'.
+ */
 const adminAuth = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
+    // Extract token from Authorization header
+    const header = req.header('Authorization');
+    if (!header) {
       return res.status(401).json({ message: 'No authentication token, access denied' });
     }
+    const token = header.replace('Bearer ', '');
 
+    // Verify JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId);
 
+    // Handle payload key: 'id' vs 'userId'
+    const userId = decoded.userId || decoded.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Invalid token payload' });
+    }
+
+    // Find user by ID
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    if (user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    // Only allow 'admin' or 'order-management' roles
+    if (user.role !== 'admin' && user.role !== 'order-management') {
+      return res.status(403).json({ message: 'Access denied. Admin or order-management privileges required.' });
     }
 
+    // Attach user and proceed
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Token is invalid or expired' });
+    return res.status(401).json({ message: 'Token is invalid or expired' });
   }
 };
 
-module.exports = adminAuth; 
+module.exports = adminAuth;

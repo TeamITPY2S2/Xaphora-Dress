@@ -15,14 +15,23 @@ const AdminOrdersDashboard = () => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       const userType = localStorage.getItem("userType");
+      const userId = localStorage.getItem("userId");
 
-      if (!token || userType !== "order-management") {
+      if (!token || !userType || !userId) {
         localStorage.clear();
-        navigate("/api/auth/login");
+        navigate("/login");
+        return;
+      }
+
+      // Check if user has correct permissions
+      if (userType !== "admin" && userType !== "order-management" && userType !== "super-admin") {
+        localStorage.clear();
+        navigate("/login");
         return;
       }
 
       try {
+        // Fetch orders
         const res = await axios.get("http://localhost:8070/api/orders", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,11 +39,18 @@ const AdminOrdersDashboard = () => {
           },
         });
         setOrders(res.data);
-      }catch (err) {
+      } catch (err) {
         console.error("Full fetch error:", err.response ? err.response.data : err.message);
-        setError("Failed to fetch orders.");
-      
-      
+        if (err.response?.status === 401) {
+          localStorage.clear();
+          navigate("/login");
+          return;
+        }
+        if (err.response?.status === 403) {
+          setError("Access denied. You don't have permission to view orders.");
+          return;
+        }
+        setError("Failed to fetch orders. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -68,6 +84,23 @@ const AdminOrdersDashboard = () => {
     return paymentStatus === "completed" ? "payment-completed" : "payment-pending";
   };
 
+  const renderShippingAddress = (address) => {
+    if (!address) return 'N/A';
+    if (typeof address === 'string') return address;
+    return address.address || 'N/A';
+  };
+
+  const renderPhone = (address) => {
+    if (!address || typeof address !== 'object') return 'N/A';
+    return address.phone || 'N/A';
+  };
+
+  const renderCustomerName = (order) => {
+    if (order.customerName) return order.customerName;
+    if (order.shippingAddress?.fullName) return order.shippingAddress.fullName;
+    return 'N/A';
+  };
+
   if (loading) return <div className="loading">Loading orders...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -87,6 +120,7 @@ const AdminOrdersDashboard = () => {
                   <th>Order ID</th>
                   <th>Customer</th>
                   <th>Address</th>
+                  <th>Phone</th>
                   <th>Total (LKR)</th>
                   <th>Payment</th>
                   <th>Status</th>
@@ -97,20 +131,21 @@ const AdminOrdersDashboard = () => {
                 {orders.map((order) => (
                   <tr key={order._id}>
                     <td>{order._id}</td>
-                    <td>{order.customerName}</td>
-                    <td>{order.shippingAddress}</td>
-                    <td>Rs {order.totalAmount.toFixed(2)}</td>
+                    <td>{renderCustomerName(order)}</td>
+                    <td>{renderShippingAddress(order.shippingAddress)}</td>
+                    <td>{renderPhone(order.shippingAddress)}</td>
+                    <td>Rs {order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</td>
                     <td>
-                      <span className={`status-badge ${getPaymentStatusClass(order.paymentStatus)}`}>
-                        {order.paymentStatus}
+                      <span className={`status-badge ${getPaymentStatusClass(order.paymentStatus || 'pending')}`}>
+                        {order.paymentStatus || 'pending'}
                       </span>
                     </td>
                     <td>
-                      <span className={`status-badge ${getStatusColorClass(order.status)}`}>
-                        {order.status}
+                      <span className={`status-badge ${getStatusColorClass(order.status || 'pending')}`}>
+                        {order.status || 'pending'}
                       </span>
                     </td>
-                    <td>{formatDate(order.createdAt)}</td>
+                    <td>{order.createdAt ? formatDate(order.createdAt) : 'N/A'}</td>
                   </tr>
                 ))}
               </tbody>

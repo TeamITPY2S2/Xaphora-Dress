@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/OrderModel');
 const auth = require('../middleware/auth');
-const adminAuth = require('../middleware/adminAuth');
+const orderManagementAuth = require('../middleware/orderManagementAuth');
 const orderController = require('../controllers/OrderController');
 
 // Create a new order
@@ -49,8 +49,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Get all orders (admin only)
-router.get('/', adminAuth, async (req, res) => {
+// Get all orders (admin and order-management only)
+router.get('/', orderManagementAuth, async (req, res) => {
   try {
     const orders = await Order.find()
       .populate('userId', 'email')
@@ -85,8 +85,8 @@ router.get('/:orderId', auth, async (req, res) => {
   }
 });
 
-// Update order status (admin only)
-router.put('/:id/status', adminAuth, async (req, res) => {
+// Update order status (admin and order-management only)
+router.put('/:id/status', orderManagementAuth, async (req, res) => {
   try {
     const { status } = req.body;
     const order = await Order.findById(req.params.id);
