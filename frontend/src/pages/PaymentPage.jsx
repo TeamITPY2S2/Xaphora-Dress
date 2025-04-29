@@ -29,7 +29,7 @@ const PaymentPage = () => {
       try {
         setLoading(true);
         if (!userId) {
-          navigate("/login");
+          navigate("/api/auth/login");
           return;
         }
 
@@ -76,7 +76,7 @@ const PaymentPage = () => {
   const calculateLoyaltyPoints = () => {
     if (!checkoutDetails) return 0;
     const subtotal = checkoutDetails.totalAmount;
-    return Math.floor(subtotal * 0.1); // 1% of subtotal only
+    return Math.floor(subtotal * 0.01); // 1% of subtotal
   };
 
   const validateCard = () => {
