@@ -58,12 +58,12 @@
 .search-bar {
   margin-bottom: 15px;
   text-align: right;
+}
 
 /* Ensure the search input has a consistent width */
 .search-input {
   max-width: 400px;
   margin: 0 auto;
-
 }
 
 /* Card image styling */
@@ -78,6 +78,7 @@
   display: flex;
   gap: 10px;
   justify-content: center;
+}
 
 /* Hover effect for cards */
 .card:hover {
@@ -90,7 +91,7 @@
   width: 48%;
 }
 
-/* Center “No products found.” message */
+/* Center "No products found." message */
 .text-muted {
   margin-top: 40px;
   font-size: 1.1rem;

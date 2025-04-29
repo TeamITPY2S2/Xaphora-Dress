@@ -1,6 +1,6 @@
 // controllers/deliveStatusController.js
 
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 const UserModel = require('../models/UserModel');
 const { sendOrderEmail } = require('../utils/mailer');
 

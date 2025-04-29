@@ -1,6 +1,6 @@
 const Admin = require("../models/adminModel");
 
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 const DeliveryAgent = require('../models/DeliveryAgent');
 const Seller = require("../models/Seller");
 const User = require("../models/UserModel"); // Includes buyers

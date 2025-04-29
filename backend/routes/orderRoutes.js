@@ -1,8 +1,11 @@
 // routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const Order = require('../models/OrderModel');
 const { updateOrderStatus } = require('../controllers/deliveStatusController');
+const auth = require('../middleware/auth');
+const orderManagementAuth = require('../middleware/orderManagementAuth');
+const orderController = require('../controllers/OrderController');
 
 // Create a new order
 router.post('/', auth, async (req, res) => {
@@ -51,6 +54,16 @@ router.post('/', auth, async (req, res) => {
 router.get('/', orderManagementAuth, async (req, res) => {
   try {
     const orders = await Order.find();
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get orders for a specific user
+router.get('/user/:userId', auth, async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.params.userId });
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });

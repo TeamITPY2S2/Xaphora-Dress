@@ -32,7 +32,7 @@ exports.payWithMock = async (req, res) => {
       totalAmount: orderDetails.totalAmount,
       paymentMethod: "loyalty",
       paymentStatus: "completed",
-      status: "processing"
+      status: "ordered"
     });
 
     const savedOrder = await newOrder.save();
@@ -84,7 +84,7 @@ exports.payWithLoyalty = async (req, res) => {
     // Update order payment
     order.paymentMethod = "loyalty";
     order.paymentStatus = "completed";
-    order.status = "processing";
+    order.status = "ordered";
     await order.save();
 
     return res.status(200).json({
@@ -137,7 +137,7 @@ exports.payWithCard = async (req, res) => {
       totalAmount,
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      status: "processing",
+      status: "ordered",
       loyaltyPointsUsed,
       loyaltyPointsEarned
     });

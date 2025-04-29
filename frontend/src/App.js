@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import SellerLogin from './components/SellerLogin';
-import SellerSignup from './components/SellerSignup';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -10,6 +8,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import SellerLogin from './components/SellerLogin';
 import SellerSignup from './components/SellerSignup';
 import AdminSidebar from './components/AdminSidebar';
+import DeliveOrdersTable from './components/DeliveOrdersTable';
+import Layout from './components/Layout';
 
 // Pages
 import Home from './pages/home';
@@ -46,28 +46,11 @@ import AddDeliveryAgent from './pages/addDeliveryAgent';
 import AdminDashboard from './pages/AdminDashboard';
 import ViewDeliveOrderDetails from './pages/ViewDeliveOrderDetails';
 import UserOrderDetails from './pages/UserOrderDetails';
-import DeliveOrdersTable from './components/DeliveOrdersTable';
-import UserOrderDetails from './pages/UserOrderDetails';
-
-import Home from './pages/home';
-import XaphoraChatbot from './pages/XaphoraChatbot'; 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import BuyerSignup from "./pages/BuyerSignup";
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import AdminsList from "./pages/AdminsList";
-import AddAdmin from "./pages/AddAdmin";
-import UpdateAdmin from "./pages/UpdateAdmin";
-import BuyersList from './pages/BuyersList';
-import UpdateBuyer from './pages/UpdateBuyer';
-import AddBuyer from './pages/AddBuyer';
-import SellersList from "./pages/SellersList";
-import UpdateSeller from './pages/UpdateSeller';
-import AddSeller from './pages/AddSeller';
-import UpdateBuyerProfile from './pages/UpdateBuyerProfile'; // Added
-import ResetPassword from './pages/ResetPassword';
-import ForgotPassword from './pages/ForgotPassword';
-import ChangePassword from "./pages/ChangePassword";
+import ViewAgents from './pages/ViewAgents';
+import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent';
+import AssignOrderPage from './pages/AssignOrderPage';
+import AdminOrdersDashboard from './pages/AdminOrdersDashboard';
+import AdminViewOrderDetails from './pages/AdminViewOrderDetails';
 
 // Example protected route
 const ProtectedRoute = ({ children }) => {

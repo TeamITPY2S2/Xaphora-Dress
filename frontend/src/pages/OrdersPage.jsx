@@ -10,6 +10,8 @@ const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newOrder, setNewOrder] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmedOrderId, setConfirmedOrderId] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,6 +62,12 @@ const OrdersPage = () => {
   };
 
   const handleConfirmDelivery = async (orderId) => {
+    const confirmed = window.confirm("Are you sure you want to confirm delivery for this order?");
+    
+    if (!confirmed) {
+      return; // Do nothing if user clicks No
+    }
+
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
@@ -73,13 +81,20 @@ const OrdersPage = () => {
       );
 
       if (response.data) {
-        // Update the local orders state to remove the confirmed order
+        setConfirmedOrderId(orderId);
+        setShowConfirmation(true);
+        // Remove the confirmed order from the list
         setOrders(orders.filter(order => order._id !== orderId));
       }
     } catch (error) {
       console.error("Error confirming delivery:", error);
       setError("Failed to confirm delivery. Please try again later.");
     }
+  };
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+    setConfirmedOrderId(null);
   };
 
   if (loading) {
@@ -101,8 +116,6 @@ const OrdersPage = () => {
   }
 
   const renderOrderCard = (order) => {
-    const isDelivered = order.status === 'delivered';
-    
     return (
       <div key={order._id} className="order-card">
         <div className="order-header">
@@ -135,16 +148,14 @@ const OrdersPage = () => {
           ))}
         </div>
 
-        {!isDelivered && (
-          <div className="order-actions">
-            <button 
-              className="confirm-delivery-btn"
-              onClick={() => handleConfirmDelivery(order._id)}
-            >
-              Confirm Delivery
-            </button>
-          </div>
-        )}
+        <div className="order-actions">
+          <button 
+            className="confirm-delivery-btn"
+            onClick={() => handleConfirmDelivery(order._id)}
+          >
+            Confirm Delivery
+          </button>
+        </div>
       </div>
     );
   };
@@ -168,6 +179,18 @@ const OrdersPage = () => {
     <Navbar />
     <div className="orders-container">
       <h1 className="orders-heading">Your Orders</h1>
+      
+      {showConfirmation && (
+        <div className="confirmation-modal">
+          <div className="confirmation-content">
+            <h2>Order Confirmed!</h2>
+            <p>Order #{confirmedOrderId} has been marked as delivered.</p>
+            <button className="close-btn" onClick={handleCloseConfirmation}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       
       {newOrder && (
         <div className="new-order-section">

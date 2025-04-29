@@ -169,7 +169,7 @@ const PaymentPage = () => {
         })),
         totalAmount: calculateTotal(),
         paymentMethod: "credit_card",
-        status: "processing",
+        status: "ordered",
         paymentStatus: "completed",
         loyaltyPointsUsed: usePoints ? pointsToUse : 0,
         loyaltyPointsEarned: calculateLoyaltyPoints(),
