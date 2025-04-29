@@ -43,7 +43,7 @@ const sendResetEmail = async (email, token) => {
         </div>
 
         <p>If you didn't request a password reset, you can safely ignore this email.</p>
-        <p style="color: gray; font-size: 12px;">This link will expire in 1 hour.</p>
+        <p style="color: gray; font-size: 12px;">This link will expire in 5 minute.</p>
 
         <hr style="margin: 20px 0;">
         <p style="text-align: center; font-size: 12px; color: #999;">Xaphora Dress Team</p>
@@ -116,7 +116,7 @@ const forgotPassword = async (req, res) => {
     // Generate and save reset token
     const token = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken   = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    user.resetPasswordExpires = Date.now() + 300000; // 5 minutes
     await user.save();
 
     // Send email
