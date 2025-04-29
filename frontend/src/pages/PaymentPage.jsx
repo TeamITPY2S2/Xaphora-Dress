@@ -145,27 +145,23 @@ const PaymentPage = () => {
         }
       }
 
-      // Format shipping address
-      const { shippingAddress } = checkoutDetails;
-      const formattedShippingAddress = {
-        fullName: shippingAddress.contactName,
-        address: `${shippingAddress.addressLine1}${
-          shippingAddress.addressLine2
-            ? ", " + shippingAddress.addressLine2
-            : ""
-        }, ${shippingAddress.city}, ${shippingAddress.state} ${
-          shippingAddress.zipCode
-        }`,
-        phone: shippingAddress.phoneNumber,
-      };
-
       // Calculate fees & totals
       const subtotal = checkoutDetails.totalAmount;
       const shippingFee = subtotal >= 5000 ? 0 : 450;
       const orderData = {
         userId,
         customerName: checkoutDetails.customerName,
-        shippingAddress: formattedShippingAddress,
+        shippingAddress: {
+          fullName: checkoutDetails.shippingAddress.contactName,
+          address: `${checkoutDetails.shippingAddress.addressLine1}${
+            checkoutDetails.shippingAddress.addressLine2
+              ? ", " + checkoutDetails.shippingAddress.addressLine2
+              : ""
+          }, ${checkoutDetails.shippingAddress.city}, ${checkoutDetails.shippingAddress.state} ${
+            checkoutDetails.shippingAddress.zipCode
+          }`,
+          phone: checkoutDetails.shippingAddress.phoneNumber,
+        },
         items: checkoutDetails.cartItems.map(item => ({
           productId: item.productId,
           productName: item.productName,
@@ -174,16 +170,12 @@ const PaymentPage = () => {
           price: item.price,
           imageUrl: item.imageUrl || "https://via.placeholder.com/150",
         })),
-        subtotal,
-        shippingFee,
         totalAmount: calculateTotal(),
         paymentMethod: "credit_card",
-        paymentStatus: "completed",
         status: "processing",
-        loyaltyPoints: {
-          used: usePoints ? pointsToUse : 0,
-          earned: calculateLoyaltyPoints(),
-        },
+        paymentStatus: "completed",
+        loyaltyPointsUsed: usePoints ? pointsToUse : 0,
+        loyaltyPointsEarned: calculateLoyaltyPoints(),
       };
 
       console.log("Sending order data:", orderData);
@@ -216,18 +208,28 @@ const PaymentPage = () => {
         customerName: orderRes.data.customerName,
         shippingAddress: orderRes.data.shippingAddress,
         items: orderRes.data.items,
-        subtotal: orderRes.data.subtotal,
-        shippingFee: orderRes.data.shippingFee,
+        subtotal: orderRes.data.totalAmount - (orderRes.data.shippingFee || 0),
+        shippingFee: orderRes.data.shippingFee || 0,
         totalAmount: orderRes.data.totalAmount,
         paymentMethod: orderRes.data.paymentMethod,
         paymentStatus: orderRes.data.paymentStatus,
         status: orderRes.data.status,
-        loyaltyPoints: orderRes.data.loyaltyPoints,
+        loyaltyPoints: {
+          used: orderRes.data.loyaltyPointsUsed || 0,
+          earned: orderRes.data.loyaltyPointsEarned || 0,
+        },
         createdAt: orderRes.data.createdAt,
       };
 
+      console.log("Order details to be saved:", orderDetails);
+
       // Store order details in localStorage with a specific key
-      localStorage.setItem("orderSummary", JSON.stringify(orderDetails));
+      try {
+        localStorage.setItem("orderSummary", JSON.stringify(orderDetails));
+        console.log("Order details saved to localStorage");
+      } catch (error) {
+        console.error("Error saving order details to localStorage:", error);
+      }
 
       // Navigate to order confirmation with order details
       navigate("/order-confirmation", { 

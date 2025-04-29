@@ -5,15 +5,13 @@ const User = require("../models/UserModel");
 
 // Simulate payment with mock payment (basic)
 exports.payWithMock = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, cartItems, orderDetails } = req.body;
 
   try {
-    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-    if (cartItems.length === 0) {
+    if (!cartItems || cartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    const orderDetails = JSON.parse(localStorage.getItem("latestOrder"));
     if (!orderDetails) {
       return res.status(400).json({ error: "No order details found" });
     }
@@ -28,11 +26,13 @@ exports.payWithMock = async (req, res) => {
         productName: item.productName,
         size: item.size,
         quantity: item.quantity,
-        price: item.price
+        price: item.price,
+        imageUrl: item.imageUrl || "https://via.placeholder.com/150"
       })),
       totalAmount: orderDetails.totalAmount,
       paymentMethod: "loyalty",
-      paymentStatus: "completed"
+      paymentStatus: "completed",
+      status: "processing"
     });
 
     const savedOrder = await newOrder.save();
@@ -41,14 +41,11 @@ exports.payWithMock = async (req, res) => {
     if (userId) {
       const user = await User.findById(userId);
       if (user) {
-        const pointsEarned = Math.floor(orderDetails.totalAmount);
+        const pointsEarned = Math.floor(orderDetails.totalAmount * 0.1); // 10% of total amount
         user.loyaltyPoints += pointsEarned;
         await user.save();
       }
     }
-
-    // Clear localStorage cart after order
-    localStorage.removeItem("cart");
 
     return res.status(201).json({
       message: "Order placed with mock payment!",
@@ -87,6 +84,7 @@ exports.payWithLoyalty = async (req, res) => {
     // Update order payment
     order.paymentMethod = "loyalty";
     order.paymentStatus = "completed";
+    order.status = "processing";
     await order.save();
 
     return res.status(200).json({
@@ -101,12 +99,25 @@ exports.payWithLoyalty = async (req, res) => {
   }
 };
 
-// Pay using Card Details
+// Pay with Card
 exports.payWithCard = async (req, res) => {
-  const { customerName, shippingAddress, cartItems, totalAmount, cardNumber, expiryDate, userId } = req.body;
-
   try {
-    if (!cartItems || cartItems.length === 0) {
+    const {
+      userId,
+      customerName,
+      shippingAddress,
+      items,
+      totalAmount,
+      cardNumber,
+      cardholderName,
+      expiryDate,
+      cvv,
+      saveCardDetails,
+      loyaltyPointsUsed = 0,
+      loyaltyPointsEarned = 0
+    } = req.body;
+
+    if (!items || items.length === 0) {
       return res.status(400).json({ error: "No items to checkout" });
     }
 
@@ -115,40 +126,84 @@ exports.payWithCard = async (req, res) => {
       userId: userId || null,
       customerName,
       shippingAddress,
-      items: cartItems.map(item => ({
+      items: items.map(item => ({
         productId: item.productId,
         productName: item.productName,
         size: item.size,
         quantity: item.quantity,
-        price: item.price
+        price: item.price,
+        imageUrl: item.imageUrl || "https://via.placeholder.com/150"
       })),
       totalAmount,
-      paymentMethod: "card",
-      paymentStatus: "completed"
+      paymentMethod: "credit_card",
+      paymentStatus: "completed",
+      status: "processing",
+      loyaltyPointsUsed,
+      loyaltyPointsEarned
     });
 
     const savedOrder = await newOrder.save();
 
-    // Save Card Info (only last 4 digits)
-    const cardInfo = new CardInfo({
-      customerName,
-      cardLast4: cardNumber.slice(-4),
-      expiryDate,
-      orderId: savedOrder._id
-    });
+    // Save Card Info if requested (only last 4 digits)
+    if (saveCardDetails && userId) {
+      const cardInfo = new CardInfo({
+        userId,
+        customerName,
+        cardNumber: cardNumber.slice(-4),
+        cardholderName,
+        expiryDate,
+        orderId: savedOrder._id
+      });
 
-    await cardInfo.save();
+      try {
+        await cardInfo.save();
+        console.log("Card info saved successfully");
+      } catch (cardError) {
+        console.error("Error saving card info:", cardError);
+        // Continue with the order even if card saving fails
+      }
+    }
 
-    // Clear localStorage cart after payment
-    localStorage.removeItem("cart");
+    // Update user's loyalty points if applicable
+    if (userId && (loyaltyPointsUsed > 0 || loyaltyPointsEarned > 0)) {
+      try {
+        const user = await User.findById(userId);
+        if (user) {
+          user.loyaltyPoints = (user.loyaltyPoints || 0) - loyaltyPointsUsed + loyaltyPointsEarned;
+          await user.save();
+        }
+      } catch (pointsError) {
+        console.error("Error updating loyalty points:", pointsError);
+        // Continue with the order even if points update fails
+      }
+    }
+
+    // Prepare order details for response
+    const orderDetails = {
+      orderId: savedOrder._id,
+      customerName: savedOrder.customerName,
+      shippingAddress: savedOrder.shippingAddress,
+      items: savedOrder.items,
+      subtotal: savedOrder.totalAmount - (savedOrder.shippingFee || 0),
+      shippingFee: savedOrder.shippingFee || 0,
+      totalAmount: savedOrder.totalAmount,
+      paymentMethod: savedOrder.paymentMethod,
+      paymentStatus: savedOrder.paymentStatus,
+      status: savedOrder.status,
+      loyaltyPoints: {
+        used: savedOrder.loyaltyPointsUsed || 0,
+        earned: savedOrder.loyaltyPointsEarned || 0
+      },
+      createdAt: savedOrder.createdAt
+    };
 
     return res.status(201).json({
       message: "Payment successful with card!",
-      order: savedOrder
+      order: orderDetails
     });
 
   } catch (error) {
-    console.error("Card payment error:", error);
+    console.error("Card Payment Error:", error);
     res.status(500).json({ error: error.message });
   }
 };

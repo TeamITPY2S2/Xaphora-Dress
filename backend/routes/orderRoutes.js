@@ -6,24 +6,45 @@ const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 const orderController = require('../controllers/OrderController');
 
-// Create a new order using the updated Order model fields
-router.post('/', async (req, res) => {
+// Create a new order
+router.post('/', auth, async (req, res) => {
   try {
-    // Expecting new field names from the updated Order model
-    const { userId, customerName, shippingAddress, items, totalAmount, paymentMethod, status, paymentStatus } = req.body;
-    const newOrder = new Order({ 
-      userId, 
-      customerName, 
-      shippingAddress, 
-      items, 
+    const {
+      userId,
+      customerName,
+      shippingAddress,
+      items,
       totalAmount,
       paymentMethod,
       status,
-      paymentStatus
+      paymentStatus,
+      loyaltyPointsUsed,
+      loyaltyPointsEarned
+    } = req.body;
+
+    // Validate required fields
+    if (!customerName || !shippingAddress || !items || !totalAmount || !paymentMethod) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Create new order
+    const newOrder = new Order({
+      userId: userId || req.user._id, // Use authenticated user's ID if not provided
+      customerName,
+      shippingAddress,
+      items,
+      totalAmount,
+      paymentMethod,
+      status: status || 'processing',
+      paymentStatus: paymentStatus || 'completed',
+      loyaltyPointsUsed: loyaltyPointsUsed || 0,
+      loyaltyPointsEarned: loyaltyPointsEarned || 0
     });
-    await newOrder.save();
-    res.status(201).json({ message: 'Order created successfully', order: newOrder });
+
+    const savedOrder = await newOrder.save();
+    res.status(201).json(savedOrder);
   } catch (error) {
+    console.error('Create Order Error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -32,7 +53,7 @@ router.post('/', async (req, res) => {
 router.get('/', adminAuth, async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate('user', 'email')
+      .populate('userId', 'email')
       .sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
@@ -40,11 +61,19 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
-// Get orders for a specific user
-router.get('/user/:userId', orderController.getUserOrders);
+// Get user's orders
+router.get('/user/:userId', auth, async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.params.userId })
+      .sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Get a specific order by ID
-router.get('/:orderId', async (req, res) => {
+router.get('/:orderId', auth, async (req, res) => {
   try {
     const order = await Order.findById(req.params.orderId);
     if (!order) {
@@ -76,22 +105,6 @@ router.put('/:id/status', adminAuth, async (req, res) => {
 });
 
 // Update order item details (size, quantity)
-router.put('/:orderId/items/:itemId', orderController.updateOrderItem);
-
-// Get order by ID (admin only)
-router.get('/:id', adminAuth, async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id)
-      .populate('user', 'email');
-    
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-    
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.put('/:orderId/items/:itemId', auth, orderController.updateOrderItem);
 
 module.exports = router;
