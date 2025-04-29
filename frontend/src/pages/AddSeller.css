@@ -1,96 +1,147 @@
-/* src/pages/AddSeller.css */
+/* AddSeller.css */
+
+/* Container for centering the form */
 .signupContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f4f6f9;
+    padding: 20px;
   }
   
+  /* Card that holds the form */
   .formCard {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
+  /* Title and subtitle */
   .title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: bold;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
+    color: #333;
   }
   
   .subtitle {
+    font-size: 1rem;
     text-align: center;
-    margin-bottom: 1rem;
-    color: #555;
+    color: #666;
+    margin-bottom: 20px;
   }
   
+  /* Form styling */
   .form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Error message styling */
+  .error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  /* Input group styling */
+  .inputGroup {
     display: flex;
     flex-direction: column;
   }
   
-  .inputGroup {
-    margin-bottom: 1rem;
-  }
-  
+  /* Label styling */
   .label {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #495057;
   }
   
+  /* Input field styling */
   .input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
   }
   
+  .input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Button styling */
   .button {
-    background-color: #000;
+    background-color: #007bff;
     color: #fff;
-    padding: 0.75rem;
     border: none;
+    padding: 12px;
     border-radius: 4px;
+    font-size: 1rem;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-    margin-top: 1rem;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
-  .button:hover {
-    background-color: #333;
+  .button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
   
+  .button:hover:not(:disabled) {
+    background-color: #0069d9;
+  }
+  
+  /* Spinner styling */
   .spinner {
+    margin-right: 8px;
     animation: spin 1s linear infinite;
   }
   
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
   
-  .error {
-    background-color: #ffe5e5;
-    border: 1px solid #ff0000;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border-radius: 4px;
-    color: #ff0000;
-  }
-  
+  /* Link button styling */
   .link {
     background: none;
     border: none;
     color: #007bff;
-    text-decoration: underline;
     cursor: pointer;
+    text-decoration: underline;
+    font-size: 1rem;
     padding: 0;
-    font-size: 0.9rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .formCard {
+      padding: 20px;
+    }
+    
+    .title {
+      font-size: 1.6rem;
+    }
+    
+    .button {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
   }

@@ -1,12 +1,16 @@
-// backend/routes/dashboardRoutes.js
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/jwtMiddleware");
-const { getDashboardData, getDeliveryDashboardData } = require("../controllers/dashboardController");
+
+
 const { updateProfile, deleteProfile } = require("../controllers/profileController");
 
-// Universal dashboard for both admin and user tokens
-router.get("/", verifyToken, getDashboardData);
+
+const {
+  getDashboardData,
+  getRoleBasedDashboardInfo,
+} = require("../controllers/dashboardController");
+
 
 // Delivery dashboard data
 router.get("/delivery", verifyToken, getDeliveryDashboardData);
@@ -14,7 +18,20 @@ router.get("/delivery", verifyToken, getDeliveryDashboardData);
 // Update profile
 router.put("/update", verifyToken, updateProfile);
 
-// Delete profile
-router.delete("/delete", verifyToken, deleteProfile);
+const {
+  updateProfile,
+  deleteProfile,
+} = require("../controllers/profileController");
+
+
+// For logged-in user dashboard info (name, type)
+router.get("/", verifyToken, getRoleBasedDashboardInfo);
+
+// For super-admin to get system-wide stats
+router.get("/superadmin/stats", verifyToken, getDashboardData);
+
+// Profile update/delete
+router.put("/profile/update", verifyToken, updateProfile);
+router.delete("/profile/delete", verifyToken, deleteProfile);
 
 module.exports = router;

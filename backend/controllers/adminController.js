@@ -3,10 +3,9 @@ const Admin = require("../models/adminModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-/**
- * Create a Super Admin
- * Forces adminType to "super-admin" and returns a token in the response.
- */
+
+//Create a Super Admin
+
 const createSuperAdmin = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -45,7 +44,7 @@ const createSuperAdmin = async (req, res) => {
         email: newAdmin.email,
         adminType: newAdmin.adminType,
       },
-      token: token, // Include the token
+      token: token, // include the token
     });
   } catch (err) {
     console.error("Error creating super admin:", err);
@@ -53,15 +52,13 @@ const createSuperAdmin = async (req, res) => {
   }
 };
 
-/**
- * Create a new Admin (for any adminType except "super-admin")
- * Only a logged-in super admin should access this route.
- */
+//Create a new Admin (for any adminType except "super-admin")
+
 const createAdmin = async (req, res) => {
   try {
     const { firstName, lastName, email, password, adminType } = req.body;
 
-    // Prevent creating a super admin here
+    // block creating a super admin here
     if (adminType === "super-admin") {
       return res.status(400).json({
         message: "Cannot create a super admin through this route",
@@ -101,9 +98,8 @@ const createAdmin = async (req, res) => {
   }
 };
 
-/**
- * Get All Admins
- */
+// Get All Admins
+
 const getAllAdmins = async (req, res) => {
   try {
     const admins = await Admin.find();
@@ -117,9 +113,8 @@ const getAllAdmins = async (req, res) => {
   }
 };
 
-/**
- * Get Admin by ID
- */
+// Get Admin by ID
+
 const getAdminById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -134,10 +129,8 @@ const getAdminById = async (req, res) => {
   }
 };
 
-/**
- * Update Admin
- * Hash the password again if you are updating it.
- */
+// Update Admin
+
 const updateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -167,9 +160,8 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-/**
- * Delete Admin
- */
+// Delete Admin
+
 const deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;

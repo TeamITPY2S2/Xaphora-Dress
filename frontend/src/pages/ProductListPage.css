@@ -1,47 +1,30 @@
 /* src/pages/ProductListPage.css */
 
-/* Existing styles remain here... */
-
-.search-bar {
-  margin-bottom: 15px;
-  text-align: right;
+/* Ensure the search input has a consistent width */
+.search-input {
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.search-bar input {
-  padding: 8px;
-  font-size: 1rem;
-  width: 250px;
-  max-width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/* Card image styling */
+.product-img {
+  object-fit: cover;
+  height: 200px;
 }
 
-/* New styles for edit and delete buttons */
-.product-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+/* Hover effect for cards */
+.card:hover {
+  transform: translateY(-4px);
+  transition: transform 0.2s ease-in-out;
 }
 
-.product-actions button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
+/* Button spacing inside card */
+.card-body .btn {
+  width: 48%;
 }
 
-.product-actions button:hover {
-  opacity: 0.9;
-}
-
-.product-actions button:first-of-type {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.product-actions button:last-of-type {
-  background-color: #dc3545;
-  color: #fff;
+/* Center “No products found.” message */
+.text-muted {
+  margin-top: 40px;
+  font-size: 1.1rem;
 }

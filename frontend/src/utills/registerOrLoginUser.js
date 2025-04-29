@@ -31,3 +31,5 @@ async function registerOrLoginUser(userData) {
     console.log("Notifications permission not granted");
   }
 }
+
+export default registerOrLoginUser;

@@ -1,21 +1,34 @@
-/* src/pages/UpdateSeller.css */
+/* UpdateSeller.css */
 
-.update-seller-container {
-    width: 400px;
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #50e3c2;
+    --error-color: #e74c3c;
+    --background-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    --input-bg: #fff;
+    --border-radius: 8px;
+  }
+  
+  .update-seller-container {
+    max-width: 600px;
     margin: 40px auto;
-    font-family: Arial, sans-serif;
-    color: #000;
+    padding: 20px 30px;
+    background: var(--background-gradient);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
   .update-seller-container h2 {
     text-align: center;
     margin-bottom: 20px;
+    color: #333;
   }
   
   .error-message {
-    color: red;
-    margin-bottom: 15px;
+    color: var(--error-color);
     text-align: center;
+    margin-bottom: 15px;
   }
   
   .update-form {
@@ -30,14 +43,23 @@
   }
   
   .form-group label {
-    font-weight: bold;
     margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
   }
   
   .form-group input {
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    background: var(--input-bg);
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
   }
   
   .button-group {
@@ -48,17 +70,30 @@
   
   .update-button,
   .back-button {
-    background-color: #000;
-    color: #fff;
-    border: none;
     padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
+    font-size: 1em;
+    transition: background 0.3s ease, transform 0.3s ease;
   }
   
-  .update-button:hover,
+  .update-button {
+    background: var(--primary-color);
+    color: #fff;
+  }
+  
+  .update-button:hover {
+    background: #357ABD;
+    transform: scale(1.05);
+  }
+  
+  .back-button {
+    background: var(--secondary-color);
+    color: #fff;
+  }
+  
   .back-button:hover {
-    background-color: #333;
+    background: #3bb9a2;
+    transform: scale(1.05);
   }

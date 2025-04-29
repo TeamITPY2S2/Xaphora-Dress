@@ -75,8 +75,10 @@
   }
   
   /* Message (error or success) */
+
   .login-message {
-    margin-top: 15px;
-    color: red; /* Adjust color if you want success messages in green, etc. */
+    color: red;
+    margin: 1rem 0;
     text-align: center;
+    font-weight: 500;
   }

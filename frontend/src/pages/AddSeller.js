@@ -1,9 +1,8 @@
-// src/pages/AddSeller.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getMessaging, getToken } from 'firebase/messaging';
-import styles from './AddSeller.css';
+import './AddSeller.css'; // Regular CSS import (no "styles" object)
 
 // Define the backend URL (adjust if necessary)
 const BACKEND_URL = 'http://localhost:8070';
@@ -27,7 +26,7 @@ const AddSeller = () => {
     });
   };
 
-  // Get the FCM token automatically using Firebase Messaging
+  // Get the FCM token 
   const getFCMToken = async () => {
     try {
       const messaging = getMessaging();
@@ -59,7 +58,7 @@ const AddSeller = () => {
       });
 
       if (response.data) {
-        alert("Seller created successfully");
+        alert('Seller created successfully');
         navigate('/superadmin/sellers');
       }
     } catch (err) {
@@ -70,21 +69,20 @@ const AddSeller = () => {
   };
 
   return (
-    <div className={styles.signupContainer}>
-      <div className={styles.formCard}>
-        <h2 className={styles.title}>Add New Seller</h2>
-        <p className={styles.subtitle}>Fill in the details below</p>
+    <div className="signupContainer">
+      <div className="formCard">
+        <h2 className="title">Add New Seller</h2><br/>
         
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className="form" onSubmit={handleSubmit}>
           {error && (
-            <div className={styles.error}>
+            <div className="error">
               <p>Error</p>
               <p>{error}</p>
             </div>
           )}
           
-          <div className={styles.inputGroup}>
-            <label htmlFor="name" className={styles.label}>
+          <div className="inputGroup">
+            <label htmlFor="name" className="label">
               Full Name
             </label>
             <input
@@ -92,15 +90,15 @@ const AddSeller = () => {
               name="name"
               type="text"
               required
-              className={styles.input}
+              className="input"
               placeholder="Enter seller's full name"
               value={formData.name}
               onChange={handleChange}
             />
           </div>
     
-          <div className={styles.inputGroup}>
-            <label htmlFor="email" className={styles.label}>
+          <div className="inputGroup">
+            <label htmlFor="email" className="label">
               Email address
             </label>
             <input
@@ -108,15 +106,15 @@ const AddSeller = () => {
               name="email"
               type="email"
               required
-              className={styles.input}
+              className="input"
               placeholder="Enter seller's email"
               value={formData.email}
               onChange={handleChange}
             />
           </div>
     
-          <div className={styles.inputGroup}>
-            <label htmlFor="password" className={styles.label}>
+          <div className="inputGroup">
+            <label htmlFor="password" className="label">
               Password
             </label>
             <input
@@ -124,15 +122,15 @@ const AddSeller = () => {
               name="password"
               type="password"
               required
-              className={styles.input}
+              className="input"
               placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
             />
           </div>
     
-          <div className={styles.inputGroup}>
-            <label htmlFor="storeName" className={styles.label}>
+          <div className="inputGroup">
+            <label htmlFor="storeName" className="label">
               Store Name
             </label>
             <input
@@ -140,7 +138,7 @@ const AddSeller = () => {
               name="storeName"
               type="text"
               required
-              className={styles.input}
+              className="input"
               placeholder="Enter seller's store name"
               value={formData.storeName}
               onChange={handleChange}
@@ -150,11 +148,11 @@ const AddSeller = () => {
           <button
             type="submit"
             disabled={loading}
-            className={styles.button}
+            className="button"
           >
             {loading ? (
               <>
-                <svg className={styles.spinner} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20">
+                <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -167,11 +165,11 @@ const AddSeller = () => {
         </form>
     
         <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <p className={styles.subtitle}>
+          <p className="subtitle">
             Already added?{' '}
             <button
               onClick={() => navigate('/superadmin/sellers')}
-              className={styles.link}
+              className="link"
             >
               View Sellers
             </button>
