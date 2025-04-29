@@ -167,21 +167,22 @@ const AdminOrdersDashboard = () => {
     // Add table using autoTable
     autoTable(doc, {
       startY: 30,
-      head: [['Order ID', 'Customer', 'Address', 'Phone', 'Total', 'Payment', 'Status', 'Order Date']],
+      head: [['Order ID', 'Customer', 'Address', 'Phone', 'Total', 'Payment', 'Status', 'Ordered On']],
       body: tableData,
       theme: 'grid',
       headStyles: { fillColor: [52, 152, 219] },
       styles: { fontSize: 8 },
       columnStyles: {
-        0: { cellWidth: 30 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 40 },
-        3: { cellWidth: 25 },
+        0: { cellWidth: 25 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 20 },
         4: { cellWidth: 20 },
         5: { cellWidth: 20 },
         6: { cellWidth: 20 },
-        7: { cellWidth: 30 }
-      }
+        7: { cellWidth: 35 }
+      },
+      margin: { left: 10, right: 10 }
     });
 
     // Save the PDF
