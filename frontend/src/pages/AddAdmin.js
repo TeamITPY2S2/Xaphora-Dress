@@ -139,10 +139,10 @@ const AddAdmin = () => {
               onChange={handleChange}
             >
               <option value="super-admin">Super Admin</option>
-              <option value="delivery">Delivery</option>
-              <option value="inventory">Inventory</option>
+              <option value="delivery-management">Delivery Management</option>
+              <option value="inventory-management">Inventory Management</option>
               <option value="order-management">Order Management</option>
-              <option value="reviews">Reviews</option>
+              <option value="reviews-management">Reviews Management</option>
               <option value="user-management">User Management</option>
               <option value="regular">Regular</option>
             </select>
