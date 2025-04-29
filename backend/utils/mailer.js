@@ -1,11 +1,32 @@
 const nodemailer = require('nodemailer');
 
-// Create a transporter using Gmail
+// Create a transporter using Gmail with more secure settings
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false
+    }
+});
+
+// Test the connection on startup
+transporter.verify(function(error, success) {
+    if (error) {
+        console.log('Email Server Error:', error);
+        console.log('Email Configuration:', {
+            user: process.env.EMAIL_USER ? 'Set' : 'Not Set',
+            pass: process.env.EMAIL_PASSWORD ? 'Set' : 'Not Set'
+        });
+    } else {
+        console.log('Email server is ready to send messages');
+        console.log('Using email account:', process.env.EMAIL_USER);
     }
 });
 
@@ -32,8 +53,16 @@ const emailTemplates = {
 // Function to send order status emails
 const sendOrderEmail = async (order, user) => {
     try {
-        console.log('Attempting to send email with order:', order);
-        console.log('User details:', user);
+        console.log('Starting email send process...');
+        console.log('Order details:', {
+            orderId: order._id,
+            status: order.status,
+            totalAmount: order.totalAmount
+        });
+        console.log('User details:', {
+            userId: user._id,
+            email: user.email
+        });
         
         if (!user || !user.email) {
             console.error('User email not found. User:', user);
@@ -49,27 +78,26 @@ const sendOrderEmail = async (order, user) => {
         const emailContent = template(order);
         console.log('Email content prepared:', emailContent);
 
-        console.log('Sending email with config:', {
-            from: process.env.EMAIL_USER,
-            to: user.email,
-            subject: emailContent.subject
-        });
-
-        await transporter.sendMail({
+        const mailOptions = {
             from: process.env.EMAIL_USER,
             to: user.email,
             subject: emailContent.subject,
             text: emailContent.text
-        });
+        };
 
-        console.log(`Order status email sent successfully to ${user.email}`);
+        console.log('Attempting to send email with options:', mailOptions);
+
+        const result = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully:', result);
         return true;
     } catch (error) {
         console.error('Error sending order email:', error);
-        console.error('Error details:', error.message);
-        if (error.code === 'EAUTH') {
-            console.error('Authentication failed. Please check your email credentials.');
-        }
+        console.error('Full error details:', {
+            message: error.message,
+            code: error.code,
+            command: error.command,
+            response: error.response
+        });
         return false;
     }
 };

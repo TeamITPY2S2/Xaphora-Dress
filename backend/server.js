@@ -7,6 +7,19 @@ const morgan = require("morgan");
 
 dotenv.config();
 
+// Add detailed email configuration logging
+console.log('Detailed Environment Variables:');
+console.log('EMAIL_USER length:', process.env.EMAIL_USER ? process.env.EMAIL_USER.length : 0);
+console.log('EMAIL_PASSWORD length:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.length : 0);
+console.log('First character of password:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD[0] : 'not set');
+console.log('Last character of password:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD[process.env.EMAIL_PASSWORD.length - 1] : 'not set');
+
+// Add email configuration logging
+console.log('Email Configuration Status:', {
+    EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Not Set',
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ? 'Set' : 'Not Set'
+});
+
 const app = express();
 
 // Middleware
