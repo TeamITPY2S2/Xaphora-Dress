@@ -38,6 +38,13 @@ import ResetPassword from './pages/ResetPassword';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from "./pages/ChangePassword";
 
+import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent'; 
+import SellerLogin from './components/SellerLogin'; 
+import SellerSignup from './components/SellerSignup'; 
+import ProtectedRoute from './components/ProtectedRoute'; 
+import Dashboard from './pages/Dashboard';
+
+
 function App() {
   return (
     <Router>
