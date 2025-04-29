@@ -18,6 +18,7 @@ import EditProductPage from './pages/EditProductPage';
 import SellerDashboard from './pages/SellerDashboard';
 import ViewDeliveOrderDetails from './pages/ViewDeliveOrderDetails';
 import UserOrderDetails from './pages/UserOrderDetails';
+import DeliveOrdersTable from './components/DeliveOrdersTable';
 import Home from './pages/home';
 import XaphoraChatbot from './pages/XaphoraChatbot';
 import BuyerSignup from './pages/BuyerSignup';
@@ -45,7 +46,7 @@ function App() {
           <Route path="addDeliveryAgent" element={<AddDeliveryAgent />} />
           <Route path="agents" element={<ViewAgents />} />
           <Route path="assign-orders" element={<AssignOrderPage />} />
-          <Route path="order/:orderId" element={<ViewDeliveOrderDetails />} />
+          <Route path="order" element={<DeliveOrdersTable />} />
         </Route>
 
         {/* Order Details Routes */}

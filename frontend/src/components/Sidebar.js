@@ -34,6 +34,11 @@ const Sidebar = () => {
             <i className="fas fa-tasks"></i>
             <span>Assign Order</span>
           </Link>
+
+          <Link to="/admin-dashboard/order" className="nav-item">
+            <i className="fas fa-shipping-fast"></i>
+            <span>Orders and Tracking</span>
+          </Link>
         </div>
       </nav>
 
