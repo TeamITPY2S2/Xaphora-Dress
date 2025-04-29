@@ -1,136 +1,56 @@
-const Address = require("../models/addressModel");
+// backend/controllers/addressController.js
+const Address = require("../models/AddressModel");
 
-// CREATE a new address
 exports.createAddress = async (req, res) => {
   try {
-    const {
-      userId,
-      contactName,
-      phoneNumber,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      isDefault
-    } = req.body;
-
-    // If the new address is set as default, unset default from other addresses for this user
-    if (isDefault) {
-      await Address.updateMany({ userId }, { isDefault: false });
-    }
-
-    const newAddress = new Address({
-      userId,
-      contactName,
-      phoneNumber,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      isDefault
-    });
-
-    await newAddress.save();
-    return res.status(201).json(newAddress);
+    const address = new Address(req.body);
+    const savedAddress = await address.save();
+    res.status(201).json(savedAddress);
   } catch (error) {
-    console.error("Error creating address:", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to save address" });
   }
 };
 
-// READ all addresses for a specific user
-exports.getUserAddresses = async (req, res) => {
+exports.getAddressesByUser = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const addresses = await Address.find({ userId });
-    return res.status(200).json(addresses);
+    const addresses = await Address.find({ userId: req.params.userId });
+    res.status(200).json(addresses);
   } catch (error) {
-    console.error("Error fetching addresses:", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch addresses" });
   }
 };
 
-// READ a single address by its ID
 exports.getAddressById = async (req, res) => {
   try {
-    const { addressId } = req.params;
-    const address = await Address.findById(addressId);
+    const address = await Address.findById(req.params.id);
     if (!address) {
       return res.status(404).json({ error: "Address not found" });
     }
-    return res.status(200).json(address);
+    res.status(200).json(address);
   } catch (error) {
-    console.error("Error fetching address:", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch address" });
   }
 };
 
-// UPDATE an address by its ID
 exports.updateAddress = async (req, res) => {
   try {
-    const { addressId } = req.params;
-    const {
-      contactName,
-      phoneNumber,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      isDefault
-    } = req.body;
-
-    // If isDefault is set, unset default from other addresses for this user
-    if (isDefault) {
-      // Find the address being updated to get the userId
-      const existingAddress = await Address.findById(addressId);
-      if (existingAddress) {
-        await Address.updateMany(
-          { userId: existingAddress.userId },
-          { isDefault: false }
-        );
-      }
-    }
-
-    const updatedAddress = await Address.findByIdAndUpdate(
-      addressId,
-      {
-        contactName,
-        phoneNumber,
-        addressLine1,
-        addressLine2,
-        city,
-        state,
-        zipCode,
-        isDefault
-      },
-      { new: true }
-    );
-
-    if (!updatedAddress) {
-      return res.status(404).json({ error: "Address not found" });
-    }
-
-    return res.status(200).json(updatedAddress);
+    const updated = await Address.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updated);
   } catch (error) {
-    console.error("Error updating address:", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to update address" });
   }
 };
 
-// DELETE an address by its ID
 exports.deleteAddress = async (req, res) => {
   try {
-    const { addressId } = req.params;
-    const deletedAddress = await Address.findByIdAndDelete(addressId);
-    if (!deletedAddress) {
-      return res.status(404).json({ error: "Address not found" });
-    }
-    return res.status(200).json({ message: "Address deleted successfully" });
+    await Address.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Address deleted" });
   } catch (error) {
-    console.error("Error deleting address:", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete address" });
   }
 };

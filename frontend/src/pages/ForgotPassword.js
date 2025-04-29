@@ -25,8 +25,10 @@ function ForgotPassword() {
 
       if (res.ok) {
         alert("Check your email for the reset link.");
+
         setEmail("");
         setTimeout(() => navigate("/api/auth/login"), 2000);
+
       } else {
         alert(data.message || "Failed to send reset email.");
       }

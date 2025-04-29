@@ -18,6 +18,9 @@ export default function AccountDrawer({
   const [firstName = "", ...rest] = safeName.split(" ");
   const lastName = rest.join(" ");
 
+  // Get user type from localStorage
+  const userType = localStorage.getItem("userType");
+
   return (
     <div
       className={`drawer-overlay${isOpen ? " open" : ""}`}
@@ -31,9 +34,26 @@ export default function AccountDrawer({
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
         <ul className="drawer-menu">
-          <li onClick={() => { onAccountDetails(); onClose(); }}>
-            Account Details
-          </li>
+        {userType === "order-management" ? (
+    <li
+      onClick={() => {
+        window.location.href = "/admin-orders";
+        onClose();
+      }}
+    >
+      Order Management Dashboard
+    </li>
+  ) : (
+    <li
+      onClick={() => {
+        onAccountDetails();
+        onClose();
+      }}
+    >
+      Account Details
+    </li>
+  )}
+
           <li onClick={() => { onAddresses(); onClose(); }}>
             Addresses
           </li>

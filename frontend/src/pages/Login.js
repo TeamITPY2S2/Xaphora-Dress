@@ -6,28 +6,31 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 function Login() {
-  const [email, setEmail]       = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage]   = useState("");
-  const navigate                = useNavigate();
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
     try {
       const response = await fetch("http://localhost:8070/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
 
       if (response.ok) {
-        // store token & role
+        // Store user data
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
+        console.log(data.userType);
+        localStorage.setItem("userId", data.user._id);
 
-        // <-- NEW: store full name for drawer greeting
         if (data.user?.firstName) {
           const fullName = `${data.user.firstName} ${data.user.lastName || ""}`.trim();
           localStorage.setItem("userName", fullName);
@@ -35,18 +38,20 @@ function Login() {
 
         setMessage("Login successful!");
 
-        // Redirect based on role
+        // Redirect based on user type
         if (data.userType === "super-admin") {
           navigate("/superadmin");
-        // } else if (data.userType === "order-management") {
-        //   navigate("/dashboard");
-        // } else if (data.userType === "order-management") {
-        //   navigate("/dashboard");
-        // } 
-        }else if (data.userType === "admin") {
+
+        } else if (data.userType === "order-management") {
+          console.log(" order Done")
+          navigate("/admin-orders");
+        } else if (data.userType === "admin") {
+
           navigate("/dashboard");
+        } else if (data.userType === "seller") {
+          navigate("/seller-dashboard");
         } else {
-          // for both "user" (buyer) and any other fallback
+          // Buyer / user
           navigate("/home");
         }
       } else {
@@ -71,7 +76,7 @@ function Login() {
             className="login-input"
             required
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <label className="login-label password-label">PASSWORD</label>
@@ -80,7 +85,7 @@ function Login() {
             className="login-input"
             required
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button type="submit" className="login-button">LOG IN</button>
@@ -91,11 +96,6 @@ function Login() {
         </p>
         <p className="login-footer">
           Create Account <Link to="/signup" className="login-link">Sign Up</Link>
-        </p>
-        <p className="login-footer">
-          <Link to="/seller/login" className="login-link">
-            Log in as a <b>Seller</b>
-          </Link>
         </p>
       </div>
       <Footer />

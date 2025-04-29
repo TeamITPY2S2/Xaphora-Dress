@@ -1,6 +1,9 @@
+// controllers/deliveStatusController.js
+
 const Order = require('../models/Order');
 const UserModel = require('../models/UserModel');
 const { sendOrderEmail } = require('../utils/mailer');
+
 
 exports.updateOrderStatus = async (req, res) => {
   try {

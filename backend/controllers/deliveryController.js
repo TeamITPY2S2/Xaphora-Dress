@@ -1,5 +1,5 @@
 const DeliveryAgent = require('../models/DeliveryAgent');
-const Order = require('../models/Order'); // Using our temporary Order model
+const Order = require('../models/OrderModel'); // Using our temporary Order model
 
 //  new delivery agent
 exports.createDeliveryAgent = async (req, res) => {

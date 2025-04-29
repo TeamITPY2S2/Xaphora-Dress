@@ -1,9 +1,11 @@
+// backend/models/AddressModel.js
+
 const mongoose = require("mongoose");
 
-const addressSchema = new mongoose.Schema({
+const AddressSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // or "users" if that's your user model name
+    ref: "User",
     required: true
   },
   contactName: {
@@ -43,4 +45,4 @@ const addressSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Address", addressSchema);
+module.exports = mongoose.model("Address", AddressSchema);
