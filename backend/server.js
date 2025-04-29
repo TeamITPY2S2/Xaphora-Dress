@@ -53,7 +53,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/feedback", deliveFeedbackRoutes);
-app.use("/api/monitoring", monitoringRoutes);
+//app.use("/api/monitoring", monitoringRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/sellers", sellerRoutes);
