@@ -9,6 +9,8 @@ const AdminOrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,8 +73,8 @@ const AdminOrdersDashboard = () => {
 
   const getStatusColorClass = (status) => {
     switch (status) {
-      case "pending": return "status-pending";
-      case "processing": return "status-processing";
+      case "ordered": return "status-ordered";
+      case "packed": return "status-packed";
       case "shipped": return "status-shipped";
       case "delivered": return "status-delivered";
       case "cancelled": return "status-cancelled";
@@ -101,6 +103,42 @@ const AdminOrdersDashboard = () => {
     return 'N/A';
   };
 
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`http://localhost:8070/api/orders/${orderId}/status`, 
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Refresh orders after status update
+      const res = await axios.get("http://localhost:8070/api/orders", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setOrders(res.data);
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+  };
+
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = 
+      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      renderCustomerName(order).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      renderShippingAddress(order.shippingAddress).toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === "all" || order.status === filterStatus;
+    
+    return matchesSearch && matchesStatus;
+  });
+
   if (loading) return <div className="loading">Loading orders...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -108,9 +146,34 @@ const AdminOrdersDashboard = () => {
     <div className="admin-orders-container">
       <AdminSidebar />
       <div className="admin-orders-content">
-        <h1 className="admin-orders-heading">📦 All Orders Overview</h1>
+        <h1 className="admin-orders-heading">📦 Order Management Dashboard</h1>
 
-        {orders.length === 0 ? (
+        <div className="dashboard-controls">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search orders..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+          <div className="filter-controls">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="status-filter"
+            >
+              <option value="all">All Orders</option>
+              <option value="ordered">Ordered</option>
+              <option value="packed">Packed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </div>
+        </div>
+
+        {filteredOrders.length === 0 ? (
           <p style={{ textAlign: "center" }}>No orders found.</p>
         ) : (
           <div className="orders-table-wrapper">
@@ -128,7 +191,7 @@ const AdminOrdersDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <tr key={order._id}>
                     <td>{order._id}</td>
                     <td>{renderCustomerName(order)}</td>
