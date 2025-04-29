@@ -97,14 +97,8 @@ function Dashboard() {
   } else {
     const { userType } = dashboardData;
 
-    if (userType === "admin") {
-      content = (
-        <div className="generic-dashboard">
-          <h2>Admin Dashboard</h2>
-          <p>Welcome, {dashboardData.firstName} {dashboardData.lastName}!</p>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      );
+    if (userType === "order-management") {
+      navigate("/admin-orders");
     } else if (userType === "buyer") {
       content = (
         <div className="buyer-account-page">

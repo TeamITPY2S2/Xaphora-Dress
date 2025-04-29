@@ -28,6 +28,7 @@ function Login() {
         // Store user data
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
+        console.log(data.userType);
         localStorage.setItem("userId", data.user._id);
 
         if (data.user?.firstName) {
@@ -41,6 +42,7 @@ function Login() {
         if (data.userType === "super-admin") {
           navigate("/superadmin");
         } else if (data.userType === "order-management") {
+          console.log(" order Done")
           navigate("/admin-orders");
         } else if (data.userType === "admin") {
           navigate("/dashboard");

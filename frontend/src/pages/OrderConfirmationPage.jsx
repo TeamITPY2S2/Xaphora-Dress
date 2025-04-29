@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const OrderConfirmationPage = () => {
   const navigate = useNavigate();
@@ -27,6 +29,8 @@ const OrderConfirmationPage = () => {
     try {
       const latestOrder = JSON.parse(localStorage.getItem("latestOrderDetails"));
       console.log("Retrieved order from localStorage:", latestOrder); // Debug log
+      console.log("Shipping address type:", typeof latestOrder?.shippingAddress); // Debug log
+      console.log("Shipping address value:", latestOrder?.shippingAddress); // Debug log
       
       if (latestOrder && latestOrder.customerName && latestOrder.items) {
         setOrder(latestOrder);
@@ -72,6 +76,8 @@ const OrderConfirmationPage = () => {
   }
 
   return (
+    <>
+    <Navbar />
     <div style={{ padding: "30px", textAlign: "center" }}>
       {order ? (
         <>
@@ -95,9 +101,11 @@ const OrderConfirmationPage = () => {
             <h2 style={{ fontSize: "1.8rem", marginBottom: "10px" }}>Order Summary</h2>
 
             <p><strong>Customer Name:</strong> {order.customerName}</p>
-            <p><strong>Shipping Address:</strong> {typeof order.shippingAddress === 'object' 
-              ? `${order.shippingAddress.fullName}, ${order.shippingAddress.address}, Phone: ${order.shippingAddress.phone}`
-              : order.shippingAddress}</p>
+            <p><strong>Shipping Address:</strong> {
+              typeof order.shippingAddress === 'object' 
+                ? `${order.shippingAddress.fullName}, ${order.shippingAddress.address}, Phone: ${order.shippingAddress.phone}`
+                : order.shippingAddress
+            }</p>
 
             <h3 style={{ marginTop: "20px", fontSize: "1.5rem" }}>Items Ordered:</h3>
             {order.items && order.items.length > 0 ? (
@@ -138,6 +146,8 @@ const OrderConfirmationPage = () => {
         <p style={{ fontSize: "1.2rem" }}>Loading your order details...</p>
       )}
     </div>
+    <Footer />
+    </>
   );
 };
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const OrdersPage = () => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ const OrdersPage = () => {
   }, [userId]);
 
   return (
+    <>
+    <Navbar />
     <div style={{ padding: "30px" }}>
       <h1 style={{ textAlign: "center", fontSize: "2.5rem", color: "#2c3e50", marginBottom: "30px" }}>
         🛒 My Orders
@@ -86,6 +90,8 @@ const OrdersPage = () => {
         </button>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

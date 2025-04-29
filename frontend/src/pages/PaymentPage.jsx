@@ -2,333 +2,394 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import SavedCards from "../components/SavedCards";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "./PaymentPage.css";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
-
-  const [cart, setCart] = useState([]);
-  const [checkoutDetails, setCheckoutDetails] = useState({});
-  const [usePoints, setUsePoints] = useState(false);
-  const [finalTotal, setFinalTotal] = useState(0);
+  const [checkoutDetails, setCheckoutDetails] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
-  const [address, setAddress] = useState(null);
-
+  const [usePoints, setUsePoints] = useState(false);
+  const [pointsToUse, setPointsToUse] = useState(0);
   const [cardNumber, setCardNumber] = useState("");
-  const [cardholderName, setCardholderName] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
+  const [cardholderName, setCardholderName] = useState("");
   const [saveCard, setSaveCard] = useState(false);
-  const [cardErrors, setCardErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [savedCards, setSavedCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      navigate("/api/auth/login");
-      return;
-    }
+    const initializePayment = async () => {
+      try {
+        setLoading(true);
+        if (!userId) {
+          navigate("/login");
+          return;
+        }
 
-    // Get cart items from user-specific cart
-    const storedCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
-    const storedDetails = JSON.parse(localStorage.getItem("checkoutDetails")) || {};
-    
-    if (storedCart.length === 0) {
-      alert("Cart is empty!");
-      navigate("/cart");
-      return;
-    }
-    
-    setCart(storedCart);
-    setCheckoutDetails(storedDetails);
+        const details = JSON.parse(localStorage.getItem("checkoutDetails"));
+        if (!details) {
+          navigate("/cart");
+          return;
+        }
+        setCheckoutDetails(details);
 
-    fetchUserPoints();
-    fetchDefaultAddress();
-  }, [navigate]);
+        // Fetch user points
+        const userRes = await axios.get(`http://localhost:8070/api/users/${userId}`);
+        setUserPoints(userRes.data.loyaltyPoints || 0);
 
-  const fetchUserPoints = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8070/api/users/${userId}`);
-      setUserPoints(res.data.loyaltyPoints || 0);
-    } catch (error) {
-      console.error("Error fetching loyalty points:", error);
-    }
-  };
+        // Fetch saved cards
+        const cardsRes = await axios.get(`http://localhost:8070/api/cardinfo/user/${userId}`);
+        setSavedCards(cardsRes.data);
+      } catch (error) {
+        console.error("Error initializing payment:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchDefaultAddress = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8070/api/address/user/${userId}`);
-      const defaultAddr = res.data.find(addr => addr.isDefault) || res.data[0];
-      setAddress(defaultAddr);
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
-  };
+    initializePayment();
+  }, [navigate, userId]);
 
-  useEffect(() => {
-    const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const discount = usePoints ? Math.min(userPoints, cartTotal) : 0;
-    setFinalTotal(cartTotal - discount);
-  }, [cart, usePoints, userPoints]);
-
-  // Add validation functions
-  const validateCardNumber = (number) => {
-    return /^\d{16}$/.test(number);
-  };
-
-  const validateExpiryDate = (date) => {
-    return /^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(date);
-  };
-
-  const validateCVV = (cvv) => {
-    return /^\d{3,4}$/.test(cvv);
-  };
-
-  const validateCardholderName = (name) => {
-    return name.trim().length > 0;
-  };
-
-  const handleCardNumberChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 16);
-    setCardNumber(value);
-    setCardErrors(prev => ({
-      ...prev,
-      cardNumber: validateCardNumber(value) ? '' : 'Card number must be 16 digits'
-    }));
-  };
-
-  const handleExpiryDateChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length >= 2) {
-      value = value.slice(0, 2) + '/' + value.slice(2, 4);
-    }
-    setExpiryDate(value);
-    setCardErrors(prev => ({
-      ...prev,
-      expiryDate: validateExpiryDate(value) ? '' : 'Expiry date must be in MM/YY format'
-    }));
-  };
-
-  const handleCVVChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 4);
-    setCvv(value);
-    setCardErrors(prev => ({
-      ...prev,
-      cvv: validateCVV(value) ? '' : 'CVV must be 3 or 4 digits'
-    }));
-  };
-
-  const handleCardholderNameChange = (e) => {
-    const value = e.target.value;
-    setCardholderName(value);
-    setCardErrors(prev => ({
-      ...prev,
-      cardholderName: validateCardholderName(value) ? '' : 'Cardholder name is required'
-    }));
-  };
-
-  const validateCardDetails = () => {
-    const errors = {};
-    if (!validateCardNumber(cardNumber)) {
-      errors.cardNumber = 'Card number must be 16 digits';
-    }
-    if (!validateExpiryDate(expiryDate)) {
-      errors.expiryDate = 'Expiry date must be in MM/YY format';
-    }
-    if (!validateCVV(cvv)) {
-      errors.cvv = 'CVV must be 3 or 4 digits';
-    }
-    if (!validateCardholderName(cardholderName)) {
-      errors.cardholderName = 'Cardholder name is required';
-    }
-    setCardErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSelectSavedCard = (card) => {
+  const handleSelectCard = (card) => {
+    setSelectedCard(card);
     setCardNumber(card.cardNumber);
-    setCardholderName(card.cardholderName);
     setExpiryDate(card.expiryDate);
     setCvv(card.cvv);
+    setCardholderName(card.cardholderName);
     setSaveCard(true);
   };
 
+  const calculateTotal = () => {
+    if (!checkoutDetails) return 0;
+    const subtotal = checkoutDetails.totalAmount;
+    const shippingFee = subtotal >= 5000 ? 0 : 450;
+    const pointsValue = usePoints ? pointsToUse * 0.01 : 0;
+    return subtotal + shippingFee - pointsValue;
+  };
+
+  const calculateLoyaltyPoints = () => {
+    if (!checkoutDetails) return 0;
+    const subtotal = checkoutDetails.totalAmount;
+    return Math.floor(subtotal * 0.01); // 1% of subtotal only
+  };
+
+  const validateCard = () => {
+    const newErrors = {};
+    if (!cardholderName.trim()) {
+      newErrors.cardholderName = "Please enter the cardholder name";
+    }
+    if (!cardNumber.match(/^\d{16}$/)) {
+      newErrors.cardNumber = "Please enter a valid 16-digit card number";
+    }
+    if (!expiryDate.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/)) {
+      newErrors.expiryDate = "Please enter a valid expiry date (MM/YY)";
+    }
+    if (!cvv.match(/^\d{3,4}$/)) {
+      newErrors.cvv = "Please enter a valid CVV";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handlePayment = async () => {
-    if (!validateCardDetails()) {
-      alert("Please fix the card validation errors before proceeding");
-      return;
-    }
-
-    if (!address) {
-      alert("No shipping address found. Please add a shipping address first!");
-      return;
-    }
-
-    const userId = localStorage.getItem("userId");
-    const cartItems = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
-
-    if (cartItems.length === 0) {
-      alert("Cart is empty!");
-      return;
-    }
+    if (!validateCard()) return;
 
     try {
-      // First create the order
-      const orderPayload = {
+      // First save the card if requested and not already saved
+      if (saveCard) {
+        try {
+          // Check if card already exists
+          const existingCards = await axios.get(`http://localhost:8070/api/cardinfo/user/${userId}`);
+          const cardExists = existingCards.data.some(card => 
+            card.cardNumber === cardNumber && 
+            card.expiryDate === expiryDate
+          );
+
+          if (!cardExists) {
+            await axios.post("http://localhost:8070/api/cardinfo", {
+              userId,
+              cardNumber,
+              cardholderName,
+              expiryDate,
+              cvv,
+              saveCardDetails: true
+            });
+          }
+        } catch (error) {
+          console.error("Error saving card:", error);
+          // Continue with payment even if card saving fails
+        }
+      }
+
+      // Format shipping address according to schema
+      const formattedShippingAddress = {
+        fullName: checkoutDetails.shippingAddress.contactName,
+        address: `${checkoutDetails.shippingAddress.addressLine1}${checkoutDetails.shippingAddress.addressLine2 ? ', ' + checkoutDetails.shippingAddress.addressLine2 : ''}, ${checkoutDetails.shippingAddress.city}, ${checkoutDetails.shippingAddress.state} ${checkoutDetails.shippingAddress.zipCode}`,
+        phone: checkoutDetails.shippingAddress.phoneNumber
+      };
+
+      // Create the order
+      const orderData = {
         userId,
-        customerName: checkoutDetails.customerName || address.contactName,
-        shippingAddress: {
-          fullName: checkoutDetails.customerName || address.contactName,
-          address: `${checkoutDetails.shippingAddress.addressLine1}, ${checkoutDetails.shippingAddress.city}, ${checkoutDetails.shippingAddress.state}, ${checkoutDetails.shippingAddress.zipCode}`,
-          phone: checkoutDetails.shippingAddress.phoneNumber || "Not provided"
-        },
-        items: cartItems.map(item => ({
+        customerName: checkoutDetails.customerName,
+        shippingAddress: formattedShippingAddress,
+        items: checkoutDetails.cartItems.map(item => ({
           productId: item.productId,
-          productName: item.productName || "",
-          size: item.size || "N/A",
+          productName: item.productName,
+          size: item.size,
           quantity: item.quantity,
           price: item.price,
-          imageUrl: item.imageUrl || "https://via.placeholder.com/150"
+          imageUrl: item.imageUrl || "https://via.placeholder.com/150" // Add default image if not provided
         })),
-        totalAmount: finalTotal,
-        paymentMethod: "credit_card",
-        status: "pending",
-        paymentStatus: "completed"
+        totalAmount: calculateTotal(),
+        paymentMethod: "credit_card", // Changed to match enum value
+        paymentStatus: "pending",
+        loyaltyPoints: {
+          used: usePoints ? pointsToUse : 0,
+          earned: calculateLoyaltyPoints() // 1% of subtotal only
+        }
       };
 
-      console.log("Sending order payload:", orderPayload);
+      // Create the order
+      const orderRes = await axios.post("http://localhost:8070/api/orders", orderData);
 
-      const saveOrderRes = await axios.post("http://localhost:8070/api/orders", orderPayload);
-      console.log("Order save response:", saveOrderRes.data);
-      
-      // Save the complete order details to localStorage
-      const orderDetails = {
-        ...saveOrderRes.data,
-        customerName: orderPayload.customerName,
-        shippingAddress: orderPayload.shippingAddress,
-        items: orderPayload.items,
-        totalAmount: orderPayload.totalAmount
-      };
-      
-      localStorage.setItem("latestOrderDetails", JSON.stringify(orderDetails));
-      
-      // Clear cart from localStorage
+      // Update user's loyalty points
+      if (usePoints) {
+        await axios.post("http://localhost:8070/api/users/update-points", {
+          userId,
+          pointsUsed: pointsToUse,
+          pointsEarned: calculateLoyaltyPoints()
+        });
+      }
+
+      // Clear cart and checkout details
       localStorage.removeItem(`cart_${userId}`);
+      localStorage.removeItem("checkoutDetails");
       
-      // Navigate to order confirmation
+      // Store order details for confirmation page
+      localStorage.setItem("latestOrder", JSON.stringify(orderRes.data));
+      
       navigate("/order-confirmation");
     } catch (error) {
-      console.error("Payment error:", error.response?.data || error.message);
-      alert("Payment failed: " + (error.response?.data?.error || error.message));
+      console.error("Payment failed:", error);
+      const errorMessage = error.response?.data?.error || "Payment failed. Please try again.";
+      alert(errorMessage);
     }
   };
 
+  const maskCardNumber = (cardNumber) => {
+    return `**** **** **** ${cardNumber.slice(-4)}`;
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="loading-message">
+          <p>Loading payment details...</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Payment</h1>
-
-      {address ? (
-        <div style={{ marginBottom: "20px" }}>
-          <h3>Shipping Address</h3>
-          <p>{address.contactName}</p>
-          <p>{address.addressLine1}, {address.city}</p>
-          <p>{address.state}, {address.zipCode}</p>
-        </div>
-      ) : (
-        <p>No address found! Please add it in profile.</p>
-      )}
-
-      <h4>Cart Total: LKR {cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}</h4>
-
-      <div style={{ margin: "10px 0" }}>
-        <label>
-          <input
-            type="checkbox"
-            checked={usePoints}
-            onChange={() => setUsePoints(!usePoints)}
-          />
-          Use Loyalty Points (Available: {userPoints})
-        </label>
-      </div>
-
-      <h2>Final Payable: LKR {finalTotal.toFixed(2)}</h2>
-
-      <hr />
-
-      <div style={{ display: "flex", gap: "20px" }}>
-        <div style={{ flex: 1 }}>
-          <SavedCards onSelectCard={handleSelectSavedCard} />
+    <>
+      <Navbar />
+      <div className="payment-page">
+        <div className="payment-header">
+          <h1>Payment</h1>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <h3>Enter Card Details</h3>
-          <div className="card-details" style={{ marginTop: "20px" }}>
-            <div style={{ marginBottom: "10px" }}>
-              <label>Card Number:</label>
-              <input
-                type="text"
-                value={cardNumber}
-                onChange={handleCardNumberChange}
-                placeholder="1234 5678 9012 3456"
-                maxLength="16"
-              />
-              {cardErrors.cardNumber && <span style={{ color: 'red' }}>{cardErrors.cardNumber}</span>}
+        <div className="payment-content">
+          <div className="order-summary">
+            <h3>Order Summary</h3>
+            
+            <div className="shipping-info">
+              <h3>Shipping Address</h3>
+              <p>{checkoutDetails?.shippingAddress.contactName}</p>
+              <p>{checkoutDetails?.shippingAddress.addressLine1}</p>
+              {checkoutDetails?.shippingAddress.addressLine2 && (
+                <p>{checkoutDetails.shippingAddress.addressLine2}</p>
+              )}
+              <p>
+                {checkoutDetails?.shippingAddress.city}, {checkoutDetails?.shippingAddress.state} {checkoutDetails?.shippingAddress.zipCode}
+              </p>
             </div>
 
-            <div style={{ marginBottom: "10px" }}>
-              <label>Cardholder Name:</label>
-              <input
-                type="text"
-                value={cardholderName}
-                onChange={handleCardholderNameChange}
-                placeholder="John Doe"
-              />
-              {cardErrors.cardholderName && <span style={{ color: 'red' }}>{cardErrors.cardholderName}</span>}
+            <div className="summary-details">
+              <div className="summary-row">
+                <span>Subtotal:</span>
+                <span>LKR {checkoutDetails?.totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="summary-row">
+                <span>Shipping Fee:</span>
+                <span>
+                  {checkoutDetails?.totalAmount >= 5000 ? (
+                    <span className="free-shipping">FREE</span>
+                  ) : (
+                    "LKR 450.00"
+                  )}
+                </span>
+              </div>
+              {usePoints && (
+                <div className="summary-row">
+                  <span>Points Used:</span>
+                  <span>-LKR {(pointsToUse * 0.01).toFixed(2)}</span>
+                </div>
+              )}
+              <div className="summary-row total">
+                <span>Total:</span>
+                <span>LKR {calculateTotal().toFixed(2)}</span>
+              </div>
             </div>
+          </div>
 
-            <div style={{ marginBottom: "10px" }}>
-              <label>Expiry Date:</label>
-              <input
-                type="text"
-                value={expiryDate}
-                onChange={handleExpiryDateChange}
-                placeholder="MM/YY"
-                maxLength="5"
-              />
-              {cardErrors.expiryDate && <span style={{ color: 'red' }}>{cardErrors.expiryDate}</span>}
-            </div>
+          <div className="payment-section">
+            <h3>Payment Details</h3>
 
-            <div style={{ marginBottom: "10px" }}>
-              <label>CVV:</label>
-              <input
-                type="password"
-                value={cvv}
-                onChange={handleCVVChange}
-                placeholder="123"
-                maxLength="4"
-              />
-              {cardErrors.cvv && <span style={{ color: 'red' }}>{cardErrors.cvv}</span>}
-            </div>
-
-            <div style={{ marginBottom: "10px" }}>
+            <div className="loyalty-points">
               <label>
                 <input
                   type="checkbox"
-                  checked={saveCard}
-                  onChange={(e) => setSaveCard(e.target.checked)}
+                  checked={usePoints}
+                  onChange={(e) => setUsePoints(e.target.checked)}
                 />
-                Save card for future use
+                Use Loyalty Points
               </label>
+              {usePoints && (
+                <div className="points-details">
+                  <p>Available Points: {userPoints}</p>
+                  <p>Points Value: LKR {(userPoints * 0.01).toFixed(2)}</p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={pointsToUse}
+                    onChange={(e) => setPointsToUse(Math.min(parseInt(e.target.value) || 0, userPoints))}
+                    max={userPoints}
+                    min="0"
+                  />
+                </div>
+              )}
             </div>
+
+            <div className="shipping-fee">
+              <h4>Shipping Information</h4>
+              {checkoutDetails?.totalAmount >= 5000 ? (
+                <p className="free-shipping">You qualify for FREE shipping!</p>
+              ) : (
+                <p className="shipping-message">
+                  Add LKR {(5000 - checkoutDetails?.totalAmount).toFixed(2)} more to your cart to get FREE shipping!
+                </p>
+              )}
+            </div>
+
+            <div className="final-total">
+              <h2>Final Total: LKR {calculateTotal().toFixed(2)}</h2>
+            </div>
+
+            <div className="payment-methods">
+              {savedCards.length > 0 && (
+                <div className="saved-cards">
+                  <h4>Saved Cards</h4>
+                  <div className="saved-cards-list">
+                    {savedCards.map((card) => (
+                      <div
+                        key={card._id}
+                        className={`saved-card-item ${selectedCard?._id === card._id ? 'selected' : ''}`}
+                        onClick={() => handleSelectCard(card)}
+                      >
+                        <div className="card-number">{maskCardNumber(card.cardNumber)}</div>
+                        <div className="card-details">
+                          <span>{card.cardholderName}</span>
+                          <span>Expires: {card.expiryDate}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="card-form">
+                <div className="form-group">
+                  <label>Cardholder Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Enter name as it appears on card"
+                    value={cardholderName}
+                    onChange={(e) => setCardholderName(e.target.value)}
+                  />
+                  {errors.cardholderName && <span className="error-message">{errors.cardholderName}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Card Number</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))}
+                  />
+                  {errors.cardNumber && <span className="error-message">{errors.cardNumber}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Expiry Date</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="MM/YY"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value.replace(/\D/g, "").slice(0, 4).replace(/(\d{2})(\d)/, "$1/$2"))}
+                  />
+                  {errors.expiryDate && <span className="error-message">{errors.expiryDate}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>CVV</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="123"
+                    value={cvv}
+                    onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  />
+                  {errors.cvv && <span className="error-message">{errors.cvv}</span>}
+                </div>
+
+                <div className="save-card-option">
+                  <input
+                    type="checkbox"
+                    id="saveCard"
+                    checked={saveCard}
+                    onChange={(e) => setSaveCard(e.target.checked)}
+                  />
+                  <label htmlFor="saveCard">Save this card for future purchases</label>
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="pay-button"
+              onClick={handlePayment}
+              disabled={!cardNumber || !expiryDate || !cvv}
+            >
+              Pay Now
+            </button>
           </div>
         </div>
       </div>
-
-      <button onClick={handlePayment} style={{ marginTop: "10px", padding: "10px 20px" }}>
-        Pay Now
-      </button>
-    </div>
+      <Footer />
+    </>
   );
 };
 

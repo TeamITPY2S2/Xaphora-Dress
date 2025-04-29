@@ -30,9 +30,11 @@ const AdminOrdersDashboard = () => {
           },
         });
         setOrders(res.data);
-      } catch (err) {
-        console.error(err);
+      }catch (err) {
+        console.error("Full fetch error:", err.response ? err.response.data : err.message);
         setError("Failed to fetch orders.");
+      
+      
       } finally {
         setLoading(false);
       }

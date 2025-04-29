@@ -53,28 +53,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminOrdersDashboard from './pages/AdminOrdersDashboard';
 import AdminViewOrderDetails from './pages/AdminViewOrderDetails';
 
-// Protected Route
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const userType = localStorage.getItem('userType');
-  const path = window.location.pathname;
 
-  if (!token) return <Navigate to="/api/auth/login" replace />;
-
-  if (path.startsWith('/admin-orders') && userType !== 'order-management' && userType !== 'super-admin') {
-    return <Navigate to="/api/auth/login" replace />;
-  }
-
-  if (path.startsWith('/admin') && userType !== 'admin' && userType !== 'super-admin') {
-    return <Navigate to="/api/auth/login" replace />;
-  }
-
-  if (path.startsWith('/superadmin') && userType !== 'super-admin') {
-    return <Navigate to="/api/auth/login" replace />;
-  }
-
-  return children;
-};
 
 function App() {
   return (
@@ -126,7 +105,7 @@ function App() {
 
             {/* Admin Dashboard Routes */}
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
             {/* SuperAdmin Routes */}
             <Route path="/superadmin" element={<SuperAdminDashboard />} />
@@ -141,8 +120,8 @@ function App() {
             <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
 
             {/* Order Management Admin Routes */}
-            <Route path="/admin-orders" element={<ProtectedRoute><AdminOrdersDashboard /></ProtectedRoute>} />
-            <Route path="/admin/orders/:orderId" element={<ProtectedRoute><AdminViewOrderDetails /></ProtectedRoute>} />
+            <Route path="/admin-orders" element={<AdminOrdersDashboard />} />
+            <Route path="/api/admin/orders/:orderId" element={<AdminViewOrderDetails />} />
 
           </Routes>
         </div>

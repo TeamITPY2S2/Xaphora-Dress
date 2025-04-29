@@ -13,7 +13,9 @@ exports.createOrder = async (req, res) => {
       totalAmount,
       paymentMethod, // ✅ MUST destructure it
       status,
-      paymentStatus
+      paymentStatus,
+      loyaltyPointsUsed,
+      loyaltyPointsEarned
     } = req.body;
 
     const newOrder = new Order({
@@ -24,10 +26,22 @@ exports.createOrder = async (req, res) => {
       totalAmount,
       paymentMethod, // ✅ MUST SAVE IT
       status,
-      paymentStatus
+      paymentStatus,
+      loyaltyPointsUsed,
+      loyaltyPointsEarned
     });
 
     const savedOrder = await newOrder.save();
+
+    // Update user's loyalty points if userId is provided
+    if (userId) {
+      const user = await User.findById(userId);
+      if (user) {
+        // Deduct used points and add earned points
+        user.loyaltyPoints = (user.loyaltyPoints || 0) - (loyaltyPointsUsed || 0) + (loyaltyPointsEarned || 0);
+        await user.save();
+      }
+    }
 
     res.status(201).json(savedOrder);
   } catch (error) {

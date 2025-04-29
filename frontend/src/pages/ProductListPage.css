@@ -4,6 +4,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 80px; /* Add padding to prevent content from being hidden behind the fixed button */
 }
 
 .product-list {
@@ -170,4 +171,40 @@
 .add-to-cart-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+/* Fixed Checkout Button */
+.fixed-checkout-button {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fixed-checkout-button:hover {
+  background-color: #45a049;
+}
+
+.fixed-checkout-button i {
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fixed-checkout-button {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './ProductListPage.css';
+import { FaShoppingCart } from 'react-icons/fa';
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
@@ -188,13 +189,6 @@ function ProductListPage() {
                     >
                       Add to Cart
                     </button>
-                    <button
-            className="add-to-cart-button"
-            onClick={handleCartPage}
-            disabled={!selectedSize}
-          >
-            Checkout Cart
-          </button>
                   </>
                 )}
               </div>
@@ -214,6 +208,12 @@ function ProductListPage() {
         ) : (
           <p>No products found.</p>
         )}
+      </div>
+
+      {/* Fixed Checkout Button */}
+      <div className="fixed-checkout-button" onClick={handleCartPage}>
+        <FaShoppingCart />
+        <span>Go to Checkout</span>
       </div>
     </div>
   );
