@@ -37,10 +37,10 @@ const adminSchema = new mongoose.Schema(
       default: "regular",
       enum: [
         "super-admin",
-        "delivery",
-        "inventory",
+        "delivery-management",
+        "inventory-management",
         "order-management",
-        "reviews",
+        "reviews-management",
         "user-management",
         "regular",
       ],
