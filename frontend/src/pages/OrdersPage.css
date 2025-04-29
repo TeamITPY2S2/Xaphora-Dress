@@ -291,4 +291,30 @@
 
 .retry-btn:hover {
   background-color: #c82333;
+}
+
+.order-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.confirm-delivery-btn {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.confirm-delivery-btn:hover {
+  background-color: #218838;
+}
+
+.confirm-delivery-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 } 

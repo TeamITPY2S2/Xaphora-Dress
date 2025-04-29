@@ -59,6 +59,29 @@ const OrdersPage = () => {
     });
   };
 
+  const handleConfirmDelivery = async (orderId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:8070/api/orders/${orderId}/confirm-delivery`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        // Update the local orders state to remove the confirmed order
+        setOrders(orders.filter(order => order._id !== orderId));
+      }
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+      setError("Failed to confirm delivery. Please try again later.");
+    }
+  };
+
   if (loading) {
     return <div className="orders-container">Loading...</div>;
   }
@@ -77,69 +100,54 @@ const OrdersPage = () => {
     );
   }
 
-  const renderOrderCard = (order) => (
-    <div key={order._id} className="order-card">
-      <div className="order-header">
-        <span className="order-id">Order #{order._id.slice(-6)}</span>
-        <span className="order-date">{formatDate(order.createdAt)}</span>
-      </div>
-      
-      <div className="order-info">
-        <div className="info-row">
-          <span className="info-label">Customer:</span>
-          <span className="info-value">{order.shippingAddress?.fullName || 'N/A'}</span>
+  const renderOrderCard = (order) => {
+    const isDelivered = order.status === 'delivered';
+    
+    return (
+      <div key={order._id} className="order-card">
+        <div className="order-header">
+          <span className="order-id">Order #{order._id}</span>
+          <span className="order-date">{formatDate(order.createdAt)}</span>
         </div>
-        <div className="info-row">
-          <span className="info-label">Address:</span>
-          <span className="info-value">{order.shippingAddress?.address || 'N/A'}</span>
-        </div>
-        <div className="info-row">
-          <span className="info-label">Phone:</span>
-          <span className="info-value">{order.shippingAddress?.phone || 'N/A'}</span>
-        </div>
-      </div>
 
-      <div className="order-items">
-        <h3 className="items-heading">Ordered Items</h3>
-        {order.items.map((item) => (
-          <div key={item._id} className="order-item">
-            <div className="item-details">
-              <span className="item-name">{item.name}</span>
-              <span className="item-size">Size: {item.size || "N/A"}</span>
-              <span className="item-quantity">Qty: {item.quantity}</span>
-            </div>
-            <span className="item-price">Rs {item.price.toFixed(2)}</span>
+        <div className="order-info">
+          <div className="info-row">
+            <span className="info-label">Status:</span>
+            <span className={`info-value status-${order.status}`}>{order.status}</span>
           </div>
-        ))}
-      </div>
+          <div className="info-row">
+            <span className="info-label">Total Amount:</span>
+            <span className="info-value">LKR {order.totalAmount.toFixed(2)}</span>
+          </div>
+        </div>
 
-      <div className="order-summary">
-        <div className="summary-row">
-          <span>Subtotal:</span>
-          <span>Rs {order.totalAmount.toFixed(2)}</span>
+        <div className="order-items">
+          <h3 className="items-heading">Items</h3>
+          {order.items.map((item, index) => (
+            <div key={index} className="order-item">
+              <div className="item-details">
+                <span className="item-name">{item.productName}</span>
+                <span className="item-size">Size: {item.size}</span>
+                <span className="item-quantity">Qty: {item.quantity}</span>
+              </div>
+              <span className="item-price">LKR {item.price.toFixed(2)}</span>
+            </div>
+          ))}
         </div>
-        <div className="summary-row">
-          <span>Delivery Fee:</span>
-          <span>Rs {order.deliveryFee ? order.deliveryFee.toFixed(2) : "0.00"}</span>
-        </div>
-        <div className="summary-row total">
-          <span>Total Amount:</span>
-          <span>Rs {(order.totalAmount + (order.deliveryFee || 0)).toFixed(2)}</span>
-        </div>
-      </div>
 
-      <div className="order-status-container">
-        <div className={`order-status status-${order.status}`}>
-          <span className="status-label">Order Status:</span>
-          <span className="status-value">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
-        </div>
-        <div className={`payment-status status-${order.paymentStatus}`}>
-          <span className="status-label">Payment Status:</span>
-          <span className="status-value">{order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}</span>
-        </div>
+        {!isDelivered && (
+          <div className="order-actions">
+            <button 
+              className="confirm-delivery-btn"
+              onClick={() => handleConfirmDelivery(order._id)}
+            >
+              Confirm Delivery
+            </button>
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  };
 
   if (orders.length === 0 && !newOrder) {
     return (

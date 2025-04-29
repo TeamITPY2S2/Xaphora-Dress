@@ -107,4 +107,28 @@ router.put('/:id/status', orderManagementAuth, async (req, res) => {
 // Update order item details (size, quantity)
 router.put('/:orderId/items/:itemId', auth, orderController.updateOrderItem);
 
+// Confirm order delivery (buyer only)
+router.put('/:orderId/confirm-delivery', auth, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Check if the order belongs to the authenticated user
+    if (order.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to confirm this order' });
+    }
+
+    // Update order status to delivered
+    order.status = 'delivered';
+    await order.save();
+    
+    res.json({ message: 'Order confirmed as delivered', order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
