@@ -6,6 +6,19 @@ const morgan = require("morgan");
 
 dotenv.config();
 
+// Add detailed email configuration logging
+console.log('Detailed Environment Variables:');
+console.log('EMAIL_USER length:', process.env.EMAIL_USER ? process.env.EMAIL_USER.length : 0);
+console.log('EMAIL_PASSWORD length:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD.length : 0);
+console.log('First character of password:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD[0] : 'not set');
+console.log('Last character of password:', process.env.EMAIL_PASSWORD ? process.env.EMAIL_PASSWORD[process.env.EMAIL_PASSWORD.length - 1] : 'not set');
+
+// Add email configuration logging
+console.log('Email Configuration Status:', {
+    EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Not Set',
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ? 'Set' : 'Not Set'
+});
+
 const app = express();
 
 // Middleware
@@ -16,10 +29,14 @@ app.use(morgan("dev"));
 // Routes
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/UserRoutes");
-const deliveryRoutes = require("./routes/deliveryRoutes");
+
+const deliveryRoutes = require("./routes/DeliveryRoutes");
+
+
+
 const orderRoutes = require("./routes/orderRoutes");
 const deliveFeedbackRoutes = require("./routes/deliveFeedbackRoutes");
-const monitoringRoutes = require("./routes/deliveMonitoringRoutes");
+const deliveMonitoringRoutes = require("./routes/deliveMonitoringRoutes");
 const historyRoutes = require("./routes/deliveHistoryRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
@@ -45,7 +62,12 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/monitoring", deliveMonitoringRoutes);
+app.use("/api/admin", deliveMonitoringRoutes);
+
 app.use('/api/fcm', fcmRoutes);
+
 
 
 // MongoDB Connection

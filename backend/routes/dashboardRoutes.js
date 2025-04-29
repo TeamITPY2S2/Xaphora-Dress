@@ -2,15 +2,27 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/jwtMiddleware");
 
+
+const { updateProfile, deleteProfile } = require("../controllers/profileController");
+
+
 const {
   getDashboardData,
   getRoleBasedDashboardInfo,
 } = require("../controllers/dashboardController");
 
+
+// Delivery dashboard data
+router.get("/delivery", verifyToken, getDeliveryDashboardData);
+
+// Update profile
+router.put("/update", verifyToken, updateProfile);
+
 const {
   updateProfile,
   deleteProfile,
 } = require("../controllers/profileController");
+
 
 // For logged-in user dashboard info (name, type)
 router.get("/", verifyToken, getRoleBasedDashboardInfo);

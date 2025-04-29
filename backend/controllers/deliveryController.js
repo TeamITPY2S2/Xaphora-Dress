@@ -1,11 +1,10 @@
-// controllers/deliveryController.js
 const DeliveryAgent = require('../models/DeliveryAgent');
 const Order = require('../models/Order'); // Using our temporary Order model
 
-// Create a new delivery agent
+//  new delivery agent
 exports.createDeliveryAgent = async (req, res) => {
   try {
-    // Updated to include email
+    
     const { name, contact, email, assignedRegion } = req.body;
     const newAgent = new DeliveryAgent({ name, contact, email, assignedRegion });
     await newAgent.save();
@@ -25,7 +24,7 @@ exports.getAllDeliveryAgents = async (req, res) => {
   }
 };
 
-// NEW: Retrieve a single delivery agent by ID
+
 exports.getDeliveryAgentById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,24 +72,24 @@ exports.deleteDeliveryAgent = async (req, res) => {
   }
 };
 
-// Automatically Assign an Order to a Delivery Agent Based on the Order's Shipping Region
+
 exports.assignOrderToDeliveryAgent = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-    // Retrieve the order details from our temporary Order model
+   
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Find a delivery agent whose assignedRegion matches the order's shippingRegion
+   
     const agent = await DeliveryAgent.findOne({ assignedRegion: order.shippingRegion });
     if (!agent) {
       return res.status(404).json({ message: "No available delivery agent for this region" });
     }
 
-    // Assign the delivery agent to the order
+ 
     order.deliveryAgent = agent._id;
     await order.save();
 
@@ -104,32 +103,38 @@ exports.assignOrderToDeliveryAgent = async (req, res) => {
   }
 };
 
-// Manually Assign an Order to a Delivery Agent (via dropdown selection)
+// Manually Assign an Order to a Delivery Agent 
+// Manually Assign an Order to a Delivery Agent 
 exports.assignAgentManually = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { agentId } = req.body;
+    let { agentId } = req.body;
 
-    // Retrieve the order details
-    const order = await Order.findById(orderId);
-    if (!order) {
+    // If agentId is empty or null, set to null (unassign)
+    if (!agentId) agentId = null;
+
+    // If agentId is not null, check if agent exists
+    if (agentId) {
+      const agent = await DeliveryAgent.findById(agentId);
+      if (!agent) {
+        return res.status(404).json({ message: "Delivery agent not found" });
+      }
+    }
+
+    // Update order using findByIdAndUpdate
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { deliveryAgent: agentId },
+      { new: true, runValidators: false }
+    );
+
+    if (!updatedOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Validate if the selected agent exists
-    const agent = await DeliveryAgent.findById(agentId);
-    if (!agent) {
-      return res.status(404).json({ message: "Delivery agent not found" });
-    }
-
-    // Assign the selected agent to the order
-    order.deliveryAgent = agentId;
-    await order.save();
-
     res.status(200).json({
-      message: "Agent manually assigned successfully",
-      order,
-      agent
+      message: agentId ? "Agent manually assigned successfully" : "Agent unassigned successfully",
+      order: updatedOrder,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

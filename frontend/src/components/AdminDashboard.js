@@ -1,84 +1,197 @@
 // src/components/AdminDashboard.js
-import './AdminDashboard.css';
 import React, { useState, useEffect } from 'react';
-import { getAgents, getAgentPerformance } from '../api/adminAPI';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
-  const [performance, setPerformance] = useState('');
+  const [performance, setPerformance] = useState(null);
+  const [activeTab, setActiveTab] = useState('total');
+  const [orders, setOrders] = useState({ total: 0, delivered: 0 });
+  const [recentOrders, setRecentOrders] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch agents when the component mounts
+  // Fetch orders statistics and recent orders
+  useEffect(() => {
+    async function fetchOrderStats() {
+      try {
+        const statsRes = await fetch('http://localhost:8070/api/orders/stats');
+        if (!statsRes.ok) throw new Error('Failed to fetch order stats');
+        const stats = await statsRes.json();
+        setOrders({
+          total: stats.totalOrders || 0,
+          delivered: stats.deliveredOrders || 0
+        });
+
+        const recentRes = await fetch('http://localhost:8070/api/orders/recent');
+        if (!recentRes.ok) throw new Error('Failed to fetch recent orders');
+        const recent = await recentRes.json();
+        setRecentOrders(recent);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchOrderStats();
+  }, []);
+
+  // Fetch agents list
   useEffect(() => {
     async function fetchAgents() {
       try {
-        const data = await getAgents();
-        setAgents(data);
-      } catch (error) {
-        console.error('Error fetching agents:', error);
+        const res = await fetch('http://localhost:8070/api/delivery/agents');
+        if (!res.ok) throw new Error('Failed to fetch agents');
+        setAgents(await res.json());
+      } catch (err) {
+        console.error(err);
       }
     }
     fetchAgents();
   }, []);
 
+  // Handler to load one agent's performance
   const handleAgentChange = async (e) => {
     const agentId = e.target.value;
     setSelectedAgent(agentId);
-    if (agentId) {
-      try {
-        const response = await fetch(`http://localhost:8070/api/admin/agent-performance?agentId=${agentId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch performance');
-        }
-        const result = await response.json();
-        // Assuming result.report is an array of objects; format it using JSON.stringify
-        setPerformance(JSON.stringify(result.report, null, 2) || 'Performance details not available');
-      } catch (error) {
-        console.error('Error fetching performance:', error);
-        setPerformance('Error fetching performance');
-      }
-    } else {
-      setPerformance('');
+    setPerformance(null);
+
+    if (!agentId) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:8070/api/admin/agent-performance/${agentId}`
+      );
+      if (!res.ok) throw new Error('Failed to fetch performance');
+      const { report } = await res.json();
+      setPerformance(report);
+    } catch (err) {
+      console.error(err);
+      setPerformance({ error: 'Could not load performance' });
     }
   };
-  
+
+  // Build the textarea content
+  const performanceText = React.useMemo(() => {
+    if (!selectedAgent) return '';
+    if (performance?.error) return performance.error;
+    if (!performance) return '';
+
+    const lines = [
+      `ID: ${performance._id}`,
+      `Name: ${performance.name}`,
+      `Region: ${performance.assignedRegion}`,
+      `Total Orders: ${performance.totalOrders}`,
+      `Delivered Orders: ${performance.deliveredOrders}`
+    ];
+
+    if (performance.orderDetails?.length) {
+      lines.push('', 'Order Details:');
+      performance.orderDetails.forEach(o => {
+        lines.push(`  • ${o.orderId} — ${o.customerName}`);
+      });
+    }
+
+    return lines.join('\n');
+  }, [performance, selectedAgent]);
+
+  // PDF download handler
+  const handleDownloadReport = () => {
+    if (!performance) return;
+
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.text('Agent Performance Report', 10, 15);
+
+    // Agent Info
+    doc.setFontSize(12);
+    doc.text(`ID: ${performance._id}`, 10, 30);
+    doc.text(`Name: ${performance.name}`, 10, 38);
+    doc.text(`Region: ${performance.assignedRegion}`, 10, 46);
+    doc.text(`Total Orders: ${performance.totalOrders}`, 10, 54);
+    doc.text(`Delivered Orders: ${performance.deliveredOrders}`, 10, 62);
+
+    // Order Details Table
+    if (performance.orderDetails && performance.orderDetails.length > 0) {
+      doc.setFontSize(14);
+      doc.text('Order Details:', 10, 75);
+      doc.setFontSize(12);
+
+      let y = 83;
+      doc.text('Order ID', 10, y);
+      doc.text('Customer Name', 70, y);
+
+      y += 7;
+      performance.orderDetails.forEach((order, idx) => {
+        doc.text(String(order.orderId), 10, y);
+        doc.text(String(order.customerName), 70, y);
+        y += 7;
+        // Add new page if needed
+        if (y > 280) {
+          doc.addPage();
+          y = 15;
+        }
+      });
+    }
+
+    doc.save(`agent_performance_${performance.name || selectedAgent}.pdf`);
+  };
 
   return (
-    <div className="admin-dashboard" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div className="admin-dashboard">
       {/* Top Bar */}
-      <div className="top-bar" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <button className="assign-order-button" style={{ padding: '10px 15px', fontSize: '16px' }}>
-          Assign Order
-        </button>
+      <div className="top">
         <div className="top-right-buttons">
-          <button 
-            className="add-agent-button" 
-            style={{ padding: '10px 15px', marginRight: '10px', fontSize: '16px' }}
-            onClick={() => navigate('/addDeliveryAgent')}
-          >
-            Add Agent
-          </button>
-          <button 
-            className="view-agent-button" 
-            style={{ padding: '10px 15px', fontSize: '16px' }}
-            onClick={() => navigate('/agents')}
-          >
-            View Agent
-          </button>
+         
+    
+        </div>
+      </div>
+
+      {/* Order Statistics Tabs */}
+      <div className="order-stats-tabs">
+        <div 
+          className={`tab ${activeTab === 'total' ? 'active' : ''}`}
+          onClick={() => setActiveTab('total')}
+        >
+          <h3>Total Orders</h3>
+          <div className="stat-number">{orders.total}</div>
+        </div>
+        <div 
+          className={`tab ${activeTab === 'delivered' ? 'active' : ''}`}
+          onClick={() => setActiveTab('delivered')}
+        >
+          <h3>Delivered Orders</h3>
+          <div className="stat-number">{orders.delivered}</div>
+        </div>
+      </div>
+
+      {/* Recent Orders Section */}
+      <div className="recent-orders">
+        <h3>Recent Orders</h3>
+        <div className="orders-list">
+          {recentOrders.map(order => (
+            <div key={order._id} className="order-item">
+              <div className="order-info">
+                <span className="order-id">Order #{order._id}</span>
+                <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="order-details">
+                <span className="customer-name">{order.customerName}</span>
+                <span className="order-status">{order.status}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Agent Performance Section */}
-      <div className="agent-performance" style={{ marginBottom: '20px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-          Agent Performance:
-        </label>
-        <select 
-          value={selectedAgent} 
-          onChange={handleAgentChange} 
-          style={{ padding: '8px', width: '100%', marginBottom: '10px' }}
+      <div className="agent-performance">
+        <h3>Agent Performance</h3>
+        <select
+          value={selectedAgent}
+          onChange={handleAgentChange}
         >
           <option value="">Select an Agent</option>
           {agents.map(agent => (
@@ -87,23 +200,22 @@ const AdminDashboard = () => {
             </option>
           ))}
         </select>
-        <textarea
-          readOnly
-          value={performance}
-          placeholder="Agent performance details will be displayed here..."
-          style={{ padding: '10px', width: '100%', height: '100px', resize: 'none' }}
-        />
-      </div>
 
-      {/* View Order & Order Tracking Button */}
-      <div className="order-tracking">
-        <button 
-          className="order-tracking-button" 
-          style={{ padding: '10px 15px', fontSize: '16px' }}
-          onClick={() => navigate('/Order')}
-        >
-          View Order & Order Tracking
-        </button>
+        <textarea
+          className="agent-performance-text"
+          readOnly
+          value={performanceText}
+          placeholder="Agent performance details will be displayed here..."
+        />
+        {performance && (
+          <button
+            className="download-report-button"
+            onClick={handleDownloadReport}
+          >
+            <i className="fas fa-download"></i>
+            <span>Download Report</span>
+          </button>
+        )}
       </div>
     </div>
   );

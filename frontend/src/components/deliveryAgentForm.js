@@ -1,7 +1,7 @@
-// components/DeliveryAgentForm.js
+import './deliveryAgentForm.css'; 
 import React, { useState } from 'react';
 import { createDeliveryAgent } from '../api/deliveryAgentAPI';
-import './deliveryAgentForm.css'; // Import your CSS file
+
 
 const DeliveryAgentForm = () => {
   const [agent, setAgent] = useState({

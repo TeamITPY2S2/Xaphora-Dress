@@ -1,9 +1,8 @@
-// controllers/deliveMonitoringController.js
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const DeliveryAgent = require('../models/DeliveryAgent');
 
-// Generates a report that groups orders by their status (e.g., Ordered, Packed, Shipped, Delivered)
-// and includes an array of order IDs and customer IDs for each group.
+// 1) Delivery Progress Report
 exports.getDeliveryProgressReport = async (req, res) => {
   try {
     const report = await Order.aggregate([
@@ -12,28 +11,42 @@ exports.getDeliveryProgressReport = async (req, res) => {
           _id: "$status",
           count: { $sum: 1 },
           orderIds: { $push: "$_id" },
-          customerIds: { $push: "$customer_id" } // Assuming your Order model uses "customer_id"
+          customerNames: { $push: "$customerName" }
+        }
+      },
+      {
+        $project: {
+          status: "$_id",
+          count: 1,
+          orderIds: 1,
+          customerNames: 1,
+          _id: 0
         }
       }
     ]);
-
-    res.status(200).json({
+    return res.status(200).json({
       message: "Delivery progress report generated successfully",
       report
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
-// Generates a report for each delivery agent with total and delivered orders,
-// and includes detailed order information (order ID and customer ID).
+// 2) Agent Performance Report
 exports.getAgentPerformanceReport = async (req, res) => {
   try {
-    const detailedReport = await DeliveryAgent.aggregate([
+    // ← READ from req.params, since our route is /agent-performance/:agentId
+    const { agentId } = req.params;
+    if (!agentId) {
+      return res.status(400).json({ message: 'Agent ID is required' });
+    }
+
+    const detailed = await DeliveryAgent.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(agentId) } },
       {
         $lookup: {
-          from: "orders", // Ensure this matches your orders collection name in MongoDB
+          from: "orders",
           localField: "_id",
           foreignField: "deliveryAgent",
           as: "orders"
@@ -48,18 +61,18 @@ exports.getAgentPerformanceReport = async (req, res) => {
             $size: {
               $filter: {
                 input: "$orders",
-                as: "order",
-                cond: { $eq: ["$$order.status", "Delivered"] }
+                as: "o",
+                cond: { $eq: ["$$o.status", "Delivered"] }
               }
             }
           },
           orderDetails: {
             $map: {
               input: "$orders",
-              as: "order",
+              as: "o",
               in: {
-                orderId: "$$order._id",
-                customerId: "$$order.customer_id" // Adjust if your field is named differently (e.g., "customer")
+                orderId: "$$o._id",
+                customerName: "$$o.customerName"
               }
             }
           }
@@ -67,11 +80,15 @@ exports.getAgentPerformanceReport = async (req, res) => {
       }
     ]);
 
-    res.status(200).json({
+    if (!detailed.length) {
+      return res.status(404).json({ message: 'Agent not found' });
+    }
+
+    return res.status(200).json({
       message: "Agent performance report generated successfully",
-      report: detailedReport
+      report: detailed[0]
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };

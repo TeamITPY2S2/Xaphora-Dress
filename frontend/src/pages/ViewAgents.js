@@ -2,15 +2,14 @@ import './ViewAgents.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-
 const ViewAgents = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  // Fetch agents from backend API
+  // Fetch agents 
   useEffect(() => {
     async function fetchAgents() {
       try {
@@ -29,13 +28,12 @@ const ViewAgents = () => {
     fetchAgents();
   }, []);
 
-  // Handler for updating an agent: navigates to an update page
+  
   const handleUpdate = (agentId) => {
-    // Ensure the route matches the one defined in your router configuration
     navigate(`/UpdateDeliveryAgent/${agentId}`);
   };
 
-  // Handler for deleting an agent
+
   const handleDelete = async (agentId) => {
     if (!window.confirm("Are you sure you want to delete this agent?")) return;
     try {
@@ -45,7 +43,7 @@ const ViewAgents = () => {
       if (!response.ok) {
         throw new Error('Failed to delete agent');
       }
-      // Remove the deleted agent from the state
+      
       setAgents((prevAgents) => prevAgents.filter(agent => agent._id !== agentId));
     } catch (err) {
       console.error(err.message);
@@ -56,41 +54,52 @@ const ViewAgents = () => {
   if (loading) return <p>Loading agents...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  // Filter agents by name
+  const filteredAgents = agents.filter(agent =>
+    agent.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div className="view-agents-container">
       <h2>Delivery Agents</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+      {/* Search input */}
+      <input
+        type="text"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        style={{ marginBottom: "16px", padding: "8px", width: "250px" }}
+      />
+      <table className="view-agents-table">
         <thead>
           <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Name</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Contact</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Email</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Assigned Region</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Created At</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Assigned Region</th>
+            <th>Created At</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {agents.map((agent) => (
+          {filteredAgents.map((agent) => (
             <tr key={agent._id}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{agent.name}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{agent.contact}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{agent.email}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{agent.assignedRegion}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                {new Date(agent.createdAt).toLocaleString()}
-              </td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                <div style={{ display: 'flex', gap: '10px' }}>
+              <td>{agent.name}</td>
+              <td>{agent.contact}</td>
+              <td>{agent.email}</td>
+              <td>{agent.assignedRegion}</td>
+              <td>{new Date(agent.createdAt).toLocaleString()}</td>
+              <td>
+                <div className="action-buttons">
                   <button 
                     onClick={() => handleUpdate(agent._id)}
-                    style={{ padding: '5px 10px', fontSize: '14px' }}
+                    className="update-button"
                   >
                     Update
                   </button>
                   <button 
                     onClick={() => handleDelete(agent._id)}
-                    style={{ padding: '5px 10px', fontSize: '14px' }}
+                    className="delete-button"
                   >
                     Delete
                   </button>
