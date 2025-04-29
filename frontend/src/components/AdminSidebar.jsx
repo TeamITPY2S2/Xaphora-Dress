@@ -1,5 +1,7 @@
+// src/components/AdminSidebar.js
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import "./AdminSidebar.css";
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -18,48 +20,25 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div
-      style={{
-        width: "250px",
-        minHeight: "100vh",
-        backgroundColor: "#2c3e50",
-        color: "#fff",
-        padding: "20px",
-        position: "fixed",
-      }}
-    >
-      <h2 style={{ marginBottom: "30px", textAlign: "center" }}>Admin Panel</h2>
-
-      <ul style={{ listStyle: "none", padding: 0 }}>
+    <div className="admin-sidebar">
+      <Link to="/" className="sidebar-title">
+        Xaphora Dress
+      </Link>
+      <ul className="sidebar-nav">
         {navLinks.map((link) => (
-          <li key={link.path} style={{ marginBottom: "20px" }}>
+          <li key={link.path} className="sidebar-item">
             <Link
               to={link.path}
-              style={{
-                color: location.pathname === link.path ? "#f1c40f" : "#ecf0f1",
-                textDecoration: "none",
-                fontSize: "18px",
-              }}
+              className={`sidebar-link ${
+                location.pathname === link.path ? "active" : ""
+              }`}
             >
               {link.label}
             </Link>
           </li>
         ))}
       </ul>
-
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: "30px",
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#e74c3c",
-          border: "none",
-          color: "#fff",
-          cursor: "pointer",
-          fontSize: "16px",
-        }}
-      >
+      <button className="sidebar-logout" onClick={handleLogout}>
         Logout
       </button>
     </div>

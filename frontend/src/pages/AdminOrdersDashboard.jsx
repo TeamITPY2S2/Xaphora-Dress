@@ -26,7 +26,7 @@ const AdminOrdersDashboard = () => {
       // Check if user has correct permissions
       if (userType !== "admin" && userType !== "order-management" && userType !== "super-admin") {
         localStorage.clear();
-        navigate("/login");
+        navigate("/api/auth/login");
         return;
       }
 
@@ -43,7 +43,7 @@ const AdminOrdersDashboard = () => {
         console.error("Full fetch error:", err.response ? err.response.data : err.message);
         if (err.response?.status === 401) {
           localStorage.clear();
-          navigate("/login");
+          navigate("/api/auth/login");
           return;
         }
         if (err.response?.status === 403) {
@@ -118,7 +118,7 @@ const AdminOrdersDashboard = () => {
               <thead>
                 <tr>
                   <th>Order ID</th>
-                  <th>Customer</th>
+                  <th>Customer Name</th>
                   <th>Address</th>
                   <th>Phone</th>
                   <th>Total (LKR)</th>
