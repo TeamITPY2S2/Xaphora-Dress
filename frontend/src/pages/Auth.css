@@ -1,40 +1,177 @@
-.auth-container {
+/* src/pages/Auth.css */
+
+/* =============================
+   Theme variables
+   ============================= */
+   :root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --text-color: #111827;
+    --bg-color: #f9fafb;
+    --card-bg: #ffffff;
+    --input-border: #d1d5db;
+    --error-color: #dc2626;
+    --radius-lg: 12px;
+    --radius-sm: 8px;
+    --spacing: 20px;
+  }
+  
+  /* =============================
+     Shared card (Forgot Password)
+     ============================= */
+  .auth-card {
     max-width: 400px;
     margin: 80px auto;
     padding: 30px;
-    border-radius: 12px;
-    background: #f9fafb;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .auth-title,
+  .auth-card h2 {
+    margin-bottom: var(--spacing);
+    font-size: 1.5rem;
+    color: var(--text-color);
+  }
+  
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .form-group label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .auth-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: var(--spacing);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--input-border);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  
+  .auth-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  .auth-button {
+    width: 100%;
+    padding: 12px 0;
+    margin-top: 0.5rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .auth-button:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .auth-button-secondary {
+    width: 100%;
+    padding: 12px 0;
+    margin-top: 0.5rem;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1px solid var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .auth-button-secondary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+  
+  /* =============================
+     Reset container (Reset Password)
+     ============================= */
+  .auth-container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
   
   .auth-container h2 {
-    margin-bottom: 20px;
-    color: #111827;
+    margin-bottom: var(--spacing);
+    font-size: 1.5rem;
+    color: var(--text-color);
+  }
+  
+  .auth-message {
+    margin-bottom: 10px;
+    color: var(--error-color);
+    font-weight: 500;
+  }
+  
+  .auth-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .auth-container label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
   }
   
   .auth-container input {
     width: 100%;
     padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
+    margin-bottom: var(--spacing);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--input-border);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  
+  .auth-container input:focus {
+    outline: none;
+    border-color: var(--primary-color);
   }
   
   .auth-container button {
-    padding: 12px 20px;
-    background-color: #3b82f6;
-    color: white;
+    padding: 12px;
+    margin-top: 0.5rem;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s;
   }
   
-  .auth-container button:hover {
-    background-color: #2563eb;
+  .auth-container button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
   }
   
-  .auth-message {
-    margin-bottom: 10px;
-    color: #dc2626;
+  .auth-container button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }

@@ -41,10 +41,12 @@ function Login() {
         // Redirect based on user type
         if (data.userType === "super-admin") {
           navigate("/superadmin");
+
         } else if (data.userType === "order-management") {
           console.log(" order Done")
           navigate("/admin-orders");
         } else if (data.userType === "admin") {
+
           navigate("/dashboard");
         } else if (data.userType === "seller") {
           navigate("/seller-dashboard");

@@ -1,55 +1,78 @@
 // src/pages/ForgotPassword.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import "./Auth.css";
-import { toast } from 'react-toastify';
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
 
     try {
-      const res = await fetch("http://localhost:8070/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
+      const res = await fetch(
+        "http://localhost:8070/api/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
       const data = await res.json();
+
       if (res.ok) {
         alert("Check your email for the reset link.");
-        navigate("/api/auth/login");
+
+        setEmail("");
+        setTimeout(() => navigate("/api/auth/login"), 2000);
+
       } else {
-        setMessage(data.message || "Failed to send reset email.");
+        alert(data.message || "Failed to send reset email.");
       }
     } catch (err) {
-      setMessage("Server error");
+      alert("Server error. Please try again later.");
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Forgot Password</h2>
-      {message && <p className="auth-message">{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button type="submit">Send Reset Link</button>
-        <button type="button" onClick={() => navigate("/api/auth/login")}>
-          Back to Login
-        </button>
-      </form>
-    </div>
+    <>
+      <Navbar />
+
+      <div className="auth-card">
+        <h2 className="auth-title">Forgot Password</h2>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              className="auth-input"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="auth-button">
+            Send Reset Link
+          </button>
+          <button
+            type="button"
+            className="auth-button-secondary"
+            onClick={() => navigate("/api/auth/login")}
+          >
+            Back to Login
+          </button>
+        </form>
+      </div>
+
+      <Footer />
+    </>
   );
 }
 

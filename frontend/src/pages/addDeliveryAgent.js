@@ -1,4 +1,3 @@
-// pages/AddDeliveryAgent.js
 import React from 'react';
 import DeliveryAgentForm from '../components/deliveryAgentForm';
 

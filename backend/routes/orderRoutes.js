@@ -1,10 +1,8 @@
 // routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/OrderModel');
-const auth = require('../middleware/auth');
-const orderManagementAuth = require('../middleware/orderManagementAuth');
-const orderController = require('../controllers/OrderController');
+const Order = require('../models/Order');
+const { updateOrderStatus } = require('../controllers/deliveStatusController');
 
 // Create a new order
 router.post('/', auth, async (req, res) => {
@@ -52,23 +50,10 @@ router.post('/', auth, async (req, res) => {
 // Get all orders (admin and order-management only)
 router.get('/', orderManagementAuth, async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate('userId', 'email')
-      .sort({ createdAt: -1 });
-    res.json(orders);
+    const orders = await Order.find();
+    res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Get user's orders
-router.get('/user/:userId', auth, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.params.userId })
-      .sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 

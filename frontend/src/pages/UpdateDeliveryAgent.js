@@ -1,13 +1,13 @@
-// src/pages/UpdateDeliveryAgent.js
+import './UpdateDeliveryAgent.css';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const UpdateDeliveryAgent = () => {
-  // Destructure the parameter using the same name as in your route definition
+ 
   const { agentId } = useParams();
   const navigate = useNavigate();
 
-  // State to hold form values
+  
   const [agent, setAgent] = useState({
     name: '',
     contact: '',
@@ -18,7 +18,7 @@ const UpdateDeliveryAgent = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState('');
 
-  // Fetch the current agent details when component mounts
+  // Fetch the current agent details 
   useEffect(() => {
     async function fetchAgentDetails() {
       try {
@@ -27,7 +27,7 @@ const UpdateDeliveryAgent = () => {
           throw new Error('Failed to fetch agent details');
         }
         const data = await response.json();
-        // Set state with fetched agent data (adjust keys as per your backend)
+        // Set state with fetched agent data
         setAgent({
           name: data.name,
           contact: data.contact,
@@ -43,12 +43,12 @@ const UpdateDeliveryAgent = () => {
     fetchAgentDetails();
   }, [agentId]);
 
-  // Handle input changes
+ 
   const handleChange = (e) => {
     setAgent({ ...agent, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission for update
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -66,7 +66,7 @@ const UpdateDeliveryAgent = () => {
       }
       const result = await response.json();
       setSuccess(result.message || 'Agent updated successfully');
-      // Optionally navigate back to the agent list after a short delay
+      
       setTimeout(() => {
         navigate('/agents');
       }, 1500);

@@ -1,32 +1,18 @@
+// src/components/ProtectedRoute.js
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const userType = localStorage.getItem('userType');
 
-  if (!token) {
-    // No token, redirect to login
-    return <Navigate to="/login" replace />;
-  }
+  const isAuthenticated = !!localStorage.getItem('token'); // or use your authentication logic
 
-  // Check if the user has the correct role for the route
-  const path = window.location.pathname;
-  
-  if (path.startsWith('/admin') && userType !== 'admin' && userType !== 'super-admin') {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (path.startsWith('/superadmin') && userType !== 'super-admin') {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (path.startsWith('/admin-orders') && userType !== 'order-management' && userType !== 'super-admin') {
-    return <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/api/auth/login" replace />;
   }
 
-  // If all checks pass, render the protected content
   return children;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;
+

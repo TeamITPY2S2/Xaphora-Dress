@@ -1,10 +1,13 @@
+
 // controllers/deliveHistoryController.js
 const Order = require('../models/OrderModel');
+const Order = require('../models/Order');
 
-// For customers: get delivery history for a specific customer
+
+// get delivery history for a specific customer
 exports.getUserDeliveryHistory = async (req, res) => {
   try {
-    // Assume the request provides a customerId in the URL params.
+    
     const { customerId } = req.params;
     const orders = await Order.find({ customer: customerId });
     res.status(200).json({
@@ -16,7 +19,7 @@ exports.getUserDeliveryHistory = async (req, res) => {
   }
 };
 
-// For admin: get the complete delivery history (all orders)
+// get the complete delivery history 
 exports.getAllDeliveryHistory = async (req, res) => {
   try {
     const orders = await Order.find();

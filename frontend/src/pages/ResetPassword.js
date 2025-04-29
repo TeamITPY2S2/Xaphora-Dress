@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Auth.css";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -39,6 +41,8 @@ function ResetPassword() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="auth-container">
       <h2>Reset Password</h2>
       {message && <p className="auth-message">{message}</p>}
@@ -63,6 +67,8 @@ function ResetPassword() {
         </button>
       </form>
     </div>
+    <Footer />
+    </>
   );
 }
 

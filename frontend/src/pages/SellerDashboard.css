@@ -1,68 +1,167 @@
-/* src/pages/SellerDashboard.css */
-.seller-dashboard {
-    padding: 20px;
-    background-color: #f7f7f7;
-    min-height: 100vh;
-    text-align: center;
+/* overall wrapper */
+.dashboard-bg {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f1f3f5;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  background-color: #343a40;
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+.sidebar.closed {
+  transform: translateX(-260px);
+}
+
+/* header & toggle */
+.sidebar-header {
+  padding: 1rem;
+}
+.sidebar-header h5 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.toggle-btn {
+  background: none;
+  border: none;
+}
+.toggle-btn:hover {
+  color: #fff;
+}
+
+/* Profile block */
+.sidebar-profile {
+  padding: 1rem;
+  border-bottom: 1px solid #495057;
+}
+.sidebar-profile .spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+.sidebar-profile .text-danger {
+  font-size: 0.9rem;
+  color: #e4606d;
+}
+
+/* Nav items */
+.sidebar-nav {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-nav small {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #adb5bd;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.nav-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: #adb5bd;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-item i {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+}
+.nav-item:hover {
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  cursor: pointer;
+}
+.nav-item.active {
+  background-color: #495057;
+  color: #fff;
+  border-left: 4px solid #0d6efd;
+}
+
+/* Footer */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid #495057;
+}
+.sidebar-footer small {
+  display: block;
+  color: #adb5bd;
+}
+.sidebar-footer div {
+  color: #fff;
+}
+
+/* Main area */
+main {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #f1f3f5;
+}
+
+/* Low-stock alert */
+.alert-warning {
+  border-radius: 0.25rem;
+}
+
+/* Top navbar in main */
+.seller-nav {
+  border-bottom: 1px solid #dee2e6;
+}
+.seller-nav .btn:focus,
+.seller-nav .form-control:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Content area padding */
+.content-area {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cards & tabs */
+.card {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.card-header {
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+}
+.card-header-tabs .nav-link {
+  border: none;
+  padding: 0.75rem 1rem;
+  color: #495057;
+}
+.card-header-tabs .nav-link.active {
+  border-bottom: 3px solid #0d6efd;
+  color: #0d6efd;
+}
+
+/* Buttons at bottom */
+.d-flex.justify-content-between .btn {
+  min-width: 140px;
+}
+
+/* Mobile / narrow view */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
   }
-  
-  .seller-dashboard h1 {
-    margin-bottom: 20px;
-  }
-  
-  /* Styles for the new action buttons */
-  .action-buttons {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .action-buttons button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .action-buttons button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Styles for the tab navigation */
-  .dashboard-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-tabs button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #e0e0e0;
-    transition: background-color 0.3s ease;
-  }
-  
-  .dashboard-tabs button:hover {
-    background-color: #d0d0d0;
-  }
-  
-  .dashboard-tabs button.active {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  /* Dashboard content container */
-  .dashboard-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
+}

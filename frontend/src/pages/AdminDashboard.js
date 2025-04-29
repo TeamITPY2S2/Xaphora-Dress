@@ -1,64 +1,9 @@
+
 // src/pages/AdminDashboardPage.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './AdminDashboard.css';
+import React from 'react';
+import AdminDashboard from '../components/AdminDashboard';
 
-function AdminDashboard() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get('http://localhost:8070/api/orders');
-      setOrders(response.data);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to fetch orders');
-      setLoading(false);
-    }
-  };
-
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      await axios.put(`http://localhost:8070/api/orders/${orderId}/status`, {
-        status: newStatus
-      });
-      fetchOrders(); // Refresh orders after status update
-    } catch (err) {
-      setError('Failed to update order status');
-    }
-  };
-
-  const filteredOrders = orders.filter(order => {
-    if (filterStatus === 'all') return true;
-    return order.status === filterStatus;
-  });
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const calculateTotal = (items) => {
-    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
-
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
-
+const AdminDashboardPage = () => {
   return (
     <div className="admin-dashboard">
       <h1>Order Management Dashboard</h1>

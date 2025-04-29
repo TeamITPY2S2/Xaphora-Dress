@@ -1,12 +1,14 @@
-// routes/deliveMonitoringRoutes.js
 const express = require('express');
-const router = express.Router();
-const { getDeliveryProgressReport, getAgentPerformanceReport } = require('../controllers/deliveMonitoringController');
+const router  = express.Router();
 
-// Endpoint to get delivery progress report
-router.get('/progress-report', getDeliveryProgressReport);
+// Import exactly the two exported functions
+const {
+  getDeliveryProgressReport,
+  getAgentPerformanceReport
+} = require('../controllers/deliveMonitoringController');
 
-// Endpoint to get delivery agent performance report
-router.get('/agent-performance', getAgentPerformanceReport);
+// Mount them under your chosen paths:
+router.get('/progress-report',       getDeliveryProgressReport);
+router.get('/agent-performance/:agentId', getAgentPerformanceReport);
 
 module.exports = router;
