@@ -93,7 +93,7 @@ const UserOrderDetails = () => {
         <p><strong>Shipping Address:</strong> {order.shippingAddress}</p>
         <p><strong>Order Status:</strong> {order.status}</p>
         <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
-        <p><strong>Total Amount:</strong> ${order.totalAmount?.toFixed(2)}</p>
+        <p><strong>Total Amount:</strong> Rs.{order.totalAmount?.toFixed(2)}</p>
       </div>
 
       {/* Items List */}
@@ -105,8 +105,8 @@ const UserOrderDetails = () => {
               <li key={idx} style={{ marginBottom: '5px' }}>
                 <strong>Product Name:</strong> {item.productName} |{' '}
                 <strong>Quantity:</strong> {item.quantity} |{' '}
-                <strong>Price:</strong> ${item.price} |{' '}
-                <strong>Subtotal:</strong> ${(item.quantity * item.price).toFixed(2)}
+                <strong>Price:</strong> Rs.{item.price} |{' '}
+                <strong>Subtotal:</strong> Rs.{(item.quantity * item.price).toFixed(2)}
               </li>
             ))}
           </ul>

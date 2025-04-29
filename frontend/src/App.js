@@ -81,13 +81,13 @@ function App() {
             {/* Seller login & signup */}
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/addDeliveryAgent" element={<AddDeliveryAgent />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            
             <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
             <Route path="/Order" element={<DeliveOrdersTable />} />
             <Route path="/agents" element={<ViewAgents />} />
             {/* Updated route: now matches the URL pattern used in ViewAgents.js */}
             <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
-            <Route path="/Order/:orderId" element={<UserOrderDetails />} />
+            
             <Route path="/seller/login" element={<SellerLogin />} />
             <Route path="/seller/signup" element={<SellerSignup />} />
 

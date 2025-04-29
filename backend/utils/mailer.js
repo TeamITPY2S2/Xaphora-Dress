@@ -34,7 +34,7 @@ transporter.verify(function(error, success) {
 const emailTemplates = {
     Ordered: (orderDetails) => ({
         subject: 'Order Confirmation - Xaphora Dress',
-        text: `Thank you for your order!\n\nOrder ID: ${orderDetails._id}\nTotal Amount: $${orderDetails.totalAmount}\n\nWe'll notify you once your order is packed and ready for shipping.`
+        text: `Thank you for your order!\n\nOrder ID: ${orderDetails._id}\nTotal Amount: Rs.${orderDetails.totalAmount}\n\nWe'll notify you once your order is packed and ready for shipping.`
     }),
     Packed: (orderDetails) => ({
         subject: 'Order Packed - Xaphora Dress',

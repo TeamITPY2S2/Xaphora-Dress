@@ -1,12 +1,11 @@
 import './UpdateDeliveryAgent.css';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 const UpdateDeliveryAgent = () => {
- 
   const { agentId } = useParams();
   const navigate = useNavigate();
-
   
   const [agent, setAgent] = useState({
     name: '',
@@ -27,7 +26,6 @@ const UpdateDeliveryAgent = () => {
           throw new Error('Failed to fetch agent details');
         }
         const data = await response.json();
-        // Set state with fetched agent data
         setAgent({
           name: data.name,
           contact: data.contact,
@@ -43,12 +41,10 @@ const UpdateDeliveryAgent = () => {
     fetchAgentDetails();
   }, [agentId]);
 
- 
   const handleChange = (e) => {
     setAgent({ ...agent, [e.target.name]: e.target.value });
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -68,74 +64,87 @@ const UpdateDeliveryAgent = () => {
       setSuccess(result.message || 'Agent updated successfully');
       
       setTimeout(() => {
-        navigate('/agents');
+        navigate('/admin-dashboard/agents');
       }, 1500);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  if (loading) return <p>Loading agent details...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return (
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-content">
+        <p>Loading agent details...</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-content">
+        <p>Error: {error}</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h2>Update Delivery Agent</h2>
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Name: </label>
-          <input 
-            type="text" 
-            name="name" 
-            value={agent.name} 
-            onChange={handleChange} 
-            required 
-            style={{ padding: '8px', width: '100%' }}
-          />
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-content">
+        <div className="update-agent-container">
+          <h2>Update Delivery Agent</h2>
+          {success && <p className="success-message">{success}</p>}
+          {error && <p className="error-message">{error}</p>}
+          <form onSubmit={handleSubmit} className="update-form">
+            <div className="form-group">
+              <label>Name: </label>
+              <input 
+                type="text" 
+                name="name" 
+                value={agent.name} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label>Contact: </label>
+              <input 
+                type="text" 
+                name="contact" 
+                value={agent.contact} 
+                onChange={handleChange} 
+                required 
+                placeholder="10-digit number" 
+              />
+            </div>
+            <div className="form-group">
+              <label>Email: </label>
+              <input 
+                type="email" 
+                name="email" 
+                value={agent.email} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label>Assigned Region: </label>
+              <input 
+                type="text" 
+                name="assignedRegion" 
+                value={agent.assignedRegion} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            <button type="submit" className="update-button">
+              Update Agent
+            </button>
+          </form>
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Contact: </label>
-          <input 
-            type="text" 
-            name="contact" 
-            value={agent.contact} 
-            onChange={handleChange} 
-            required 
-            placeholder="10-digit number" 
-            style={{ padding: '8px', width: '100%' }}
-          />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Email: </label>
-          <input 
-            type="email" 
-            name="email" 
-            value={agent.email} 
-            onChange={handleChange} 
-            required 
-            style={{ padding: '8px', width: '100%' }}
-          />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Assigned Region: </label>
-          <input 
-            type="text" 
-            name="assignedRegion" 
-            value={agent.assignedRegion} 
-            onChange={handleChange} 
-            required 
-            style={{ padding: '8px', width: '100%' }}
-          />
-        </div>
-        <button 
-          type="submit" 
-          style={{ padding: '10px 15px', fontSize: '16px', cursor: 'pointer' }}
-        >
-          Update Agent
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

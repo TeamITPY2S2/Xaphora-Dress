@@ -9,7 +9,7 @@ exports.updateOrderStatus = async (req, res) => {
 
     console.log('Updating order status:', { orderId, status });
     
-    const validStatuses = ['Ordered', 'Packed', 'Shipped', 'Delivered'];
+    const validStatuses = ['Processing', 'Ordered', 'Packed', 'Shipped', 'Delivered'];
     if (!validStatuses.includes(status)) {
       console.error('Invalid status provided:', status);
       return res.status(400).json({ message: 'Invalid status value' });

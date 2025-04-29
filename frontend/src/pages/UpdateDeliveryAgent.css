@@ -1,61 +1,83 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 20px;
+  background-color: #f8fafc;
+}
 
 .update-agent-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-  }
-  
-  /* Page Title */
-  .update-agent-container h2 {
-    margin-bottom: 20px;
-  }
-  
-  
-  .update-agent-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .update-agent-form label {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  /* Input Fields */
-  .update-agent-form input[type="text"],
-  .update-agent-form input[type="email"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  /* Submit */
-  .update-agent-form button {
-    padding: 10px 15px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .update-agent-form button:hover {
-    background-color: #0056b3;
-  }
-  
-  
-  .success-message {
-    color: green;
-    margin-bottom: 10px;
-  }
-  
-  .error-message {
-    color: red;
-    margin-bottom: 10px;
-  }
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.update-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.update-button:hover {
+  background-color: #2563eb;
+}
+
+.success-message {
+  color: #059669;
+  background-color: #d1fae5;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
   

@@ -30,7 +30,7 @@ app.use(morgan("dev"));
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/UserRoutes");
 
-const deliveryRoutes = require("./routes/DeliveryRoutes");
+const deliveryRoutes = require("./routes/deliveryRoutes");
 
 
 

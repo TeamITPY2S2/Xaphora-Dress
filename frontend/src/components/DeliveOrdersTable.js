@@ -104,7 +104,7 @@ const DeliveOrdersTable = () => {
             <tr key={order._id}>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order._id}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.customerName}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.shippingAddress || order.shippingRegion}</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.shippingAddress?.state || 'Unknown'}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                 <span style={{
                   padding: '4px 8px',
@@ -112,7 +112,9 @@ const DeliveOrdersTable = () => {
                   backgroundColor: 
                     order.status === 'Delivered' ? '#4CAF50' :
                     order.status === 'Shipped' ? '#2196F3' :
-                    order.status === 'Packed' ? '#FF9800' : '#9E9E9E',
+                    order.status === 'Packed' ? '#FF9800' :
+                    order.status === 'Ordered' ? '#9E9E9E' :
+                    '#E91E63', // Pink color for Processing
                   color: 'white'
                 }}>
                   {order.status}
@@ -131,6 +133,7 @@ const DeliveOrdersTable = () => {
                     border: '1px solid #ddd'
                   }}
                 >
+                  <option value="Processing">Processing</option>
                   <option value="Ordered">Ordered</option>
                   <option value="Packed">Packed</option>
                   <option value="Shipped">Shipped</option>
