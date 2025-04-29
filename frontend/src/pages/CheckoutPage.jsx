@@ -137,12 +137,17 @@ const CheckoutPage = () => {
     }
 
     const selectedAddress = addressList.find(addr => addr._id === selectedAddressId);
+    const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    const shippingFee = subtotal >= 5000 ? 0 : 450;
+    
     const orderDetails = {
       userId,
       customerName: selectedAddress.contactName,
       shippingAddress: selectedAddress,
       cartItems: cart,
-      totalAmount: calculateTotal(),
+      subtotal: subtotal,
+      shippingFee: shippingFee,
+      totalAmount: subtotal + shippingFee,
     };
 
     localStorage.setItem("checkoutDetails", JSON.stringify(orderDetails));

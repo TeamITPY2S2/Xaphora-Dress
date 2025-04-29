@@ -69,9 +69,8 @@ const PaymentPage = () => {
   const calculateTotal = () => {
     if (!checkoutDetails) return 0;
     const subtotal = checkoutDetails.totalAmount;
-    const shippingFee = subtotal >= 5000 ? 0 : 450; // Single delivery charge
     const pointsValue = usePoints ? pointsToUse * 0.01 : 0;
-    return subtotal + shippingFee - pointsValue;
+    return subtotal - pointsValue;
   };
 
   const calculateLoyaltyPoints = () => {
@@ -146,8 +145,6 @@ const PaymentPage = () => {
       }
 
       // Calculate fees & totals
-      const subtotal = checkoutDetails.totalAmount;
-      const shippingFee = subtotal >= 5000 ? 0 : 450;
       const orderData = {
         userId,
         customerName: checkoutDetails.customerName,
