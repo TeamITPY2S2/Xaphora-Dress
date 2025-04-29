@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import './AdminOrdersDashboard.css';
+import "./AdminOrdersDashboard.css";
 
 const AdminOrdersDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -27,34 +27,29 @@ const AdminOrdersDashboard = () => {
         return;
       }
 
-      // Check if user has correct permissions
-      if (userType !== "admin" && userType !== "order-management" && userType !== "super-admin") {
+      if (
+        userType !== "admin" &&
+        userType !== "order-management" &&
+        userType !== "super-admin"
+      ) {
         localStorage.clear();
-        navigate("/api/auth/login");
+        navigate("/login");
         return;
       }
 
       try {
-        // Fetch orders
         const res = await axios.get("http://localhost:8070/api/orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(res.data);
       } catch (err) {
-        console.error("Full fetch error:", err.response ? err.response.data : err.message);
-        if (err.response?.status === 401) {
+        console.error("Fetch error:", err.response || err.message);
+        if (err.response?.status === 401 || err.response?.status === 403) {
           localStorage.clear();
-          navigate("/api/auth/login");
-          return;
+          navigate("/login");
+        } else {
+          setError("Failed to fetch orders. Please try again later.");
         }
-        if (err.response?.status === 403) {
-          setError("Access denied. You don't have permission to view orders.");
-          return;
-        }
-        setError("Failed to fetch orders. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -63,139 +58,85 @@ const AdminOrdersDashboard = () => {
     fetchData();
   }, [navigate]);
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString("en-US", {
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
 
-  const getStatusColorClass = (status) => {
-    switch (status) {
-      case "ordered": return "status-ordered";
-      case "packed": return "status-packed";
-      case "shipped": return "status-shipped";
-      case "delivered": return "status-delivered";
-      case "cancelled": return "status-cancelled";
-      default: return "";
-    }
-  };
+  const renderCustomerName = (order) =>
+    order.customerName || order.shippingAddress?.fullName || "N/A";
 
-  const getPaymentStatusClass = (paymentStatus) => {
-    return paymentStatus === "completed" ? "payment-completed" : "payment-pending";
-  };
+  const renderShippingAddress = (address) =>
+    typeof address === "string"
+      ? address
+      : address?.addressLine1 || address?.address || "N/A";
 
-  const renderShippingAddress = (address) => {
-    if (!address) return 'N/A';
-    if (typeof address === 'string') return address;
-    return address.address || 'N/A';
-  };
+  const renderPhone = (address) =>
+    address?.phoneNumber || address?.phone || "N/A";
 
-  const renderPhone = (address) => {
-    if (!address || typeof address !== 'object') return 'N/A';
-    return address.phone || 'N/A';
-  };
+  // Filtering orders based on search and status
+  const filteredOrders = orders.filter((order) => {
+    const text = searchTerm.trim().toLowerCase();
+    const inText =
+      order._id.toLowerCase().includes(text) ||
+      renderCustomerName(order).toLowerCase().includes(text) ||
+      renderShippingAddress(order.shippingAddress)
+        .toLowerCase()
+        .includes(text);
 
-  const renderCustomerName = (order) => {
-    if (order.customerName) return order.customerName;
-    if (order.shippingAddress?.fullName) return order.shippingAddress.fullName;
-    return 'N/A';
-  };
+    const status = (order.status || "").toLowerCase();
+    const inStatus = filterStatus === "all" || status === filterStatus;
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:8070/api/orders/${orderId}/status`, 
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // Refresh orders after status update
-      const res = await axios.get("http://localhost:8070/api/orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      setOrders(res.data);
-    } catch (err) {
-      console.error("Error updating order status:", err);
-    }
-  };
-
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      renderCustomerName(order).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      renderShippingAddress(order.shippingAddress).toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = filterStatus === "all" || order.status === filterStatus;
-    
-    return matchesSearch && matchesStatus;
+    return inText && inStatus;
   });
 
-  const downloadPDF = (ordersToDownload, title) => {
+  // PDF generation
+  const downloadPDF = () => {
     const doc = new jsPDF();
-    
-    // Add title
     doc.setFontSize(16);
-    doc.text(`Xaphora Dress - ${title}`, 14, 15);
-    
-    // Add date
+    doc.text("Xaphora Dress - Orders Report", 14, 15);
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
-    
-    // Prepare data for the table
-    const tableData = ordersToDownload.map(order => [
+
+    const tableData = filteredOrders.map((order) => [
       order._id,
       renderCustomerName(order),
       renderShippingAddress(order.shippingAddress),
       renderPhone(order.shippingAddress),
-      `Rs ${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}`,
-      order.paymentStatus || 'pending',
-      order.status || 'pending',
-      formatDate(order.createdAt)
+      order.totalAmount ? order.totalAmount.toFixed(2) : "0.00",
+      order.paymentStatus || "N/A",
+      order.status || "N/A",
+      formatDate(order.createdAt),
     ]);
 
-    // Add table using autoTable
     autoTable(doc, {
       startY: 30,
-      head: [['Order ID', 'Customer', 'Address', 'Phone', 'Total', 'Payment', 'Status', 'Ordered On']],
+      head: [[
+        "Order ID",
+        "Customer",
+        "Address",
+        "Phone",
+        "Total (LKR)",
+        "Payment",
+        "Status",
+        "Ordered On",
+      ]],
       body: tableData,
-      theme: 'grid',
+      theme: "grid",
       headStyles: { fillColor: [52, 152, 219] },
       styles: { fontSize: 8 },
-      columnStyles: {
-        0: { cellWidth: 25 },
-        1: { cellWidth: 25 },
-        2: { cellWidth: 35 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 20 },
-        7: { cellWidth: 35 }
-      },
-      margin: { left: 10, right: 10 }
+      margin: { left: 10, right: 10 },
     });
 
-    // Save the PDF
-    doc.save(`Xaphora_Orders_${title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
-  };
-
-  const handleDownload = () => {
-    if (filterStatus === "all") {
-      downloadPDF(filteredOrders, "All Orders");
-    } else {
-      const statusOrders = orders.filter(order => order.status === filterStatus);
-      downloadPDF(statusOrders, `${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Orders`);
-    }
+    doc.save(
+      `Xaphora_Orders_${filterStatus}_${new Date()
+        .toISOString()
+        .split("T")[0]}.pdf`
+    );
   };
 
   if (loading) return <div className="loading">Loading orders...</div>;
@@ -205,38 +146,39 @@ const AdminOrdersDashboard = () => {
     <div className="admin-orders-container">
       <AdminSidebar />
       <div className="admin-orders-content">
-        <h1 className="admin-orders-heading">📦 Order Management Dashboard</h1>
+        <h1 className="admin-orders-heading">
+          📦 Order Management Dashboard
+        </h1>
 
+        {/* Controls */}
         <div className="dashboard-controls">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search orders..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <div className="filter-controls">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="status-filter"
-            >
-              <option value="all">All Orders</option>
-              <option value="ordered">Ordered</option>
-              <option value="packed">Packed</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-            </select>
-          </div>
-          <div className="download-controls">
-            <button onClick={handleDownload} className="download-btn">
-              Download {filterStatus === "all" ? "All Orders" : `${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Orders`}
-            </button>
-          </div>
+          <input
+            type="text"
+            placeholder="Search orders..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="status-filter"
+          >
+            <option value="all">All Orders</option>
+            <option value="ordered">Ordered</option>
+            <option value="packed">Packed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          <button onClick={downloadPDF} className="download-btn">
+            Download PDF
+          </button>
         </div>
 
+        {/* Table */}
         {filteredOrders.length === 0 ? (
           <p style={{ textAlign: "center" }}>No orders found.</p>
         ) : (
@@ -245,7 +187,7 @@ const AdminOrdersDashboard = () => {
               <thead>
                 <tr>
                   <th>Order ID</th>
-                  <th>Customer Name</th>
+                  <th>Customer</th>
                   <th>Address</th>
                   <th>Phone</th>
                   <th>Total (LKR)</th>
@@ -261,15 +203,17 @@ const AdminOrdersDashboard = () => {
                     <td>{renderCustomerName(order)}</td>
                     <td>{renderShippingAddress(order.shippingAddress)}</td>
                     <td>{renderPhone(order.shippingAddress)}</td>
-                    <td>Rs {order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</td>
                     <td>
-                      <span className={`status-badge ${getPaymentStatusClass(order.paymentStatus || 'pending')}`}>
-                        {order.paymentStatus || 'pending'}
+                      Rs {order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}
+                    </td>
+                    <td>
+                      <span className={`status-badge ${order.paymentStatus === 'completed' ? 'payment-completed' : 'payment-pending'}`}>
+                        {order.paymentStatus}
                       </span>
                     </td>
                     <td>
-                      <span className={`status-badge ${getStatusColorClass(order.status || 'pending')}`}>
-                        {order.status || 'pending'}
+                      <span className={`status-badge ${order.status}`}>
+                        {order.status}
                       </span>
                     </td>
                     <td>{order.createdAt ? formatDate(order.createdAt) : 'N/A'}</td>
