@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -52,8 +51,6 @@ import UserOrderDetails from './pages/UserOrderDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminOrdersDashboard from './pages/AdminOrdersDashboard';
 import AdminViewOrderDetails from './pages/AdminViewOrderDetails';
-
-
 
 function App() {
   return (
@@ -122,7 +119,6 @@ function App() {
             {/* Order Management Admin Routes */}
             <Route path="/admin-orders" element={<AdminOrdersDashboard />} />
             <Route path="/api/admin/orders/:orderId" element={<AdminViewOrderDetails />} />
-
           </Routes>
         </div>
       </div>

@@ -226,29 +226,17 @@ const PaymentPage = () => {
         createdAt: orderRes.data.createdAt,
       };
 
-      // Store order details in localStorage
-      localStorage.setItem("latestOrder", JSON.stringify(orderDetails));
-      console.log("Stored order details:", orderDetails);
+      // Store order details in localStorage with a specific key
+      localStorage.setItem("orderSummary", JSON.stringify(orderDetails));
 
-      // Show success message and navigate
-      alert("Payment successful! Your order has been placed.");
-      
-      // Navigate to order confirmation with state
+      // Navigate to order confirmation with order details
       navigate("/order-confirmation", { 
-        state: { orderDetails },
-        replace: true 
+        state: { orderDetails }
       });
-
-      // Fallback navigation if React Router navigation fails
-      setTimeout(() => {
-        const currentPath = window.location.pathname;
-        if (currentPath !== "/order-confirmation") {
-          window.location.href = "/order-confirmation";
-        }
-      }, 1000);
     } catch (error) {
       console.error("Payment failed:", error);
-      const msg = error.response?.data?.error || error.message || "Payment failed.";
+      const msg =
+        error.response?.data?.error || error.message || "Payment failed.";
       alert(msg);
     }
   };
