@@ -11,6 +11,7 @@ const AssignOrderPage = () => {
       const oRes = await fetch('http://localhost:8070/api/orders');
       if (!oRes.ok) throw new Error('Failed to load orders');
       const oData = await oRes.json();
+      console.log('Orders with addresses:', oData); // For debugging
       setOrders(oData);
     } catch (err) {
       setError(err.message);
@@ -24,6 +25,7 @@ const AssignOrderPage = () => {
         const aRes = await fetch('http://localhost:8070/api/delivery/agents');
         if (!aRes.ok) throw new Error('Failed to load agents');
         const aData = await aRes.json();
+        console.log('Delivery agents:', aData); // For debugging
         setAgents(aData);
       } catch (err) {
         setError(err.message);
@@ -72,29 +74,48 @@ const AssignOrderPage = () => {
         </thead>
         <tbody>
           {orders.map(order => {
-            const filtered = agents.filter(
-              a => a.assignedRegion === (order.shippingRegion || order.shippingAddress)
-            );
+            // Case-insensitive comparison of regions
+            const filtered = agents.filter(agent => {
+              const agentRegion = (agent.assignedRegion || '').toLowerCase().trim();
+              const orderRegion = (order.shippingRegion || '').toLowerCase().trim();
+              console.log(`Comparing regions for order ${order._id}:`);
+              console.log(`Agent region: "${agentRegion}", Order region: "${orderRegion}"`);
+              return agentRegion === orderRegion;
+            });
+
             return (
               <tr key={order._id}>
                 <td>
                   <strong>#{order._id}</strong><br/>
-                  Customer: {order.customerName || order.customer}<br/>
-                  Region: {order.shippingRegion || order.shippingAddress}<br/>
+                  Customer: {order.customerName}<br/>
+                  Region: <span style={{ fontWeight: order.shippingRegion === 'Unknown' ? 'bold' : 'normal', color: order.shippingRegion === 'Unknown' ? 'red' : 'inherit' }}>
+                    {order.shippingRegion}
+                  </span><br/>
                   Status: {order.status}
                 </td>
                 <td>
-                  <select
-                    value={order.deliveryAgent || ''}
-                    onChange={e => handleAssign(order._id, e.target.value)}
-                  >
-                    <option value="">-- select agent --</option>
-                    {filtered.map(a => (
-                      <option key={a._id} value={a._id}>
-                        {a.name} — {a.assignedRegion}
-                      </option>
-                    ))}
-                  </select>
+                  {order.shippingRegion === 'Unknown' ? (
+                    <div style={{ color: 'red' }}>Cannot assign - Unknown region</div>
+                  ) : (
+                    <>
+                      <select
+                        value={order.deliveryAgent || ''}
+                        onChange={e => handleAssign(order._id, e.target.value)}
+                      >
+                        <option value="">-- select agent --</option>
+                        {filtered.map(a => (
+                          <option key={a._id} value={a._id}>
+                            {a.name} — {a.assignedRegion}
+                          </option>
+                        ))}
+                      </select>
+                      {filtered.length === 0 && (
+                        <div style={{ color: 'orange', fontSize: '0.8em', marginTop: '5px' }}>
+                          No agents available for {order.shippingRegion}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </td>
               </tr>
             );
