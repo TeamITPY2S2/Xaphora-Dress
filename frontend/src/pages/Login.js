@@ -38,7 +38,12 @@ function Login() {
         // Redirect based on role
         if (data.userType === "super-admin") {
           navigate("/superadmin");
-        } else if (data.userType === "admin") {
+        // } else if (data.userType === "order-management") {
+        //   navigate("/dashboard");
+        // } else if (data.userType === "order-management") {
+        //   navigate("/dashboard");
+        // } 
+        }else if (data.userType === "admin") {
           navigate("/dashboard");
         } else {
           // for both "user" (buyer) and any other fallback
