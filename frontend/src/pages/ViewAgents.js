@@ -32,7 +32,7 @@ const ViewAgents = () => {
 
   const handleUpdate = async (agentId) => {
     try {
-      // Add your update logic here
+      navigate(`/UpdateDeliveryAgent/${agentId}`);
       console.log('Update agent:', agentId);
     } catch (err) {
       console.error('Error updating agent:', err);
