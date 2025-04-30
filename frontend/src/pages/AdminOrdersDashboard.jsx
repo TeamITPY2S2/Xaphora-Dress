@@ -35,7 +35,7 @@ const AdminOrdersDashboard = () => {
 
       if (!token || !userType || !userId) {
         localStorage.clear();
-        navigate("/login");
+        navigate("/api/auth/login");
         return;
       }
 
@@ -45,7 +45,7 @@ const AdminOrdersDashboard = () => {
         userType !== "super-admin"
       ) {
         localStorage.clear();
-        navigate("/login");
+        navigate("/api/auth/login");
         return;
       }
 
@@ -58,7 +58,7 @@ const AdminOrdersDashboard = () => {
         console.error("Fetch error:", err.response || err.message);
         if (err.response?.status === 401 || err.response?.status === 403) {
           localStorage.clear();
-          navigate("/login");
+          navigate("/api/auth/login");
         } else {
           setError("Failed to fetch orders. Please try again later.");
         }
