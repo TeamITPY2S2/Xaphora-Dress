@@ -1,17 +1,15 @@
-// routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
-const Address = require('../models/addressModel');
 const { updateOrderStatus } = require('../controllers/deliveStatusController');
-
 
 // Get order statistics
 router.get('/stats', async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
     const deliveredOrders = await Order.countDocuments({ status: 'Delivered' });
-    
+
     res.status(200).json({
       totalOrders,
       deliveredOrders
@@ -28,65 +26,72 @@ router.get('/recent', async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(10)
       .select('_id customerName status createdAt');
-    
+
     res.status(200).json(recentOrders);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Create a new order using the updated Order model fields
+// ✅ Create a new order (fix userId cast)
 router.post('/', async (req, res) => {
   try {
-    // Expecting new field names from the updated Order model
-    const { userId, customerName, shippingAddress, items, totalAmount } = req.body;
-    const newOrder = new Order({ userId, customerName, shippingAddress, items, totalAmount });
+    let { userId, customerName, shippingAddress, items, totalAmount } = req.body;
+
+    // Validate and convert userId to ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: 'Invalid userId format' });
+    }
+
+    userId = new mongoose.Types.ObjectId(userId);
+
+    const newOrder = new Order({
+      userId,
+      customerName,
+      shippingAddress,
+      items,
+      totalAmount
+    });
+
     await newOrder.save();
+
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get all orders
+// ✅ Get all orders with region extracted from nested shippingAddress.address
 router.get('/', async (req, res) => {
   try {
-    // Get all orders without populating userId yet
     const orders = await Order.find();
-    
-    // Process each order to include address state
-    const ordersWithAddresses = await Promise.all(orders.map(async (order) => {
-      try {
-        // Get the userId directly from the order
-        const userId = order.userId;
-        console.log('Processing order:', order._id, 'userId:', userId);
 
-        // Find the default address for this user
-        const customerAddress = await Address.findOne({ 
-          userId: userId,
-          isDefault: true
-        });
-        
-        console.log('Found address for order:', order._id, 'address:', customerAddress);
-        
-        const orderObj = order.toObject();
-        
-        // Add the state from the user's address
-        return {
-          ...orderObj,
-          shippingRegion: customerAddress ? customerAddress.state : 'Unknown'
-        };
-      } catch (err) {
-        console.error('Error processing order:', order._id, err);
-        return {
-          ...order.toObject(),
-          shippingRegion: 'Unknown'
-        };
+    const ordersWithRegion = orders.map(order => {
+      const orderObj = order.toObject();
+
+      const addressStr = orderObj.shippingAddress?.address || '';
+      let shippingRegion = 'Unknown';
+
+      const parts = addressStr.split(',').map(p => p.trim());
+
+      if (parts.length >= 2) {
+        const secondLast = parts[parts.length - 2];
+        const last = parts[parts.length - 1];
+
+        if (/\d{3,}/.test(last)) {
+          shippingRegion = secondLast;
+        } else {
+          shippingRegion = last;
+        }
       }
-    }));
-    
-    console.log('Final processed orders:', ordersWithAddresses);
-    res.status(200).json(ordersWithAddresses);
+
+      return {
+        ...orderObj,
+        shippingRegion
+      };
+    });
+
+    res.status(200).json(ordersWithRegion);
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ error: error.message });
