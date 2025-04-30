@@ -84,9 +84,9 @@ router.get('/', async (req, res) => {
         console.log('Address parts:', addressParts);
 
         // For address format like: "213/70/01 katuwellegama, Negombo, Negombo, North 11526"
-        if (addressParts.length >= 2) {
+        if (addressParts.length >= 3) {
           // Get the second part after the comma (should be "Negombo")
-          shippingRegion = addressParts[1];
+          shippingRegion = addressParts[2];
           console.log('Extracted region:', shippingRegion);
         }
       }
