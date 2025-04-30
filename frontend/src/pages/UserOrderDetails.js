@@ -89,8 +89,8 @@ const UserOrderDetails = () => {
       {/* Delivery Details */}
       <div style={{ marginBottom: '20px' }}>
         <h3>Delivery Information</h3>
-        <p><strong>Customer Name:</strong> {order.customerName}</p>
-        <p><strong>Shipping Address:</strong> {order.shippingAddress}</p>
+        <p><strong>Customer Name:</strong> {order.shippingAddress.fullName}</p>
+        <p><strong>Shipping Address:</strong> {order.shippingAddress.address}</p>
         <p><strong>Order Status:</strong> {order.status}</p>
         <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
         <p><strong>Total Amount:</strong> Rs.{order.totalAmount?.toFixed(2)}</p>
