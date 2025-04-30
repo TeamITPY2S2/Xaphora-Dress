@@ -145,3 +145,26 @@
       padding: 10px;
     }
   }
+  .inputError {
+    border-color: #e53e3e;
+  }
+  
+  .errorText {
+    color: #e53e3e;
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+  }
+  
+  .error {
+    background: #fed7d7;
+    color: #c53030;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .spinnerWrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }

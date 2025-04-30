@@ -1,4 +1,3 @@
-// src/pages/AdminsList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SuperAdminSidebar from "../components/SuperAdminSidebar";
@@ -14,7 +13,7 @@ export default function AdminsList() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // Load admins on mount
+  // Load on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/api/auth/login");
@@ -32,7 +31,7 @@ export default function AdminsList() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error fetching admins");
-      
+
       // super-admins first, then newest
       const sorted = data.sort((a, b) => {
         if (a.adminType === "super-admin" && b.adminType !== "super-admin") return -1;
@@ -48,13 +47,13 @@ export default function AdminsList() {
     }
   };
 
-  // Live filtering
+  // Live filter
   useEffect(() => {
     const q = searchTerm.trim().toLowerCase();
     setFiltered(
       !q
         ? admins
-        : admins.filter(a =>
+        : admins.filter((a) =>
             [a.email, `${a.firstName} ${a.lastName}`, a.adminType]
               .join(" ")
               .toLowerCase()
@@ -63,10 +62,10 @@ export default function AdminsList() {
     );
   }, [searchTerm, admins]);
 
-  // Navigation handlers
+  // Handlers
   const handleAdd = () => navigate("/superadmin/add-admin");
-  const handleUpdate = id => navigate(`/superadmin/update-admin/${id}`);
-  const handleDelete = async id => {
+  const handleUpdate = (id) => navigate(`/superadmin/update-admin/${id}`);
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this admin?")) return;
     try {
       const token = localStorage.getItem("token");
@@ -75,9 +74,8 @@ export default function AdminsList() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Delete failed");
-      // remove locally
-      setAdmins(admins.filter(a => a._id !== id));
-      setFiltered(filtered.filter(a => a._id !== id));
+      setAdmins(admins.filter((a) => a._id !== id));
+      setFiltered(filtered.filter((a) => a._id !== id));
     } catch (err) {
       console.error(err);
       alert("Failed to delete admin");
@@ -88,16 +86,16 @@ export default function AdminsList() {
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
     doc.text("Admins List", 14, 15);
-    const rows = filtered.map(a => [
+    const rows = filtered.map((a) => [
       a.email,
       `${a.firstName} ${a.lastName}`,
       a.adminType,
-      new Date(a.createdAt).toLocaleDateString()
+      new Date(a.createdAt).toLocaleDateString(),
     ]);
     autoTable(doc, {
       head: [["Email", "Full Name", "Admin Type", "Created At"]],
       body: rows,
-      startY: 25
+      startY: 25,
     });
     doc.save("admins-list.pdf");
   };
@@ -117,7 +115,7 @@ export default function AdminsList() {
                 className="search-input"
                 placeholder="Search admins..."
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <button className="add-button" onClick={handleAdd}>
@@ -142,18 +140,28 @@ export default function AdminsList() {
                 <div className="table-cell">Actions</div>
               </div>
             </div>
-            {filtered.map(a => (
+            {filtered.map((a) => (
               <div key={a._id} className="table-row">
                 <div className="table-cell">{a.email}</div>
-                <div className="table-cell">{`${a.firstName} ${a.lastName}`}</div>
+                <div className="table-cell">
+                  {`${a.firstName} ${a.lastName}`}
+                </div>
                 <div className="table-cell">{a.adminType}</div>
-                <div className="table-cell">{new Date(a.createdAt).toLocaleString()}</div>
+                <div className="table-cell">
+                  {new Date(a.createdAt).toLocaleString()}
+                </div>
                 <div className="table-cell">
                   <div className="action-buttons">
-                    <button className="action-button edit-button" onClick={() => handleUpdate(a._id)}>
+                    <button
+                      className="action-button edit-button"
+                      onClick={() => handleUpdate(a._id)}
+                    >
                       Update
                     </button>
-                    <button className="action-button delete-button" onClick={() => handleDelete(a._id)}>
+                    <button
+                      className="action-button delete-button"
+                      onClick={() => handleDelete(a._id)}
+                    >
                       Delete
                     </button>
                   </div>

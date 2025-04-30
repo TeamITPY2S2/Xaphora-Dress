@@ -1,63 +1,119 @@
+// src/pages/AddBuyer.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SuperAdminSidebar from "../components/SuperAdminSidebar";
 
-// import the global layout/css from AdminsList (contains .superadmin-layout, .superadmin-main, etc)
 import "./AdminsList.css";
-// import just the AddBuyer page styles
 import "./AddBuyer.css";
 
 const BACKEND_URL = "http://localhost:8070/api";
 
-const AddBuyer = () => {
+export default function AddBuyer() {
   const navigate = useNavigate();
+
+  // existing buyers (for summary)
   const [buyers, setBuyers] = useState([]);
+
+  // form data
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+
+  // per-field validation errors
+  const [errors, setErrors] = useState({});
+  // server or submission error
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // fetch existing buyers for the summary panel
-  const fetchBuyers = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const res = await axios.get(`${BACKEND_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const buyersOnly = res.data.users.filter((u) => u.role === "buyer");
-      setBuyers(buyersOnly);
-    } catch {
-      console.error("Error fetching buyers");
-    }
-  };
-
+  // fetch existing buyers for summary
   useEffect(() => {
-    fetchBuyers();
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${BACKEND_URL}/users`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const onlyBuyers = res.data.users.filter((u) => u.role === "buyer");
+        setBuyers(onlyBuyers);
+      } catch (err) {
+        console.error("Error fetching buyers", err);
+      }
+    })();
   }, []);
 
+  // simple email regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // validate all fields, return an object of { field: message }
+  const validate = () => {
+    const newErrors = {};
+
+    // firstName
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    } else if (!/^[A-Za-z]+$/.test(formData.firstName.trim())) {
+      newErrors.firstName = "First name must be letters only";
+    }
+
+    // lastName
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    } else if (!/^[A-Za-z]+$/.test(formData.lastName.trim())) {
+      newErrors.lastName = "Last name must be letters only";
+    }
+
+    // email
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    // password
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    return newErrors;
+  };
+
   const handleChange = (e) => {
-    setFormData((f) => ({ ...f, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((f) => ({ ...f, [name]: value }));
+    // clear any existing error on this field
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+    setServerError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setServerError("");
+
+    // run validation
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length) {
+      setErrors(validationErrors);
+      return;
+    }
+
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       await axios.post(
         `${BACKEND_URL}/users`,
         { ...formData, role: "buyer" },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Buyer added!");
       navigate("/superadmin/buyers");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setServerError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -70,11 +126,11 @@ const AddBuyer = () => {
       <main className="superadmin-main">
         <div className="add-buyer-content">
           <form className="formCard" onSubmit={handleSubmit}>
-            <h2 className="title">Add New Buyer</h2><br/>
-           
+            <h2 className="title">Add New Buyer</h2><br />
 
-            {error && <div className="error">{error}</div>}
+            {serverError && <div className="error">{serverError}</div>}
 
+            {/* First Name */}
             <div className="inputGroup">
               <label>First Name</label>
               <input
@@ -82,9 +138,13 @@ const AddBuyer = () => {
                 value={formData.firstName}
                 onChange={handleChange}
                 placeholder="Enter buyer's first name"
-                required
               />
+              {errors.firstName && (
+                <p className="errorText">{errors.firstName}</p>
+              )}
             </div>
+
+            {/* Last Name */}
             <div className="inputGroup">
               <label>Last Name</label>
               <input
@@ -92,9 +152,13 @@ const AddBuyer = () => {
                 value={formData.lastName}
                 onChange={handleChange}
                 placeholder="Enter buyer's last name"
-                required
               />
+              {errors.lastName && (
+                <p className="errorText">{errors.lastName}</p>
+              )}
             </div>
+
+            {/* Email */}
             <div className="inputGroup">
               <label>Email Address</label>
               <input
@@ -103,9 +167,11 @@ const AddBuyer = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter buyer's email"
-                required
               />
+              {errors.email && <p className="errorText">{errors.email}</p>}
             </div>
+
+            {/* Password */}
             <div className="inputGroup">
               <label>Password</label>
               <input
@@ -114,8 +180,10 @@ const AddBuyer = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Create a password"
-                required
               />
+              {errors.password && (
+                <p className="errorText">{errors.password}</p>
+              )}
             </div>
 
             <button type="submit" className="button" disabled={loading}>
@@ -137,6 +205,4 @@ const AddBuyer = () => {
       </main>
     </div>
   );
-};
-
-export default AddBuyer;
+}

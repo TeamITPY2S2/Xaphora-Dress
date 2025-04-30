@@ -40,7 +40,7 @@ const sendEmail = async (options) => {
 
 // Password reset email template
 const sendPasswordResetEmail = async (email, token) => {
-  const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+  const resetLink = `http://localhost:3000/reset-password/${token}`;
   
   const html = `
     <div style="max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 10px;">

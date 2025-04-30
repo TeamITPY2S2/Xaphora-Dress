@@ -104,7 +104,6 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-/* Grid layouts for different list types */
 .table-row {
   display: grid;
   padding: 1rem;
@@ -113,14 +112,14 @@
   transition: background-color 0.2s;
 }
 
-/* AdminsList grid layout (5 columns) */
-.table-row:has(.table-cell:nth-child(5)) {
-  grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr;
-}
-
-/* BuyersList grid layout (4 columns) */
+/* BuyersList (4 columns) */
 .table-row:has(.table-cell:nth-child(4)) {
   grid-template-columns: 2fr 2fr 1.5fr 1fr;
+}
+
+/* AdminsList (5 columns) */
+.table-row:has(.table-cell:nth-child(5)) {
+  grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr;
 }
 
 .table-row:hover {
@@ -211,11 +210,9 @@
   .list-container {
     margin-left: 200px;
   }
-  
   .table-row:has(.table-cell:nth-child(5)) {
     grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
   }
-  
   .table-row:has(.table-cell:nth-child(4)) {
     grid-template-columns: 2fr 2fr 1fr 1fr;
   }
@@ -226,30 +223,24 @@
     margin-left: 0;
     padding: 1rem;
   }
-  
   .list-header {
     flex-direction: column;
     align-items: stretch;
   }
-  
   .list-actions {
     flex-direction: column;
   }
-  
   .search-box {
     width: 100%;
   }
-  
   .table-row {
     grid-template-columns: 1fr !important;
     gap: 0.5rem;
   }
-  
   .table-cell {
     padding: 0.25rem 0;
   }
-  
   .action-buttons {
     justify-content: flex-start;
   }
-} 
+}
