@@ -1,0 +1,255 @@
+/* Modern list styles for all list components */
+.superadmin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.list-container {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 250px; /* Space for sidebar */
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.list-title {
+  font-size: 1.75rem;
+  color: #2d3748;
+  margin: 0;
+  font-weight: 600;
+}
+
+.list-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  min-width: 250px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  background-color: #f7fafc;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  background-color: white;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.add-button:hover {
+  background-color: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-table {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table-header {
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Grid layouts for different list types */
+.table-row {
+  display: grid;
+  padding: 1rem;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
+}
+
+/* AdminsList grid layout (5 columns) */
+.table-row:has(.table-cell:nth-child(5)) {
+  grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr;
+}
+
+/* BuyersList grid layout (4 columns) */
+.table-row:has(.table-cell:nth-child(4)) {
+  grid-template-columns: 2fr 2fr 1.5fr 1fr;
+}
+
+.table-row:hover {
+  background-color: #f7fafc;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-button {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+}
+
+.edit-button:hover {
+  background-color: #bee3f8;
+  transform: translateY(-1px);
+}
+
+.delete-button {
+  background-color: #fff5f5;
+  color: #c53030;
+}
+
+.delete-button:hover {
+  background-color: #fed7d7;
+  transform: translateY(-1px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state h3 {
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.empty-state p {
+  color: #718096;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.alert-info {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+  border: 1px solid #bee3f8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .list-container {
+    margin-left: 200px;
+  }
+  
+  .table-row:has(.table-cell:nth-child(5)) {
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  }
+  
+  .table-row:has(.table-cell:nth-child(4)) {
+    grid-template-columns: 2fr 2fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .list-container {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .list-actions {
+    flex-direction: column;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  .table-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem;
+  }
+  
+  .table-cell {
+    padding: 0.25rem 0;
+  }
+  
+  .action-buttons {
+    justify-content: flex-start;
+  }
+} 

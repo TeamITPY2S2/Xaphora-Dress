@@ -2,29 +2,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SuperAdminSidebar from "../components/SuperAdminSidebar";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaSearch, FaPlus } from "react-icons/fa";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import "./AdminsList.css";
+import "../styles/ListStyles.css";
 
-function AdminsList() {
+export default function AdminsList() {
   const [admins, setAdmins] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // fetch on mount
+  // Load admins on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/api/auth/login");
-      return;
-    }
+    if (!token) return navigate("/api/auth/login");
     fetchAdmins(token);
   }, [navigate]);
 
-  // load & sort
+  // Fetch + sort
   const fetchAdmins = async (token) => {
     try {
       const res = await fetch("http://localhost:8070/api/admins", {
@@ -34,37 +31,31 @@ function AdminsList() {
         },
       });
       const data = await res.json();
-      if (res.ok) {
-        const sorted = data.sort((a, b) => {
-          if (a.adminType === "super-admin" && b.adminType !== "super-admin")
-            return -1;
-          if (b.adminType === "super-admin" && a.adminType !== "super-admin")
-            return 1;
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        setAdmins(sorted);
-        setFiltered(sorted);
-      } else {
-        setMessage(data.message || "Error fetching admins");
-      }
+      if (!res.ok) throw new Error(data.message || "Error fetching admins");
+      
+      // super-admins first, then newest
+      const sorted = data.sort((a, b) => {
+        if (a.adminType === "super-admin" && b.adminType !== "super-admin") return -1;
+        if (b.adminType === "super-admin" && a.adminType !== "super-admin") return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      setAdmins(sorted);
+      setFiltered(sorted);
     } catch (err) {
       console.error(err);
-      setMessage("Error fetching admins");
+      setMessage(err.message);
     }
   };
 
-  // live filter
+  // Live filtering
   useEffect(() => {
     const q = searchTerm.trim().toLowerCase();
     setFiltered(
       !q
         ? admins
-        : admins.filter((a) =>
-            [
-              a.email,
-              `${a.firstName} ${a.lastName}`,
-              a.adminType,
-            ]
+        : admins.filter(a =>
+            [a.email, `${a.firstName} ${a.lastName}`, a.adminType]
               .join(" ")
               .toLowerCase()
               .includes(q)
@@ -72,108 +63,114 @@ function AdminsList() {
     );
   }, [searchTerm, admins]);
 
-  // navigation
+  // Navigation handlers
   const handleAdd = () => navigate("/superadmin/add-admin");
-  const handleUpdate = (id) => navigate(`/superadmin/update-admin/${id}`);
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this admin?")) return;
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:8070/api/admins/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (res.ok) fetchAdmins(token);
-    else alert(data.message || "Failed to delete admin");
+  const handleUpdate = id => navigate(`/superadmin/update-admin/${id}`);
+  const handleDelete = async id => {
+    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:8070/api/admins/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      // remove locally
+      setAdmins(admins.filter(a => a._id !== id));
+      setFiltered(filtered.filter(a => a._id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete admin");
+    }
   };
 
-  // PDF export of filtered
+  // PDF export
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("All Admins", 14, 22);
-
-    const head = [["Email", "Full Name", "Admin Type", "Created At"]];
-    const body = filtered.map((a) => [
+    doc.text("Admins List", 14, 15);
+    const rows = filtered.map(a => [
       a.email,
       `${a.firstName} ${a.lastName}`,
       a.adminType,
-      new Date(a.createdAt).toLocaleString(),
+      new Date(a.createdAt).toLocaleDateString()
     ]);
-
     autoTable(doc, {
-      head,
-      body,
-      startY: 28,
-      headStyles: { fillColor: [243, 244, 246], textColor: [107, 114, 128], fontStyle: "bold" },
-      styles: { fontSize: 10 },
+      head: [["Email", "Full Name", "Admin Type", "Created At"]],
+      body: rows,
+      startY: 25
     });
-
-    doc.save("admins_list.pdf");
+    doc.save("admins-list.pdf");
   };
 
   return (
     <div className="superadmin-layout">
       <SuperAdminSidebar />
-      <main className="superadmin-main">
-        {/* header with search, download, title, add */}
-        <div className="buyers-header">
-          
-          <button className="download-pdf" onClick={handleDownloadPdf}>
-            <FaDownload style={{ marginRight: 8 }} />
-            Download PDF
-          </button>
-          <h2>All Admins</h2>
-          <button className="add-buyer-button" onClick={handleAdd}>
-            Add Admin
-          </button>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search admins…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+      <main className="list-container">
+        <div className="list-header">
+          <h1 className="list-title">Admin Management</h1>
+          <div className="list-actions">
+            <div className="search-box">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search admins..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button className="add-button" onClick={handleAdd}>
+              <FaPlus /> Add Admin
+            </button>
+            <button className="add-button" onClick={handleDownloadPdf}>
+              <FaDownload /> Download PDF
+            </button>
+          </div>
         </div>
 
         {message && <div className="alert alert-info">{message}</div>}
 
         {filtered.length > 0 ? (
-          <table className="buyers-table">
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Full Name</th>
-                <th>Admin Type</th>
-                <th>Created At</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((a) => (
-                <tr key={a._id}>
-                  <td>{a.email}</td>
-                  <td>{`${a.firstName} ${a.lastName}`}</td>
-                  <td>{a.adminType}</td>
-                  <td>{new Date(a.createdAt).toLocaleString()}</td>
-                  <td className="action-buttons">
-                    <button className="edit-button" onClick={() => handleUpdate(a._id)}>
+          <div className="list-table">
+            <div className="table-header">
+              <div className="table-row">
+                <div className="table-cell">Email</div>
+                <div className="table-cell">Full Name</div>
+                <div className="table-cell">Admin Type</div>
+                <div className="table-cell">Created At</div>
+                <div className="table-cell">Actions</div>
+              </div>
+            </div>
+            {filtered.map(a => (
+              <div key={a._id} className="table-row">
+                <div className="table-cell">{a.email}</div>
+                <div className="table-cell">{`${a.firstName} ${a.lastName}`}</div>
+                <div className="table-cell">{a.adminType}</div>
+                <div className="table-cell">{new Date(a.createdAt).toLocaleString()}</div>
+                <div className="table-cell">
+                  <div className="action-buttons">
+                    <button className="action-button edit-button" onClick={() => handleUpdate(a._id)}>
                       Update
                     </button>
-                    <button className="delete-button" onClick={() => handleDelete(a._id)}>
+                    <button className="action-button delete-button" onClick={() => handleDelete(a._id)}>
                       Delete
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
-          <div className="alert alert-info">No admins found.</div>
+          <div className="empty-state">
+            <h3>No Admins Found</h3>
+            <p>There are no admins in the system yet.</p>
+            <button className="add-button" onClick={handleAdd}>
+              <FaPlus /> Add First Admin
+            </button>
+          </div>
         )}
       </main>
     </div>
   );
 }
-
-export default AdminsList;
