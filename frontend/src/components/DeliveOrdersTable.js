@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import './DeliveOrdersTable.css';
 
 const DeliveOrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');  // New state for search
 
   // Fetch orders 
   const fetchOrders = async () => {
@@ -27,6 +29,11 @@ const DeliveOrdersTable = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  // Filter orders based on search query
+  const filteredOrders = orders.filter(order => 
+    order._id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Update order status
   const updateOrderStatus = async (orderId, newStatus) => {
@@ -54,96 +61,95 @@ const DeliveOrdersTable = () => {
   };
 
   if (loading) return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <p>Loading orders...</p>
-    </div>
+    <div className="loading">Loading orders...</div>
   );
   
   if (error) return (
-    <div style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+    <div className="error">
       <p>Error: {error}</p>
-      <button 
-        onClick={fetchOrders}
-        style={{
-          padding: '8px 16px',
-          marginTop: '10px',
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
+      <button className="retry-button" onClick={fetchOrders}>
         Retry
       </button>
     </div>
   );
 
   if (!orders || orders.length === 0) return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div className="no-results">
       <p>No orders found.</p>
     </div>
   );
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div className="orders-container">
       <h2>Orders</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Order ID</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Customer Name</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Shipping Region</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Status</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Created At</th>
-            <th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f4f4f4' }}>Update Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order._id}>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order._id}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.customerName}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.shippingRegion}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                <span style={{
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  backgroundColor: 
-                    order.status === 'Delivered' ? '#4CAF50' :
-                    order.status === 'Shipped' ? '#2196F3' :
-                    order.status === 'Packed' ? '#FF9800' :
-                    order.status === 'Ordered' ? '#9E9E9E' :
-                    '#E91E63', // Pink color for Processing
-                  color: 'white'
-                }}>
-                  {order.status}
-                </span>
-              </td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                {new Date(order.createdAt || order.created_at).toLocaleString()}
-              </td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                <select
-                  value={order.status}
-                  onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                  style={{ 
-                    padding: '5px',
-                    borderRadius: '4px',
-                    border: '1px solid #ddd'
-                  }}
-                >
-                  <option value="Processing">Processing</option>
-                  <option value="Ordered">Ordered</option>
-                  <option value="Packed">Packed</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
-              </td>
+      
+      {/* Search Bar */}
+      <div className="search-container">
+        <div className="search-wrapper">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by Order ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        {searchQuery && (
+          <button
+            className="clear-button"
+            onClick={() => setSearchQuery('')}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {filteredOrders.length === 0 ? (
+        <div className="no-results">
+          No orders found matching your search.
+        </div>
+      ) : (
+        <table className="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer Name</th>
+              <th>Shipping Region</th>
+              <th>Status</th>
+              <th>Created At</th>
+              <th>Update Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredOrders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id}</td>
+                <td>{order.customerName}</td>
+                <td>{order.shippingRegion}</td>
+                <td>
+                  <span className={`status-badge ${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </td>
+                <td>{new Date(order.createdAt || order.created_at).toLocaleString()}</td>
+                <td>
+                  <select
+                    className="status-select"
+                    value={order.status}
+                    onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                  >
+                    <option value="Processing">Processing</option>
+                    <option value="Ordered">Ordered</option>
+                    <option value="Packed">Packed</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
