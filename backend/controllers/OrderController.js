@@ -11,7 +11,7 @@ exports.createOrder = async (req, res) => {
       shippingAddress,
       items,
       totalAmount,
-      paymentMethod, // ✅ MUST destructure it
+      paymentMethod, 
       status,
       paymentStatus,
       loyaltyPointsUsed,
@@ -24,7 +24,7 @@ exports.createOrder = async (req, res) => {
       shippingAddress,
       items,
       totalAmount,
-      paymentMethod, // ✅ MUST SAVE IT
+      paymentMethod, 
       status,
       paymentStatus,
       loyaltyPointsUsed,
