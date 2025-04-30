@@ -56,7 +56,7 @@ const UpdateBuyerProfile = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:8070/api/dashboard/profile/update", {
+      const res = await fetch("http://localhost:8070/api/dashboard/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

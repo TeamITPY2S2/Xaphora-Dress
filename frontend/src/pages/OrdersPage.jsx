@@ -7,11 +7,13 @@ import Footer from "../components/Footer";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newOrder, setNewOrder] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmedOrderId, setConfirmedOrderId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -39,6 +41,7 @@ const OrdersPage = () => {
         
         if (response.data) {
           setOrders(response.data);
+          setFilteredOrders(response.data);
         }
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -50,6 +53,26 @@ const OrdersPage = () => {
 
     fetchOrders();
   }, [navigate, location]);
+
+  // Add search functionality
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredOrders(orders);
+    } else {
+      const searchTermLower = searchTerm.toLowerCase();
+      const filtered = orders.filter(order => {
+        return (
+          order._id.toLowerCase().includes(searchTermLower) ||
+          order.status.toLowerCase().includes(searchTermLower) ||
+          order.items.some(item => 
+            item.productName.toLowerCase().includes(searchTermLower)
+          ) ||
+          (order.shippingAddress?.fullName || "").toLowerCase().includes(searchTermLower)
+        );
+      });
+      setFilteredOrders(filtered);
+    }
+  }, [searchTerm, orders]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -65,7 +88,7 @@ const OrdersPage = () => {
     const confirmed = window.confirm("Are you sure you want to confirm delivery for this order?");
     
     if (!confirmed) {
-      return; // Do nothing if user clicks No
+      return;
     }
 
     try {
@@ -160,56 +183,61 @@ const OrdersPage = () => {
     );
   };
 
-  if (orders.length === 0 && !newOrder) {
-    return (
-      <div className="orders-container">
-        <div className="empty-orders">
-          <h2>No Orders Yet</h2>
-          <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
-          <button className="shop-now-btn" onClick={() => navigate("/")}>
-            Shop Now
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-    <Navbar />
-    <div className="orders-container">
-      <h1 className="orders-heading">My Orders</h1>
-      
-      {showConfirmation && (
-        <div className="confirmation-modal">
-          <div className="confirmation-content">
-            <h2>Order Confirmed!</h2>
-            <p>Order #{confirmedOrderId} has been marked as delivered.</p>
-            <button className="close-btn" onClick={handleCloseConfirmation}>
-              Close
+      <Navbar />
+      <div className="orders-container">
+        <h1 className="orders-heading">My Orders</h1>
+        
+        {/* Search Bar */}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search orders by ID, status, or product name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        
+        {showConfirmation && (
+          <div className="confirmation-modal">
+            <div className="confirmation-content">
+              <h2>Order Confirmed!</h2>
+              <p>Order #{confirmedOrderId} has been marked as delivered.</p>
+              <button className="close-btn" onClick={handleCloseConfirmation}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {newOrder && (
+          <div className="new-order-section">
+            <h2 className="success-message">🎉 Order Placed Successfully!</h2>
+            <p className="order-confirmation">
+              Thank you for your order! Your order has been placed and is being processed.
+              You can track your order status below.
+            </p>
+            {renderOrderCard(newOrder)}
+          </div>
+        )}
+
+        {filteredOrders.length > 0 ? (
+          <div className="orders-list">
+            {filteredOrders.map((order) => renderOrderCard(order))}
+          </div>
+        ) : (
+          <div className="empty-orders">
+            <h2>No Orders Found</h2>
+            <p>{searchTerm ? "No orders match your search criteria." : "You haven't placed any orders yet. Start shopping to see your orders here!"}</p>
+            <button className="shop-now-btn" onClick={() => navigate("/")}>
+              Shop Now
             </button>
           </div>
-        </div>
-      )}
-      
-      {newOrder && (
-        <div className="new-order-section">
-          <h2 className="success-message">🎉 Order Placed Successfully!</h2>
-          <p className="order-confirmation">
-            Thank you for your order! Your order has been placed and is being processed.
-            You can track your order status below.
-          </p>
-          {renderOrderCard(newOrder)}
-        </div>
-      )}
-
-      {orders.length > 0 && (
-        <div className="orders-list">
-          {orders.map((order) => renderOrderCard(order))}
-        </div>
-      )}
-    </div>
-    <Footer />
+        )}
+      </div>
+      <Footer />
     </>
   );
 };

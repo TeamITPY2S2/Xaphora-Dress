@@ -1,4 +1,3 @@
-// src/pages/OrderConfirmationPage.jsx
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -9,16 +8,15 @@ const OrderConfirmationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get order details from navigation state or localStorage
-  const orderDetails = location.state?.orderDetails || JSON.parse(localStorage.getItem("orderSummary") || "null");
+  const orderDetails =
+    location.state?.orderDetails ||
+    JSON.parse(localStorage.getItem("orderSummary") || "null");
 
-  // Helper function to format shipping address
   const formatShippingAddress = (address) => {
     if (!address) return "No shipping address provided";
     return `${address.fullName}, ${address.address}, ${address.phone}`;
   };
 
-  // Helper function to format date
   const formatDate = (dateString) => {
     if (!dateString) return "Date not available";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -30,7 +28,6 @@ const OrderConfirmationPage = () => {
     });
   };
 
-  // Helper function to get status class
   const getStatusClass = (status) => {
     if (!status) return "status-unknown";
     return `status-${status.toLowerCase()}`;
@@ -43,7 +40,9 @@ const OrderConfirmationPage = () => {
         <div className="order-confirmation">
           <div className="confirmation-header">
             <h1>Order Confirmation</h1>
-            <p className="error-message">No order details found. Please try again.</p>
+            <p className="error-message">
+              No order details found. Please try again.
+            </p>
           </div>
         </div>
         <Footer />
@@ -63,11 +62,28 @@ const OrderConfirmationPage = () => {
         <div className="order-details">
           <div className="order-section">
             <h2>Order Information</h2>
-            <p><strong>Order ID:</strong> {orderDetails.orderId || "Not available"}</p>
-            <p><strong>Order Date:</strong> {formatDate(orderDetails.createdAt)}</p>
-            <p><strong>Customer Name:</strong> {orderDetails.customerName || "Not available"}</p>
-            <p><strong>Payment Status:</strong> <span className={getStatusClass(orderDetails.paymentStatus)}>{orderDetails.paymentStatus || "Not available"}</span></p>
-            <p><strong>Order Status:</strong> <span className={getStatusClass(orderDetails.status)}>{orderDetails.status || "Not available"}</span></p>
+            <p>
+              <strong>Order ID:</strong> {orderDetails.orderId || "Not available"}
+            </p>
+            <p>
+              <strong>Order Date:</strong> {formatDate(orderDetails.createdAt)}
+            </p>
+            <p>
+              <strong>Customer Name:</strong>{" "}
+              {orderDetails.customerName || "Not available"}
+            </p>
+            <p>
+              <strong>Payment Status:</strong>{" "}
+              <span className={getStatusClass(orderDetails.paymentStatus)}>
+                {orderDetails.paymentStatus || "Not available"}
+              </span>
+            </p>
+            <p>
+              <strong>Order Status:</strong>{" "}
+              <span className={getStatusClass(orderDetails.status)}>
+                {orderDetails.status || "Not available"}
+              </span>
+            </p>
           </div>
 
           <div className="order-section">
@@ -132,10 +148,16 @@ const OrderConfirmationPage = () => {
         </div>
 
         <div className="action-buttons">
-          <button onClick={() => navigate("/my-orders")} className="view-orders-btn">
+          <button
+            onClick={() => navigate("/my-orders")}
+            className="view-orders-btn"
+          >
             View My Orders
           </button>
-          <button onClick={() => navigate("/")} className="continue-shopping-btn">
+          <button
+            onClick={() => navigate("/")}
+            className="continue-shopping-btn"
+          >
             Continue Shopping
           </button>
         </div>

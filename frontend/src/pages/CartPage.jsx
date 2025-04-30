@@ -119,7 +119,7 @@ const CartPage = () => {
   };
 
   const handleAddMoreItems = () => {
-    navigate("/products");
+    navigate("/home");
   };
 
   if (loading) {

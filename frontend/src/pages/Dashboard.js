@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./Dashboard.css";
+import { FaBars } from "react-icons/fa";
 
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -99,29 +100,114 @@ function Dashboard() {
 
     if (userType === "order-management") {
       navigate("/admin-orders");
-    } else if (userType === "buyer") {
+    } else if(userType === "delivery-management"){
+      navigate("/admin-dashboard");
+    }
+    else if (userType === "buyer") {
       content = (
         <div className="buyer-account-page">
           <header className="buyer-header">
             <h1>My Account</h1>
+            <div className="header-actions">
+              <button className="btn-menu" onClick={() => navigate('/update-profile')}>
+                <FaBars className="menu-icon" /> Update Profile
+              </button>
+              <button className="btn-logout" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
           </header>
-          <div className="buyer-content buyer-content-stacked">
-            <section className="buyer-section buyer-history">
-              <h3>Order History</h3>
-              <p>You haven't placed any orders yet.</p>
-              <button onClick={() => navigate('/my-orders')}>View My Orders</button>
+
+          <div className="buyer-content">
+            {/* Account Overview Section */}
+            <section className="buyer-section account-overview">
+              <h3>Account Overview</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="info-label">Name</span>
+                  <span className="info-value">{dashboardData.firstName} {dashboardData.lastName}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Email</span>
+                  <span className="info-value">{dashboardData.email}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Member Since</span>
+                  <span className="info-value">{new Date(dashboardData.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
             </section>
-            <section className="buyer-section buyer-details">
-              <h3>Account Details</h3>
-              <div className="info">
-                {dashboardData.firstName} {dashboardData.lastName}
+
+            {/* Quick Actions Section */}
+            <section className="buyer-section quick-actions">
+              <h3>Quick Actions</h3>
+              <div className="action-buttons">
+                <button onClick={() => navigate('/my-orders')} className="action-btn">
+                  <i className="bi bi-bag"></i>
+                  View Orders
+                </button>
+                <button onClick={() => navigate('/address')} className="action-btn">
+                  <i className="bi bi-geo-alt"></i>
+                  Manage Addresses
+                </button>
+                <button onClick={() => navigate('/change-password')} className="action-btn">
+                  <i className="bi bi-key"></i>
+                  Change Password
+                </button>
               </div>
-              <div className="info">
-                {dashboardData.address?.country || "Sri Lanka"}
-              </div>
-              <Link to="/address" className="info-link">
-                View Address
-              </Link>
+            </section>
+
+            {/* Recent Orders Section */}
+            <section className="buyer-section recent-orders">
+              <h3>Recent Orders</h3>
+              {dashboardData.recentOrders && dashboardData.recentOrders.length > 0 ? (
+                <div className="orders-list">
+                  {dashboardData.recentOrders.slice(0, 3).map(order => (
+                    <div key={order._id} className="order-item">
+                      <div className="order-info">
+                        <span className="order-id">Order #{order._id.slice(-6)}</span>
+                        <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                        <span className="order-status">{order.status}</span>
+                      </div>
+                      <button onClick={() => navigate(`/order/${order._id}`)} className="view-order-btn">
+                        View Details
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-orders">
+                  <p>No recent orders found</p>
+                  <button onClick={() => navigate('/home')} className="shop-now-btn">
+                    Start Shopping
+                  </button>
+                </div>
+              )}
+            </section>
+
+            {/*  Addresses Section */}
+            <section className="buyer-section saved-addresses">
+              <h3>Addresses</h3>
+              {dashboardData.addresses && dashboardData.addresses.length > 0 ? (
+                <div className="addresses-preview">
+                  {dashboardData.addresses.slice(0, 2).map(address => (
+                    <div key={address._id} className="address-preview">
+                      <div className="address-info">
+                        <strong>{address.contactName}</strong>
+                        <p>{address.addressLine1}</p>
+                        <p>{address.city}, {address.state} {address.zipCode}</p>
+                      </div>
+                      {address.isDefault && <span className="default-badge">Default</span>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-addresses">
+                  <button onClick={() => navigate('/address')} className="add-address-btn">
+                    View and Add Address
+                  </button>
+                </div>
+              )}
             </section>
           </div>
         </div>

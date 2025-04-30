@@ -46,7 +46,7 @@ function Login() {
           console.log(" order Done")
           navigate("/admin-orders");
         } else if (data.userType === "delivery-management") {
-
+          console.log(" delivery Done")
           navigate("/admin-dashboard");
         } else if (data.userType === "seller") {
           navigate("/seller-dashboard");

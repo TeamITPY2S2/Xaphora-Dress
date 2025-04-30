@@ -51,25 +51,49 @@ import UpdateDeliveryAgent from './pages/UpdateDeliveryAgent';
 import AssignOrderPage from './pages/AssignOrderPage';
 import AdminOrdersDashboard from './pages/AdminOrdersDashboard';
 import AdminViewOrderDetails from './pages/AdminViewOrderDetails';
+import AddressPage from './pages/AddressPage';
 
-// Example protected route
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('seller_token');
-  if (!isAuthenticated) {
-    return <Navigate to="/seller/login" replace />;
-  }
-  return children;
-};
 
 function App() {
   return (
     <Router>
-
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Admin Routes */}
+        <Route path="/home" element={<Home />} />
+        <Route path="/chatbot" element={<XaphoraChatbot />} />
+        <Route path="/api/auth/login" element={<Login />} />
+        <Route path="/login" element={<Navigate to="/api/auth/login" replace />} />
+        <Route path="/signup" element={<BuyerSignup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+
+        {/* Buyer Routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/update-profile" element={<UpdateBuyerProfile />} />
+        <Route path="/address" element={<AddressPage />} />
+
+        {/* Product Routes */}
+        <Route path="/products" element={<ProductListPage />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/add-product" element={<AddProductPage />} />
+        <Route path="/edit-product/:id" element={<EditProductPage />} />
+
+        {/* Cart and Orders */}
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+        <Route path="/my-orders" element={<OrdersPage />} />
+        <Route path="/cardinfo" element={<CardInfoPage />} />
+
+        {/* Seller Routes */}
+        <Route path="/seller/login" element={<SellerLogin />} />
+        <Route path="/seller/signup" element={<SellerSignup />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
+
+        {/* Admin Dashboard Routes */}
         <Route path="/admin-dashboard" element={<Layout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="addDeliveryAgent" element={<AddDeliveryAgent />} />
@@ -78,78 +102,27 @@ function App() {
           <Route path="order" element={<DeliveOrdersTable />} />
         </Route>
 
+        {/* SuperAdmin Routes */}
+        <Route path="/superadmin" element={<SuperAdminDashboard />} />
+        <Route path="/superadmin/admins" element={<AdminsList />} />
+        <Route path="/superadmin/add-admin" element={<AddAdmin />} />
+        <Route path="/superadmin/update-admin/:adminId" element={<UpdateAdmin />} />
+        <Route path="/superadmin/buyers" element={<BuyersList />} />
+        <Route path="/superadmin/add-buyer" element={<AddBuyer />} />
+        <Route path="/superadmin/update-buyer/:buyerId" element={<UpdateBuyer />} />
+        <Route path="/superadmin/sellers" element={<SellersList />} />
+        <Route path="/superadmin/add-seller" element={<AddSeller />} />
+        <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
+
+        {/* Order Management Admin Routes */}
+        <Route path="/admin-orders" element={<AdminOrdersDashboard />} />
+        <Route path="/api/admin/orders/:orderId" element={<AdminViewOrderDetails />} />
+
         {/* Order Details Routes */}
         <Route path="/order/:orderId" element={<UserOrderDetails />} />
+        <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
+        <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
       </Routes>
-
-      <div className="app-container">
-        <div className="content-container">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/chatbot" element={<XaphoraChatbot />} />
-
-            {/* Authentication */}
-            <Route path="/api/auth/login" element={<Login />} />
-            <Route path="/login" element={<Navigate to="/api/auth/login" replace />} />
-            <Route path="/signup" element={<BuyerSignup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/change-password" element={<ChangePassword />} />
-
-            {/* Buyer Routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/update-profile" element={<UpdateBuyerProfile />} />
-
-            {/* Product Routes */}
-            <Route path="/products" element={<ProductListPage />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/add-product" element={<AddProductPage />} />
-            <Route path="/edit-product/:id" element={<EditProductPage />} />
-
-            {/* Cart and Orders */}
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/payment" element={<PaymentPage />} />
-            <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-            <Route path="/my-orders" element={<OrdersPage />} />
-            <Route path="/cardinfo" element={<CardInfoPage />} />
-
-            {/* Seller Routes */}
-            <Route path="/seller/login" element={<SellerLogin />} />
-            <Route path="/seller/signup" element={<SellerSignup />} />
-            <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/addDeliveryAgent" element={<AddDeliveryAgent />} />
-            <Route path="/vieworder/:orderId" element={<ViewDeliveOrderDetails />} />
-            <Route path="/Order" element={<DeliveOrdersTable />} />
-            <Route path="/agents" element={<ViewAgents />} />
-            <Route path="/UpdateDeliveryAgent/:agentId" element={<UpdateDeliveryAgent />} />
-            <Route path="/Order/:orderId" element={<UserOrderDetails />} />
-
-            {/* Admin Dashboard Routes */}
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-            {/* SuperAdmin Routes */}
-            <Route path="/superadmin" element={<SuperAdminDashboard />} />
-            <Route path="/superadmin/admins" element={<AdminsList />} />
-            <Route path="/superadmin/add-admin" element={<AddAdmin />} />
-            <Route path="/superadmin/update-admin/:adminId" element={<UpdateAdmin />} />
-            <Route path="/superadmin/buyers" element={<BuyersList />} />
-            <Route path="/superadmin/add-buyer" element={<AddBuyer />} />
-            <Route path="/superadmin/update-buyer/:buyerId" element={<UpdateBuyer />} />
-            <Route path="/superadmin/sellers" element={<SellersList />} />
-            <Route path="/superadmin/add-seller" element={<AddSeller />} />
-            <Route path="/superadmin/update-seller/:sellerId" element={<UpdateSeller />} />
-
-            {/* Order Management Admin Routes */}
-            <Route path="/admin-orders" element={<AdminOrdersDashboard />} />
-            <Route path="/api/admin/orders/:orderId" element={<AdminViewOrderDetails />} />
-          </Routes>
-        </div>
-      </div>
-
     </Router>
   );
 }
