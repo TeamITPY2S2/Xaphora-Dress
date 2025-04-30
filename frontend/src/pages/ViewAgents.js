@@ -110,8 +110,8 @@ const ViewAgents = () => {
               <tr key={agent._id}>
                 <td>{agent._id}</td>
                 <td>{agent.name}</td>
-                <td>{agent.contactNumber}</td>
-                <td>{agent.vehicleNumber}</td>
+                <td>{agent.contact}</td>
+                <td>{agent.assignedRegion}</td>
                 <td className="action-buttons">
                   <button
                     className="update-button"
