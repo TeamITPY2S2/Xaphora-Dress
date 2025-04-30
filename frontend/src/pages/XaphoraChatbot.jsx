@@ -14,7 +14,7 @@ const XaphoraChatbot = () => {
   const messagesEndRef = useRef(null);
 
   // Replace with your actual OpenAI API key and settings
-  const OPENAI_API_KEY = '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';
+  const OPENAI_API_KEY = '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';
   
   // Scroll to bottom of messages
   useEffect(() => {
@@ -53,7 +53,7 @@ const XaphoraChatbot = () => {
              About Xaphora Dress:
                 - Premium clothing brand specializing in women's dresses
                 - Known for high-quality fabrics and unique designs
-                - Price range: LKR1500-LKR9000
+                - Price range: LKR1000-LKR9000
                 - Collections include: Casual, Formal, Evening, and Seasonal lines
                 - Sizes range from XS to XXXL
                 - Shipping available islandwide
@@ -70,7 +70,7 @@ const XaphoraChatbot = () => {
             - Payment methods: cash on delivery, online transfer, and card payment
             - Delivery: within 3 working days
               
-              Always be helpful, friendly, and knowledgeable about fashion. Recommend products based on customer needs but don't be pushy. If you don't know specific product details, offer to connect the customer with a human representative.`
+              Always be helpful, friendly, and knowledgeable about fashion. Recommend products based on customer needs but don't be pushy. If you don't know specific product details, offer to connect the customer with a human representative. Also make sure to answer questions only related to this specific application. If user ask any other question please send reply as "We are Clothing store Please ask details about us.."`
             },
             ...messages.map(msg => ({ role: msg.role, content: msg.content })),
             { role: 'user', content: input }
