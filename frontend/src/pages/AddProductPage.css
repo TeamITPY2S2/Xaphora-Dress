@@ -1,15 +1,70 @@
 /* src/pages/AddProductPage.css */
+
 .add-product-container {
-  max-width: 600px;
+  max-width: 700px;
+  margin: auto;
+  padding-bottom: 50px;
 }
-.add-product-container .card {
+
+.card {
+  border: none;
+  border-radius: 15px;
+  background-color: #ffffff;
+}
+
+.card-header {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 1.5rem 2rem;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-control {
   border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
 }
-.add-product-container .card-header {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+
+.form-control:focus {
+  border-color: #4e5d94;
+  box-shadow: 0 0 0 0.2rem rgba(78, 93, 148, 0.25);
 }
-.add-product-container .form-control:focus {
-  box-shadow: none;
-  border-color: #0d6efd;
+
+textarea.form-control {
+  resize: none;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 0.75rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.alert-info {
+  font-size: 0.95rem;
+  border-radius: 8px;
+  background-color: #e9f7fe;
+  color: #0c5460;
+  border: 1px solid #b8daff;
+}
+
+.bi-plus-circle,
+.bi-check-circle {
+  vertical-align: -0.125em;
 }
