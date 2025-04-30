@@ -61,27 +61,33 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✅ Get all orders with region extracted from nested shippingAddress.address
+// Get all orders with region extracted from nested shippingAddress.address
 router.get('/', async (req, res) => {
   try {
     const orders = await Order.find();
 
     const ordersWithRegion = orders.map(order => {
       const orderObj = order.toObject();
+      
+      // Log the full order for debugging
+      console.log('Processing order:', {
+        id: orderObj._id,
+        address: orderObj.shippingAddress
+      });
 
-      const addressStr = orderObj.shippingAddress?.address || '';
+      // Initialize region as Unknown
       let shippingRegion = 'Unknown';
 
-      const parts = addressStr.split(',').map(p => p.trim());
+      // Check if we have a valid shipping address object with address field
+      if (orderObj.shippingAddress && orderObj.shippingAddress.address) {
+        const addressParts = orderObj.shippingAddress.address.split(',').map(part => part.trim());
+        console.log('Address parts:', addressParts);
 
-      if (parts.length >= 2) {
-        const secondLast = parts[parts.length - 2];
-        const last = parts[parts.length - 1];
-
-        if (/\d{3,}/.test(last)) {
-          shippingRegion = secondLast;
-        } else {
-          shippingRegion = last;
+        // For address format like: "213/70/01 katuwellegama, Negombo, Negombo, North 11526"
+        if (addressParts.length >= 2) {
+          // Get the second part after the comma (should be "Negombo")
+          shippingRegion = addressParts[1];
+          console.log('Extracted region:', shippingRegion);
         }
       }
 
@@ -91,6 +97,7 @@ router.get('/', async (req, res) => {
       };
     });
 
+    console.log('First two processed orders:', ordersWithRegion.slice(0, 2));
     res.status(200).json(ordersWithRegion);
   } catch (error) {
     console.error('Error fetching orders:', error);

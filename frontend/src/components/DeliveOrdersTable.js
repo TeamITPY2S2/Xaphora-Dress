@@ -104,7 +104,7 @@ const DeliveOrdersTable = () => {
             <tr key={order._id}>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order._id}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.customerName}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.shippingAddress?.state || 'Unknown'}</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{order.shippingRegion}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                 <span style={{
                   padding: '4px 8px',
