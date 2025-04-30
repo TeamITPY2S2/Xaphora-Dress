@@ -5,6 +5,7 @@ const AssignOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [agents, setAgents] = useState([]);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');  // New state for search
 
   const fetchOrders = async () => {
     try {
@@ -33,6 +34,11 @@ const AssignOrderPage = () => {
     }
     fetchAgents();
   }, []);
+
+  // Filter orders based on search query
+  const filteredOrders = orders.filter(order => 
+    order._id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Assign an agent to an order
   const handleAssign = async (orderId, agentId) => {
@@ -65,6 +71,26 @@ const AssignOrderPage = () => {
   return (
     <div className="assign-page">
       <h2>Assign Orders to Delivery Agents</h2>
+      
+      {/* Search input */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search by Order ID..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+        {searchQuery && (
+          <button 
+            onClick={() => setSearchQuery('')}
+            className="clear-button"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
       <table className="assign-table">
         <thead>
           <tr>
@@ -73,13 +99,11 @@ const AssignOrderPage = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map(order => {
+          {filteredOrders.map(order => {
             // Case-insensitive comparison of regions
             const filtered = agents.filter(agent => {
               const agentRegion = (agent.assignedRegion || '').toLowerCase().trim();
               const orderRegion = (order.shippingRegion || '').toLowerCase().trim();
-              console.log(`Comparing regions for order ${order._id}:`);
-              console.log(`Agent region: "${agentRegion}", Order region: "${orderRegion}"`);
               return agentRegion === orderRegion;
             });
 
@@ -122,6 +146,13 @@ const AssignOrderPage = () => {
           })}
         </tbody>
       </table>
+
+      {/* No results message */}
+      {filteredOrders.length === 0 && searchQuery && (
+        <div className="no-results">
+          No orders found matching "{searchQuery}"
+        </div>
+      )}
     </div>
   );
 };
