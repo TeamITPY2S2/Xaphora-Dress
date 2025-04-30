@@ -58,20 +58,27 @@ const OrdersPage = () => {
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredOrders(orders);
-    } else {
-      const searchTermLower = searchTerm.toLowerCase();
-      const filtered = orders.filter(order => {
-        return (
-          order._id.toLowerCase().includes(searchTermLower) ||
-          order.status.toLowerCase().includes(searchTermLower) ||
-          order.items.some(item => 
-            item.productName.toLowerCase().includes(searchTermLower)
-          ) ||
-          (order.shippingAddress?.fullName || "").toLowerCase().includes(searchTermLower)
-        );
-      });
-      setFilteredOrders(filtered);
+      return;
     }
+
+    const searchTermLower = searchTerm.toLowerCase();
+    const filtered = orders.filter(order => {
+      if (!order) return false;
+
+      const orderId = (order._id || '').toLowerCase();
+      const status = (order.status || '').toLowerCase();
+      const fullName = (order.shippingAddress?.fullName || '').toLowerCase();
+      const productNames = (order.items || []).map(item => 
+        (item?.productName || '').toLowerCase()
+      );
+
+      return orderId.includes(searchTermLower) ||
+             status.includes(searchTermLower) ||
+             fullName.includes(searchTermLower) ||
+             productNames.some(name => name.includes(searchTermLower));
+    });
+
+    setFilteredOrders(filtered);
   }, [searchTerm, orders]);
 
   const formatDate = (dateString) => {
