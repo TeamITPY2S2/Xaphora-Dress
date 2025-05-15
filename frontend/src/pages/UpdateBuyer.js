@@ -36,7 +36,7 @@ function UpdateBuyer() {
       // DEBUG: Indicate we're about to fetch
       console.log(`DEBUG: Fetching buyer data for buyerId: ${buyerId}`);
 
-      const res = await fetch(`http://localhost:8070/users/${buyerId}`, {
+      const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -52,9 +52,9 @@ function UpdateBuyer() {
         // setBuyerData({ ...data.user });
         // But let's assume your server returns the shape: { user: { ... } }
         setBuyerData({
-          email: data.user.email,
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
         });
       } else {
         setMessage(data.message || "Error fetching buyer");
@@ -82,7 +82,7 @@ function UpdateBuyer() {
     console.log("DEBUG: Updating buyer with data:", buyerData);
 
     try {
-      const res = await fetch(`http://localhost:8070/users/${buyerId}`, {
+      const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
