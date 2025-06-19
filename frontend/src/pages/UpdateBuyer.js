@@ -25,20 +25,33 @@ function UpdateBuyer() {
 
   const fetchBuyer = async (token) => {
     try {
-      const res = await fetch(
-        `http://localhost:8070/api/users/${buyerId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      // If we got back HTML (or any non-JSON), bail out
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Error fetching buyer");
+      // DEBUG: Indicate we're about to fetch
+      console.log(`DEBUG: Fetching buyer data for buyerId: ${buyerId}`);
+
+      const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+
+      // DEBUG: Log the entire response data
+      console.log("DEBUG: Response from server:", data);
+
+      if (res.ok) {
+        // If your server returns { user: { ... } }, we need to do:
+        // setBuyerData({ ...data.user });
+        // But let's assume your server returns the shape: { user: { ... } }
+        setBuyerData({
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        });
+      } else {
+        setMessage(data.message || "Error fetching buyer");
+
       }
 
       const data = await res.json();
@@ -71,17 +84,16 @@ function UpdateBuyer() {
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:8070/api/users/${buyerId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(buyerData),
-        }
-      );
+
+      const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(buyerData),
+      });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error updating buyer");
       navigate("/superadmin/buyers");
