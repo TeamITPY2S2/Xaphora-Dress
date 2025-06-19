@@ -12,27 +12,20 @@ function UpdateBuyer() {
     firstName: "",
     lastName: "",
   });
-
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // DEBUG: Log the buyerId from the URL
-    console.log("DEBUG: buyerId from useParams:", buyerId);
-
     const token = localStorage.getItem("token");
-    // DEBUG: Log the token from localStorage
-    console.log("DEBUG: Token from localStorage:", token);
-
     if (!token) {
       setMessage("No token found. Please login.");
       return;
     }
-
     fetchBuyer(token);
-  }, [buyerId, navigate]);
+  }, [buyerId]);
 
   const fetchBuyer = async (token) => {
     try {
+
       // DEBUG: Indicate we're about to fetch
       console.log(`DEBUG: Fetching buyer data for buyerId: ${buyerId}`);
 
@@ -58,30 +51,40 @@ function UpdateBuyer() {
         });
       } else {
         setMessage(data.message || "Error fetching buyer");
+
       }
+
+      const data = await res.json();
+      // some APIs wrap the user in { user: {...} }
+      const user = data.user || data;
+      setBuyerData({
+        email: user.email || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+      });
     } catch (err) {
       console.error("Error fetching buyer:", err);
-      setMessage("Error fetching buyer");
+      setMessage(
+        err.message.startsWith("<")
+          ? "Server returned HTML instead of JSON. Check your URL."
+          : err.message
+      );
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setBuyerData({ ...buyerData, [e.target.name]: e.target.value });
-  };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem("token");
     if (!token) {
       setMessage("No token found. Please login.");
       return;
     }
 
-    // DEBUG: Log the data we're about to send
-    console.log("DEBUG: Updating buyer with data:", buyerData);
-
     try {
+
       const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
         method: "PUT",
         headers: {
@@ -90,26 +93,17 @@ function UpdateBuyer() {
         },
         body: JSON.stringify(buyerData),
       });
+
       const data = await res.json();
-
-      // DEBUG: Log the response from the update
-      console.log("DEBUG: Update response:", data);
-
-      if (res.ok) {
-        setMessage("Buyer updated successfully!");
-        navigate("/superadmin/buyers");
-      } else {
-        setMessage(data.message || "Error updating buyer");
-      }
+      if (!res.ok) throw new Error(data.message || "Error updating buyer");
+      navigate("/superadmin/buyers");
     } catch (err) {
       console.error("Error updating buyer:", err);
-      setMessage("Error updating buyer");
+      setMessage(err.message);
     }
   };
 
-  const handleBack = () => {
-    navigate("/superadmin/buyers");
-  };
+  const handleBack = () => navigate("/superadmin/buyers");
 
   return (
     <div className="update-buyer-container">
@@ -154,7 +148,11 @@ function UpdateBuyer() {
           <button type="submit" className="update-button">
             Update
           </button>
-          <button type="button" className="back-button" onClick={handleBack}>
+          <button
+            type="button"
+            className="back-button"
+            onClick={handleBack}
+          >
             Back
           </button>
         </div>

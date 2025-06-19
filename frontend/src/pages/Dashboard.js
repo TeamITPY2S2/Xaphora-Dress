@@ -62,14 +62,8 @@ function Dashboard() {
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile?")) return;
     const token = localStorage.getItem("token");
-    const userId = dashboardData?._id;
-    if (!userId) {
-      alert("Cannot delete: user ID not found.");
-      return;
-    }
-
     try {
-      const res = await fetch(`http://localhost:8070/api/users/${userId}`, {
+      const res = await fetch("http://localhost:8070/api/dashboard/profile/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -22,10 +22,10 @@ function ResetPassword() {
     }
 
     try {
-      const res = await fetch("http://localhost:8070/api/auth/reset-password", {
-        method: "POST",
+      const res = await fetch(`http://localhost:8070/api/auth/reset-password/${token}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ password }),
       });
 
       const data = await res.json();

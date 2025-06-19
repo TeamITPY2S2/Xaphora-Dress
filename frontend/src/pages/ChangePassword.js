@@ -76,24 +76,25 @@ const ChangePassword = () => {
   const handleDeleteProfile = async () => {
     if (!window.confirm("Are you sure you want to delete your profile?")) return;
     const token = localStorage.getItem("token");
-
     try {
-      const res = await fetch("http://localhost:8070/api/dashboard/delete", {
+      const res = await fetch("http://localhost:8070/api/dashboard/profile/delete", {
         method: "DELETE",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
+      const data = await res.json();
       if (res.ok) {
-        toast.success("Profile deleted");
-        setTimeout(() => handleLogout(), 2000);
+        alert("Your account has been deleted successfully.");
+        handleLogout();
       } else {
-        const data = await res.json();
-        toast.error(data.message || "Failed to delete profile");
+        alert(data.message || "Failed to delete your account.");
       }
-    } catch {
-      toast.error("Error deleting profile");
+    } catch (err) {
+      console.error("Error deleting profile:", err);
+      alert("Error deleting your profile.");
     }
   };
 

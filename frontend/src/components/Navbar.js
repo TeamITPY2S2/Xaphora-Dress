@@ -43,7 +43,7 @@ const Navbar = () => {
     if (!window.confirm('Delete your profile?')) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:8070/api/users', {
+      const res = await fetch('http://localhost:8070/api/dashboard/profile/delete', {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
