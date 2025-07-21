@@ -5,6 +5,8 @@ import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
 import AccountDrawer from '../components/AccountDrawer';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -87,79 +89,7 @@ const Home = () => {
   return (
     <div className="container">
       <div className="main-wrapper">
-
-        {/* Top Bar */}
-        <div className="top-bar">
-          Free shipping on orders over Rs 5000
-        </div>
-
-        {/* Header */}
-        <header className="header">
-          <div className="header-content">
-            <Link to="/" className="logo">Xaphora Dress</Link>
-
-            <div className="search-bar">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button className="search-button">
-                <FaSearch />
-              </button>
-            </div>
-
-            <div className="header-actions">
-              <Link to="/wishlist">
-                <FaHeart />
-              </Link>
-
-              {token ? (
-                <span
-                  className="header-icon"
-                  onClick={handleProfileClick}
-                  role="button"
-                  tabIndex={0}
-                  onKeyPress={(e) => e.key === 'Enter' && handleProfileClick()}
-                >
-                  <FaUser />
-                </span>
-              ) : (
-                <Link to="/api/auth/login" className="header-icon">
-                  <FaUser />
-                </Link>
-              )}
-
-              <Link to="/cart">
-                <FaShoppingCart />
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* Navigation */}
-        <nav className="main-nav">
-          <div className="nav-container">
-            <button
-              className="mobile-menu-btn"
-              onClick={() => setIsMenuOpen((open) => !open)}
-            >
-              <FaBars />
-            </button>
-            <ul className={`nav-list ${isMenuOpen ? 'show' : ''}`}>
-              <li><Link to="/women" className="nav-link">Women</Link></li>
-              <li><Link to="/men" className="nav-link">Men</Link></li>
-              <li><Link to="/kids" className="nav-link">Kids & Baby</Link></li>
-              <li><Link to="/beauty" className="nav-link">Beauty & Health</Link></li>
-              <li><Link to="/shoes" className="nav-link">Shoes & Bags</Link></li>
-              <li><Link to="/watches" className="nav-link">Watches</Link></li>
-              <li><Link to="/toys" className="nav-link">Toys</Link></li>
-              <li><Link to="/home" className="nav-link">Home & Living</Link></li>
-            </ul>
-          </div>
-        </nav>
+        <Navbar />
 
         {/* Hero Section */}
         <section className="hero-section">
@@ -230,7 +160,7 @@ const Home = () => {
         {/* Chatbot */}
         <XaphoraChatbot />
 
-        {/* Footer */}
+        {/* Footer
         <footer className="footer">
           <div className="footer-content">
             <div className="footer-column">
@@ -258,8 +188,9 @@ const Home = () => {
               <p>Address: 123 Fashion Street</p>
             </div>
           </div>
-        </footer>
-
+        </footer> */}
+        
+        <Footer />
         {/* Account Drawer */}
         <AccountDrawer
           isOpen={drawerOpen}
@@ -272,6 +203,7 @@ const Home = () => {
           onDeleteProfile={handleDeleteProfile}
           onLogout={handleLogout}
         />
+        
       </div>
     </div>
   );
