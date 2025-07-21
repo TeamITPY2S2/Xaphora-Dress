@@ -5,6 +5,7 @@ import './home.css';
 import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
 import AccountDrawer from '../components/AccountDrawer';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -230,7 +231,7 @@ const Home = () => {
         {/* Chatbot */}
         <XaphoraChatbot />
 
-        {/* Footer */}
+        {/* Footer
         <footer className="footer">
           <div className="footer-content">
             <div className="footer-column">
@@ -258,8 +259,9 @@ const Home = () => {
               <p>Address: 123 Fashion Street</p>
             </div>
           </div>
-        </footer>
-
+        </footer> */}
+        
+        <Footer />
         {/* Account Drawer */}
         <AccountDrawer
           isOpen={drawerOpen}
@@ -272,6 +274,7 @@ const Home = () => {
           onDeleteProfile={handleDeleteProfile}
           onLogout={handleLogout}
         />
+        
       </div>
     </div>
   );
