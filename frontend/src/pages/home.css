@@ -471,3 +471,6 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
+.page-wrapper {
+  margin-top: 190px;
+}
