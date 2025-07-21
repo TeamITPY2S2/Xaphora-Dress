@@ -11,12 +11,12 @@
     z-index: 1000;
   }
   
-  .navbar .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
-    text-decoration: none;
-  }
+.logo {
+  font-size: 46px;
+  font-weight: 700;
+  color: #111827;
+  text-decoration: none;
+}
   
   .navbar .nav-links {
     display: flex;
@@ -34,6 +34,13 @@
   
   .navbar .nav-link:hover {
     color: #1e3a8a;
+  }
+  .nav-icon {
+  font-size: 26px;
+  color: #0d4cd6; 
+}
+  .navbar :hover .nav-icon {
+    color: #03288f; 
   }
   
   .navbar-icons {

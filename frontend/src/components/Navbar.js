@@ -22,6 +22,15 @@ const Navbar = () => {
   const userType = localStorage.getItem('userType');
   const userName = localStorage.getItem('userName') || '';
 
+  // search handler
+  const handleSearch = e => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
+
   // drawer action handlers
   const handleAccountDetails = () => {
     navigate('/dashboard');
@@ -74,7 +83,7 @@ const Navbar = () => {
         <div className="header-content">
           <Link to="/" className="logo">Xaphora Dress</Link>
 
-          <div className="search-bar">
+          <form className="search-bar" onSubmit={handleSearch}>
             <input
               type="text"
               className="search-input"
@@ -82,14 +91,14 @@ const Navbar = () => {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
-            <button className="search-button">
+            <button className="search-button" type="submit">
               <FaSearch />
             </button>
-          </div>
+          </form>
 
           <div className="header-actions">
             <Link to="/wishlist">
-              <FaHeart />
+              <FaHeart className="nav-icon" />
             </Link>
 
             {/* Profile icon: open drawer if logged in, else go to login */}
@@ -101,7 +110,7 @@ const Navbar = () => {
                 tabIndex={0}
                 onKeyPress={e => e.key === 'Enter' && setDrawerOpen(true)}
               >
-                <FaUser />
+                <FaUser className="nav-icon" />
               </span>
             ) : (
               <Link to="/api/auth/login" className="header-icon">
@@ -110,8 +119,15 @@ const Navbar = () => {
             )}
 
             <Link to="/cart">
-              <FaShoppingCart />
+              <FaShoppingCart className="nav-icon" />
             </Link>
+
+            <button
+              className="mobile-menu-btn"
+              onClick={() => setIsMenuOpen(o => !o)}
+            >
+              <FaBars />
+            </button>
           </div>
         </div>
       </header>
@@ -119,12 +135,6 @@ const Navbar = () => {
       {/* Navigation */}
       <nav className="main-nav">
         <div className="nav-container">
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setIsMenuOpen(o => !o)}
-          >
-            <FaBars />
-          </button>
           <ul className={`nav-list ${isMenuOpen ? 'show' : ''}`}>
             <li><Link to="/women" className="nav-link">Women</Link></li>
             <li><Link to="/men" className="nav-link">Men</Link></li>
