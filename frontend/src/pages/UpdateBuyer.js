@@ -23,54 +23,41 @@ function UpdateBuyer() {
     fetchBuyer(token);
   }, [buyerId]);
 
-  const fetchBuyer = async (token) => {
-    try {
+  
+ const fetchBuyer = async (token) => {
+  try {
+    console.log(`DEBUG: Fetching buyer data for buyerId: ${buyerId}`);
 
-      // DEBUG: Indicate we're about to fetch
-      console.log(`DEBUG: Fetching buyer data for buyerId: ${buyerId}`);
+    const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const res = await fetch(`http://localhost:8070/api/users/${buyerId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
+    const data = await res.json();
+    console.log("DEBUG: Response from server:", data);
 
-      // DEBUG: Log the entire response data
-      console.log("DEBUG: Response from server:", data);
-
-      if (res.ok) {
-        // If your server returns { user: { ... } }, we need to do:
-        // setBuyerData({ ...data.user });
-        // But let's assume your server returns the shape: { user: { ... } }
-        setBuyerData({
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        });
-      } else {
-        setMessage(data.message || "Error fetching buyer");
-
-      }
-
-      const data = await res.json();
-      // some APIs wrap the user in { user: {...} }
+    if (res.ok) {
       const user = data.user || data;
+
       setBuyerData({
         email: user.email || "",
         firstName: user.firstName || "",
         lastName: user.lastName || "",
       });
-    } catch (err) {
-      console.error("Error fetching buyer:", err);
-      setMessage(
-        err.message.startsWith("<")
-          ? "Server returned HTML instead of JSON. Check your URL."
-          : err.message
-      );
+    } else {
+      setMessage(data.message || "Error fetching buyer");
     }
-  };
+  } catch (err) {
+    console.error("Error fetching buyer:", err);
+    setMessage(
+      err.message.startsWith("<")
+        ? "Server returned HTML instead of JSON. Check your URL."
+        : err.message
+    );
+  }
+};
 
   const handleChange = (e) =>
     setBuyerData({ ...buyerData, [e.target.name]: e.target.value });
