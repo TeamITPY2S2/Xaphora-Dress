@@ -164,7 +164,7 @@ const Navbar = () => {
                         role="option"
                         aria-selected={idx === activeIndex}
                         className={idx === activeIndex ? 'active' : ''}
-                        onMouseDown={(e) => { // use mousedown to fire before blur
+                        onMouseDown={(e) => {
                           e.preventDefault();
                           navigate(`/product/${s._id}`);
                           setShowSuggestions(false);
@@ -174,7 +174,10 @@ const Navbar = () => {
                         onMouseEnter={() => setActiveIndex(idx)}
                       >
                         {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
-                        <span>{s.name}</span>
+                        <div className="suggestion-info">
+                          <span className="suggestion-name">{s.name}</span>
+                          <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
+                        </div>
                       </li>
                     ))}
                   </ul>

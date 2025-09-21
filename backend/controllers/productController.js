@@ -16,7 +16,7 @@ const suggestProducts = async (req, res) => {
     const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(escaped, "i");
     const products = await Product.find({ name: regex })
-      .select("name imageUrl")
+      .select("name imageUrl price category")
       .limit(Math.min(Number(limit) || 8, 15));
     res.status(200).json(products);
   } catch (error) {
