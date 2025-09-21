@@ -6,7 +6,8 @@ import {
   FaSearch,
   FaShoppingCart,
   FaUser,
-  FaBars
+  FaBars,
+  FaTimes
 } from 'react-icons/fa';
 import AccountDrawer from './AccountDrawer';
 import './Navbar.css';
@@ -156,6 +157,16 @@ const Navbar = () => {
                   ref={inputRef}
                   className="search-input"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="clear-search-btn"
+                    aria-label="Clear search"
+                    onClick={() => { setSearchQuery(''); setSuggestions([]); setShowSuggestions(false); inputRef.current?.focus(); }}
+                  >
+                    <FaTimes />
+                  </button>
+                )}
                 {showSuggestions && suggestions.length > 0 && (
                   <ul className="search-suggestions" role="listbox">
                     {suggestions.map((s, idx) => (

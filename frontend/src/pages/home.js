@@ -160,35 +160,6 @@ const Home = () => {
         {/* Chatbot */}
         <XaphoraChatbot />
 
-        {/* Footer
-        <footer className="footer">
-          <div className="footer-content">
-            <div className="footer-column">
-              <h3>Company</h3>
-              <Link to="/about" className="footer-link">About Us</Link>
-              <Link to="/contact" className="footer-link">Contact Us</Link>
-              <Link to="/careers" className="footer-link">Careers</Link>
-            </div>
-            <div className="footer-column">
-              <h3>Help</h3>
-              <Link to="/shipping" className="footer-link">Shipping Information</Link>
-              <Link to="/returns" className="footer-link">Returns & Exchanges</Link>
-              <Link to="/faq" className="footer-link">FAQ</Link>
-            </div>
-            <div className="footer-column">
-              <h3>Shop</h3>
-              <Link to="/women" className="footer-link">Women's Fashion</Link>
-              <Link to="/men" className="footer-link">Men's Fashion</Link>
-              <Link to="/kids" className="footer-link">Kids & Baby</Link>
-            </div>
-            <div className="footer-column">
-              <h3>Contact</h3>
-              <p>Email: support@xaphoradress.com</p>
-              <p>Phone: (555) 123-4567</p>
-              <p>Address: 123 Fashion Street</p>
-            </div>
-          </div>
-        </footer> */}
         
         <Footer />
         {/* Account Drawer */}
