@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -55,6 +55,29 @@ import AddressPage from './pages/AddressPage';
 
 
 function App() {
+  // Dynamically calculate combined top bar + navbar height and expose as CSS variable
+  useEffect(() => {
+    const setOffset = () => {
+      const topBar = document.querySelector('.top-bar');
+      const header = document.querySelector('.xaphora-header');
+      if (header) {
+        const topBarHeight = topBar ? topBar.offsetHeight : 0;
+        const headerHeight = header.offsetHeight || 0;
+        const total = topBarHeight + headerHeight;
+        document.documentElement.style.setProperty('--app-offset', total + 'px');
+      }
+    };
+    setOffset();
+    // Recalculate on resize (debounced minimal)
+    let timeout;
+    const onResize = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(setOffset, 120);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
     <Router>
       <Routes>

@@ -134,8 +134,3 @@
     width: 100px;
   }
 }
-
-/* 🚀 Fix: add padding so content starts below navbar */
-body {
-  padding-top: 120px; /* 40px top-bar + ~80px navbar */
-}
