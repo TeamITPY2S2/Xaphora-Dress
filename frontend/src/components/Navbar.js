@@ -55,12 +55,16 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Top bar */}
       <div className="top-bar">Free shipping on orders over Rs 5000</div>
 
+      {/* Navbar header */}
       <header className="xaphora-header">
         <div className="xaphora-container">
+          {/* Logo */}
           <Link to="/" className="xaphora-logo">Xaphora Dress</Link>
 
+          {/* Navigation */}
           <nav className="xaphora-nav">
             <Link to="/women">Women</Link>
             <Link to="/men">Men</Link>
@@ -72,6 +76,7 @@ const Navbar = () => {
             <Link to="/home">Home & Living</Link>
           </nav>
 
+          {/* Actions */}
           <div className="xaphora-actions">
             <form className="search-form" onSubmit={handleSearch}>
               <FaSearch className="search-icon" />
@@ -126,6 +131,7 @@ const Navbar = () => {
         )}
       </header>
 
+      {/* Drawer */}
       <AccountDrawer
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
