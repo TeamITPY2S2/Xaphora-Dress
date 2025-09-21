@@ -69,11 +69,6 @@ const Navbar = () => {
             <Link to="/women">Women</Link>
             <Link to="/men">Men</Link>
             <Link to="/kids">Kids & Baby</Link>
-            <Link to="/beauty">Beauty & Health</Link>
-            <Link to="/shoes">Shoes & Bags</Link>
-            <Link to="/watches">Watches</Link>
-            <Link to="/toys">Toys</Link>
-            <Link to="/home">Home & Living</Link>
           </nav>
 
           {/* Actions */}
@@ -122,11 +117,6 @@ const Navbar = () => {
             <Link to="/women">Women</Link>
             <Link to="/men">Men</Link>
             <Link to="/kids">Kids & Baby</Link>
-            <Link to="/beauty">Beauty & Health</Link>
-            <Link to="/shoes">Shoes & Bags</Link>
-            <Link to="/watches">Watches</Link>
-            <Link to="/toys">Toys</Link>
-            <Link to="/home">Home & Living</Link>
           </div>
         )}
       </header>
