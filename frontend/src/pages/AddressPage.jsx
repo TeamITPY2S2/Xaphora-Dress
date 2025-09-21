@@ -1,3 +1,4 @@
+// src/pages/AddressPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -80,7 +81,6 @@ const AddressPage = () => {
 
   const handleDeleteAddress = async (addressId) => {
     if (!window.confirm('Are you sure you want to delete this address?')) return;
-    
     try {
       await axios.delete(`http://localhost:8070/api/address/${addressId}`);
       setAddresses(addresses.filter(addr => addr._id !== addressId));
@@ -128,20 +128,17 @@ const AddressPage = () => {
     <>
       <Navbar />
       <div className="address-page">
-        <div className="address-header">
+        {/* Page Header */}
+        <header className="address-header">
           <h1>My Addresses</h1>
-          <button 
-            className="add-address-btn"
-            onClick={() => setIsAddingAddress(true)}
-          >
-            Add New Address
-          </button>
-        </div>
+        </header>
 
+        {/* Error */}
         {error && <div className="error-message">{error}</div>}
 
+        {/* Add Address Form */}
         {isAddingAddress && (
-          <div className="address-form-container">
+          <section className="address-form-container">
             <h2>Add New Address</h2>
             <form onSubmit={handleAddAddress} className="address-form">
               <div className="form-group">
@@ -243,10 +240,11 @@ const AddressPage = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </section>
         )}
 
-        <div className="saved-addresses-section">
+        {/* Saved Addresses */}
+        <section className="saved-addresses-section">
           <h2>Saved Addresses</h2>
           {addresses.length > 0 ? (
             <div className="addresses-grid">
@@ -294,7 +292,7 @@ const AddressPage = () => {
               </button>
             </div>
           )}
-        </div>
+        </section>
       </div>
       <Footer />
     </>

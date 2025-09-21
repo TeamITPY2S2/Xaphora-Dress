@@ -102,14 +102,6 @@ function Dashboard() {
         <div className="buyer-account-page">
           <header className="buyer-header">
             <h1>My Account</h1>
-            <div className="header-actions">
-              <button className="btn-menu" onClick={() => navigate('/update-profile')}>
-                <FaBars className="menu-icon" /> Update Profile
-              </button>
-              <button className="btn-logout" onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
           </header>
 
           <div className="buyer-content">

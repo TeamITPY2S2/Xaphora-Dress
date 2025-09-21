@@ -1,132 +1,276 @@
-/* Navbar.css */
+/* Navbar.css (modernized) */
 
-.top-bar {
-  background-color: #111;
-  color: white;
-  text-align: center;
-  padding: 8px;
-  font-size: 14px;
-  font-weight: 500;
+:root {
+  --color-bg: #ffffff;
+  --color-bg-alt: #f5f7fa;
+  --color-border: #d8dee6;
+  --color-text: #222426;
+  --color-text-dim: #5b6168;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 18px -4px rgba(0,0,0,0.12);
+  --blur-bg: saturate(180%) blur(10px);
+  --transition: .28s cubic-bezier(.4,0,.2,1);
 }
 
+.top-bar {
+  background: linear-gradient(90deg,#111827,#1f2937);
+  color: #f1f5f9;
+  text-align: center;
+  padding: 6px 10px;
+  font-size: 13px;
+  letter-spacing: .5px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  margin-top: 5rem;
+}
+
+/* Fixed navbar at top */
 .xaphora-header {
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: white;
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: var(--blur-bg);
+  -webkit-backdrop-filter: var(--blur-bg);
+  border-bottom: 1px solid rgba(255,255,255,0.45);
+  box-shadow: var(--shadow-sm);
+  transition: background .4s ease, box-shadow .4s ease;
 }
+body.scrolled .xaphora-header { background: rgba(255,255,255,0.9); box-shadow: var(--shadow-md); }
 
+/* Container */
 .xaphora-container {
   max-width: 1400px;
-  margin: auto;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: .9rem 2rem;
   flex-wrap: wrap;
+  gap: 1.25rem;
 }
 
 .xaphora-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.55rem;
+  font-weight: 700;
   text-decoration: none;
-  color: #000;
+  background: linear-gradient(90deg,#1e3a8a,#2563eb 55%,#1d4ed8);
+  -webkit-background-clip: text;
+  color: transparent;
+  letter-spacing: .5px;
+  display: inline-flex;
+  align-items: center;
+  gap: .4ch;
+  transition: opacity var(--transition);
 }
+.xaphora-logo:hover { opacity: .9; }
 
 .xaphora-nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.75rem;
+  align-items: center;
 }
 
 .xaphora-nav a {
+  position: relative;
   text-decoration: none;
-  color: #333;
+  color: var(--color-text-dim);
   font-weight: 500;
+  font-size: .92rem;
+  letter-spacing: .3px;
+  padding: 4px 0;
+  transition: color var(--transition);
 }
-
-.xaphora-nav a:hover {
-  color: #1e25e9;
+.xaphora-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg,#2563eb,#1d4ed8);
+  border-radius: 2px;
+  transition: width .35s ease;
 }
+.xaphora-nav a:hover { color: var(--color-text); }
+.xaphora-nav a:hover::after { width: 100%; }
 
-.xaphora-actions {
+.xaphora-actions { display: flex; align-items: center; gap: 1rem; }
+
+/* Search */
+.search-form { border: none; }
+.search-field-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 4px 14px 4px 42px;
+  transition: var(--transition);
+  min-height: 40px;
 }
-
-.search-form {
-  display: flex;
-  align-items: center;
-  border: 1px solid #f7060600;
-  border-radius: 999px;
-  padding: 6px 12px;
-  background-color: #ffffff;
+.search-field-wrapper:focus-within {
+  background: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 14px -4px rgba(37,99,235,0.35),0 0 0 3px rgba(37,99,235,0.25);
 }
-
 .search-input {
   border: none;
   outline: none;
   background: transparent;
-  padding: 5px;
-  width: 160px;
+  padding: 6px 4px;
+  width: 210px;
+  font-size: .92rem;
+  font-weight: 500;
+  color: var(--color-text);
+  letter-spacing: .3px;
+  transition: width .35s ease;
 }
-
+@media (min-width: 900px) { .search-input:focus { width: 320px; } }
+.search-input::placeholder { color: #94a3b8; font-weight: 400; }
 .search-icon {
-    position: absolute;
-    left: 120px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #718096;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #64748b;
+  pointer-events: none;
+  transition: color var(--transition), transform var(--transition);
+}
+.search-field-wrapper:focus-within .search-icon { color: var(--color-accent); transform: translateY(-50%) scale(1.05); }
+
+/* Clear button */
+.clear-search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.7);
+  border: 1px solid transparent;
+  color: #64748b;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: .75rem;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.clear-search-btn:hover { background: #f1f5f9; color: #334155; }
+.clear-search-btn:active { background: #e2e8f0; }
+.search-field-wrapper:focus-within .clear-search-btn { box-shadow: 0 0 0 2px rgba(37,99,235,0.25); }
+
+/* Suggestions dropdown */
+.search-field-wrapper { position: relative; }
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 10;
+  width: 20%;
+  margin: 6px 0 0 0;
+  padding: 6px 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px -6px rgba(0,0,0,0.15),0 2px 8px rgba(0,0,0,0.06);
+  max-height: 360px;
+  overflow-y: auto;
+  backdrop-filter: var(--blur-bg);
+  -webkit-backdrop-filter: var(--blur-bg);
+  animation: fadeSlide .35s ease both;
+  z-index: 1200;
+}
+.search-suggestions li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: .85rem;
+  cursor: pointer;
+  color: var(--color-text-dim);
+  transition: background var(--transition), color var(--transition);
+}
+.search-suggestions li:hover,
+.search-suggestions li.active {
+  background: linear-gradient(90deg,#eff6ff,#ffffff);
+  color: var(--color-text);
+}
+.suggestion-thumb {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #e2e8f0;
+}
+.suggestion-info { display: flex; flex-direction: column; line-height: 1.15; }
+.suggestion-name { font-weight: 600; color: var(--color-text); font-size: .83rem; }
+.suggestion-meta { font-size: .7rem; color: #64748b; margin-top: 2px; letter-spacing: .3px; }
+
+@media screen and (max-width: 640px) {
+  .search-field-wrapper { width: 100%; }
+  .search-suggestions { width: 100%; }
 }
 
+/* Icons */
 .nav-icon {
-  font-size: 1.2rem;
-  color: #444444;
+  font-size: 1.22rem;
+  color: #475569;
   cursor: pointer;
+  transition: color var(--transition), transform .35s ease;
 }
-.nav-icon:hover {
-  color: #1e25e9;
-}
+.nav-icon:hover { color: var(--color-accent); transform: translateY(-2px); }
+.nav-icon:active { transform: translateY(0); }
 
 .mobile-menu-btn {
   background: none;
-  border: none;
-  font-size: 1.4rem;
+  border: 1px solid transparent;
+  font-size: 1.65rem;
   display: none;
   cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+  color: #475569;
+  transition: var(--transition);
 }
+.mobile-menu-btn:hover { color: var(--color-accent); background: var(--color-bg-alt); }
 
 .mobile-nav {
   display: none;
   flex-direction: column;
-  background: white;
-  padding: 1rem;
+  background: #ffffffdd;
+  backdrop-filter: var(--blur-bg);
+  padding: 1rem 1.25rem 1.4rem;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-md);
+  animation: fadeSlide .45s ease both;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
 }
-
 .mobile-nav a {
-  padding: 8px 0;
+  padding: 10px 0;
   text-decoration: none;
-  color: #333;
+  color: var(--color-text-dim);
+  font-weight: 500;
+  position: relative;
+  transition: color var(--transition);
 }
+.mobile-nav a + a { border-top: 1px solid #e2e8f0; }
+.mobile-nav a:hover { color: var(--color-text); }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
 @media screen and (max-width: 768px) {
-  .xaphora-nav {
-    display: none;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .mobile-nav {
-    display: flex;
-  }
-
-  .search-input {
-    width: 100px;
-  }
+  .xaphora-nav { display: none; }
+  .mobile-menu-btn { display: block; }
+  .mobile-nav { display: flex; }
+  .search-field-wrapper { padding: 4px 12px 4px 40px; }
+  .search-input { width: 150px; }
 }

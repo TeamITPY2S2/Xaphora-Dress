@@ -4,6 +4,7 @@ const Order = require('../models/OrderModel');
 const DeliveryAgent = require('../models/DeliveryAgent');
 const Seller = require("../models/Seller");
 const User = require("../models/UserModel"); // Includes buyers
+const Address = require("../models/addressModel");
 
 
 // ✅ Used by /api/dashboard for all roles
@@ -24,12 +25,26 @@ const getRoleBasedDashboardInfo = async (req, res) => {
       const user = await User.findById(req.user.userId).select("-password");
       if (!user) return res.status(404).json({ message: "User not found" });
 
+      // Fetch recent orders and addresses for buyers
+      let recentOrders = [];
+      let addresses = [];
+      if (user.role === 'buyer') {
+        // Use correct field names: Order uses userId, Address uses userId
+        recentOrders = await Order.find({ userId: req.user.userId })
+          .sort({ createdAt: -1 })
+          .limit(5)
+          .lean();
+        addresses = await Address.find({ userId: req.user.userId }).lean();
+      }
+
       return res.json({
         userType: user.role,
         firstName: user.firstName,
         lastName: user.lastName,
-
-        email: user.email, 
+        email: user.email,
+        createdAt: user.createdAt,
+        recentOrders,
+        addresses,
       });
     }
 

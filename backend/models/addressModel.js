@@ -1,4 +1,4 @@
-// backend/models/AddressModel.js
+// backend/models/addressModel.js (ensure single model instance across reloads)
 
 const mongoose = require("mongoose");
 
@@ -45,4 +45,5 @@ const AddressSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Address", AddressSchema);
+// Reuse existing compiled model if it exists to avoid OverwriteModelError during dev reloads
+module.exports = mongoose.models.Address || mongoose.model("Address", AddressSchema);

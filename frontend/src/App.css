@@ -16,3 +16,12 @@
   padding: 0; /* Ensure no padding is added */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
+/* Global header offset handling */
+body {
+  /* Fallback 120px if var not yet set */
+  padding-top: var(--app-offset, 120px);
+}
+
+/* Smooth anchor scrolling so headings are visible below fixed header */
+html { scroll-behavior: smooth; }
