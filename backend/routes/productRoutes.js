@@ -13,6 +13,7 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
+  suggestProducts,
 } = require("../controllers/productController");
 
 // IMPORTANT: correct routes
@@ -22,6 +23,9 @@ router.post("/", upload.single("image"), createProduct);
 
 // Get All Products
 router.get("/", getProducts);
+
+// Suggest products (must be before /:id)
+router.get("/suggest", suggestProducts);
 
 // Get Product by ID
 router.get("/:id", getProductById);

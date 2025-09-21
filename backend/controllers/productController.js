@@ -4,6 +4,26 @@ const cloudinary = require("../configarations/cloudinary");
 const streamifier = require("streamifier");
 const { sendNotification } = require("../services/notificationService");
 
+// Lightweight product suggestion endpoint (name prefix / partial, case-insensitive)
+// Returns: [{ _id, name, imageUrl }] limited by ?limit= param (default 8)
+const suggestProducts = async (req, res) => {
+  try {
+    const { q = "", limit = 8 } = req.query;
+    const trimmed = q.toString().trim();
+    if (!trimmed) return res.status(200).json([]);
+
+    // Simple regex prefix/contains search (escape special chars)
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escaped, "i");
+    const products = await Product.find({ name: regex })
+      .select("name imageUrl")
+      .limit(Math.min(Number(limit) || 8, 15));
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching suggestions", error });
+  }
+};
+
 // Create a new product
 const createProduct = async (req, res) => {
   try {
@@ -141,4 +161,5 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
+  suggestProducts,
 };
