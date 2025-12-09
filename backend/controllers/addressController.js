@@ -1,5 +1,5 @@
 // backend/controllers/addressController.js
-const Address = require("../models/AddressModel");
+const Address = require("../models/addressModel");
 
 exports.createAddress = async (req, res) => {
   try {

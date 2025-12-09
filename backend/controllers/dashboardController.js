@@ -7,7 +7,7 @@ const User = require("../models/UserModel"); // Includes buyers
 const Address = require("../models/addressModel");
 
 
-// ✅ Used by /api/dashboard for all roles
+//  Used by /api/dashboard for all roles
 const getRoleBasedDashboardInfo = async (req, res) => {
   try {
     if (req.user && req.user.adminId) {
@@ -66,7 +66,7 @@ const getRoleBasedDashboardInfo = async (req, res) => {
   }
 };
 
-// ✅ Used by /api/dashboard/superadmin/stats to get counts
+// Used by /api/dashboard/superadmin/stats to get counts
 const getDashboardData = async (req, res) => {
   try {
     const adminCount = await Admin.countDocuments();
