@@ -86,6 +86,12 @@ const Home = () => {
     { id: 3, title: "Kids & Baby", image: '/images/baby.avif' },
   ];
 
+  const cakeProducts = [
+    { id: 1, title: "Birthday Cakes", image: '/images/birthday-cake.jpeg', description: "Custom designs for memorable celebrations" },
+    { id: 2, title: "Wedding Cakes", image: '/images/wedding-cake.jpeg', description: "Elegant creations for your special day" },
+    { id: 3, title: "Bride-to-be Cakes", image: '/images/bridal-cake.jpeg', description: "Perfect for bridal showers & bachelorettes" },
+  ];
+
   return (
     <div className="container">
       <div className="main-wrapper">
@@ -117,6 +123,28 @@ const Home = () => {
                 <div className="category-content">
                   <h2 className="category-title">{cat.title}</h2>
                   <Link to={`/category/${cat.id}`} className="shop-now-btn">Shop Now</Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Cakes Section */}
+        <section className="cakes-section">
+          <div className="section-header">
+            <h2 className="section-title">Sweet Treats by Xaphora</h2>
+            <p className="section-subtitle">Custom cakes for every celebration</p>
+          </div>
+          <div className="cakes-grid">
+            {cakeProducts.map((cake) => (
+              <div key={cake.id} className="cake-card">
+                <div className="cake-image-container">
+                  <img src={cake.image} alt={cake.title} className="cake-image" />
+                </div>
+                <div className="cake-content">
+                  <h3 className="cake-title">{cake.title}</h3>
+                  <p className="cake-description">{cake.description}</p>
+                  <Link to="/cakes" className="order-cake-btn">Order Now</Link>
                 </div>
               </div>
             ))}

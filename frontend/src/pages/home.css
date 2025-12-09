@@ -250,3 +250,124 @@ body {
   color: #dc3545;
   font-size: 1.1rem;
 }
+
+/* Cakes Section */
+.cakes-section {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #ffeef8 0%, #fff5f7 100%);
+  margin: 2rem 0;
+}
+
+.cakes-section .section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.cakes-section .section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #d4528a;
+  margin-bottom: 0.5rem;
+}
+
+.cakes-section .section-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  font-style: italic;
+}
+
+.cakes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cake-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cake-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(212, 82, 138, 0.2);
+}
+
+.cake-image-container {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+.cake-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cake-card:hover .cake-image {
+  transform: scale(1.1);
+}
+
+.cake-content {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.cake-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.cake-description {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.order-cake-btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #d4528a 0%, #e91e63 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 82, 138, 0.3);
+}
+
+.order-cake-btn:hover {
+  background: linear-gradient(135deg, #c1467a 0%, #d81b60 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(212, 82, 138, 0.4);
+}
+
+/* Responsive Design for Cakes Section */
+@media (max-width: 768px) {
+  .cakes-section {
+    padding: 3rem 1rem;
+  }
+
+  .cakes-section .section-title {
+    font-size: 2rem;
+  }
+
+  .cakes-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cake-image-container {
+    height: 200px;
+  }
+}
