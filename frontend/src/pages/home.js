@@ -81,7 +81,7 @@ const Home = () => {
   };
 
   const categories = [
-    { id: 1, title: "Women's Fashion", image: '/images/womenf.webp' },
+    { id: 1, title: "Women's Fashion", image: '/images/women-fashion.webp' },
     { id: 2, title: "Men's Collection", image: '/images/mensfassion.avif' },
     { id: 3, title: "Kids & Baby", image: '/images/baby.avif' },
   ];
@@ -116,12 +116,18 @@ const Home = () => {
 
         {/* Featured Categories */}
         <section className="featured-categories">
+          <div className="section-header">
+            <h2 className="section-title">Explore Fashion Collections</h2>
+            <p className="section-subtitle">Discover style for everyone in the family</p>
+          </div>
           <div className="category-grid">
             {categories.map((cat) => (
               <div key={cat.id} className="category-card">
-                <img src={cat.image} alt={cat.title} className="category-image" />
+                <div className="category-image-container">
+                  <img src={cat.image} alt={cat.title} className="category-image" />
+                </div>
                 <div className="category-content">
-                  <h2 className="category-title">{cat.title}</h2>
+                  <h3 className="category-title">{cat.title}</h3>
                   <Link to={`/category/${cat.id}`} className="shop-now-btn">Shop Now</Link>
                 </div>
               </div>
