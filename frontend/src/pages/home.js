@@ -10,31 +10,37 @@ import Navbar from '../components/Navbar';
 // ============================================
 // HERO CONFIG - Easy to update for seasons/festivals
 // ============================================
+// HOW TO UPDATE:
+// 1. headline: Main big text (e.g., "SUMMER SALE", "NEW ARRIVALS", "DIWALI SPECIAL")
+// 2. promoLines: Array of promo messages. Each line has:
+//    - prefix: Text before the highlighted amount
+//    - highlight: The amount/percentage to highlight in RED
+//    - suffix: Text after highlight, before discount
+//    - discount: The discount text (also highlighted in RED)
+// 3. codes: Array of promo codes to display
+// 4. heroImage: Path to the hero image (place in public/images/)
+// 5. ctaText & ctaLink: Button text and where it links to
+// ============================================
 const HERO_CONFIG = {
-  // Main headline - can be seasonal event name
-  headline: "12 DAYS OF CHRISTMAS",
-  // Promo lines with highlighted amounts/percentages
+  headline: "XAPHORA DRESS",
   promoLines: [
     { 
-      prefix: "DAY 12 - SHOP ABOVE", 
-      highlight: "RS 15,000", 
-      suffix: "AND GET", 
-      discount: "10% OFF" 
+      prefix: "Your Style,", 
+      highlight: "Your Story", 
+      suffix: "-", 
+      discount: "Shop Now" 
     },
     { 
-      prefix: "& SHOP ABOVE", 
-      highlight: "RS 25,000", 
-      suffix: "AND GET", 
-      discount: "15% OFF" 
+      prefix: "Fashion for", 
+      highlight: "Everyone", 
+      suffix: "in the", 
+      discount: "Family" 
     }
   ],
-  // Promo codes to display
-  codes: ["XMAS10", "XMAS15"],
-  // Hero image (model/product image on right side)
+  codes: [], // Empty for now - add promo codes like ["CODE10", "CODE20"] when needed
   heroImage: "/images/main-image.JPEG",
-  // CTA button
-  ctaText: "SHOP NOW",
-  ctaLink: "/shop"
+  ctaText: "EXPLORE COLLECTION",
+  ctaLink: "/products"
 };
 
 const Home = () => {

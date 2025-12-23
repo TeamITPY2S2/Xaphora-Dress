@@ -16,16 +16,22 @@ import './Navbar.css';
 // ============================================
 // PROMO BAR CONFIG - Easy to update for seasons/festivals
 // ============================================
+// HOW TO UPDATE:
+// - simpleMessage: Use this for a basic announcement (set codes to empty array [])
+// - codes: Array of promo offers. Each has: code, description, discount
+// 
+// EXAMPLES:
+// Simple message: { simpleMessage: "Free Shipping on Orders Over Rs 5000", codes: [] }
+// Promo codes: { simpleMessage: "", codes: [{ code: "SAVE10", description: "SHOP ABOVE 10,000", discount: "GET 10% OFF" }] }
+// ============================================
 const PROMO_CONFIG = {
-  message: "USE CODE",
-  codes: [
-    { code: "XMAS10", description: "SHOP ABOVE 15,000/=", discount: "GET 10% OFF" },
-    { code: "XMAS15", description: "SHOP ABOVE 25,000/=", discount: "GET 15% OFF" }
-  ]
+  simpleMessage: "Free Shipping on Orders Over Rs 5,000 | New Arrivals Every Week",
+  codes: [] // Empty = show simpleMessage. Add codes for promos.
 };
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -33,10 +39,28 @@ const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const abortRef = useRef();
   const inputRef = useRef();
+  const searchWrapperRef = useRef();
   const navigate = useNavigate();
 
   const token = localStorage.getItem('token');
   const userName = localStorage.getItem('userName') || '';
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        setSearchOpen(false);
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearchIconClick = () => {
+    setSearchOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
 
   const handleSearch = e => {
     e.preventDefault();
@@ -140,12 +164,18 @@ const Navbar = () => {
     <>
       {/* Promo announcement bar - Easy to update for seasons/festivals */}
       <div className="promo-bar">
-        {PROMO_CONFIG.codes.map((promo, idx) => (
-          <span key={promo.code}>
-            {idx > 0 && <span className="separator">|</span>}
-            {PROMO_CONFIG.message} '<span className="highlight">{promo.code}</span>' {promo.description} {promo.discount}
-          </span>
-        ))}
+        {PROMO_CONFIG.codes.length > 0 ? (
+          // Show promo codes when available
+          PROMO_CONFIG.codes.map((promo, idx) => (
+            <span key={promo.code}>
+              {idx > 0 && <span className="separator">|</span>}
+              USE CODE '<span className="highlight">{promo.code}</span>' {promo.description} {promo.discount}
+            </span>
+          ))
+        ) : (
+          // Show simple message when no promo codes
+          <span>{PROMO_CONFIG.simpleMessage}</span>
+        )}
       </div>
 
       {/* Navbar header */}
@@ -169,57 +199,71 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="xaphora-actions">
-            <form className="search-form" onSubmit={handleSearch}>
-              <div className="search-field-wrapper">
-                <FaSearch className='search-icon' />
-                <input
-                  type="text"
-                  placeholder="Search for a Product"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => suggestions.length && setShowSuggestions(true)}
-                  ref={inputRef}
-                  className="search-input"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    className="clear-search-btn"
-                    aria-label="Clear search"
-                    onClick={() => { setSearchQuery(''); setSuggestions([]); setShowSuggestions(false); inputRef.current?.focus(); }}
-                  >
-                    <FaTimes />
-                  </button>
-                )}
-              </div>
-              {showSuggestions && suggestions.length > 0 && (
-                <ul className="search-suggestions" role="listbox">
-                  {suggestions.map((s, idx) => (
-                    <li
-                      key={s._id}
-                      role="option"
-                      aria-selected={idx === activeIndex}
-                      className={idx === activeIndex ? 'active' : ''}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        navigate(`/product/${s._id}`);
-                        setShowSuggestions(false);
-                        setSearchQuery('');
-                        setActiveIndex(-1);
-                      }}
-                      onMouseEnter={() => setActiveIndex(idx)}
+            {/* Search - Click icon to expand */}
+            <div className={`search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchWrapperRef}>
+              {!searchOpen ? (
+                <button 
+                  type="button" 
+                  className="search-icon-btn" 
+                  onClick={handleSearchIconClick}
+                  aria-label="Open search"
+                >
+                  <FaSearch />
+                </button>
+              ) : (
+                <form className="search-form" onSubmit={handleSearch}>
+                  <div className="search-field">
+                    <FaSearch className="search-icon" />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      onFocus={() => suggestions.length && setShowSuggestions(true)}
+                      ref={inputRef}
+                      className="search-input"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      className="search-close-btn"
+                      aria-label="Close search"
+                      onClick={() => { setSearchOpen(false); setSearchQuery(''); setSuggestions([]); setShowSuggestions(false); }}
                     >
-                      {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
-                      <div className="suggestion-info">
-                        <span className="suggestion-name">{s.name}</span>
-                        <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                      <FaTimes />
+                    </button>
+                  </div>
+                  {showSuggestions && suggestions.length > 0 && (
+                    <ul className="search-suggestions" role="listbox">
+                      {suggestions.map((s, idx) => (
+                        <li
+                          key={s._id}
+                          role="option"
+                          aria-selected={idx === activeIndex}
+                          className={idx === activeIndex ? 'active' : ''}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            navigate(`/product/${s._id}`);
+                            setShowSuggestions(false);
+                            setSearchQuery('');
+                            setSearchOpen(false);
+                            setActiveIndex(-1);
+                          }}
+                          onMouseEnter={() => setActiveIndex(idx)}
+                        >
+                          {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
+                          <div className="suggestion-info">
+                            <span className="suggestion-name">{s.name}</span>
+                            <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </form>
               )}
-            </form>
+            </div>
 
             {token ? (
               <span
