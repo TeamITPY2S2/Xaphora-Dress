@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './ProductListPage.css';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
@@ -38,6 +40,8 @@ function ProductListPage() {
   );
 
   return (
+    <>
+      <Navbar />
     <div className="product-list-container">
       <h2>All Products</h2>
 
@@ -85,6 +89,9 @@ function ProductListPage() {
         )}
       </div>
     </div>
+        <Footer />
+        </>
+  
   );
 }
 
