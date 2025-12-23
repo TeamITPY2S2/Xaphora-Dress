@@ -7,10 +7,22 @@ import {
   FaShoppingCart,
   FaUser,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaChevronDown
 } from 'react-icons/fa';
 import AccountDrawer from './AccountDrawer';
 import './Navbar.css';
+
+// ============================================
+// PROMO BAR CONFIG - Easy to update for seasons/festivals
+// ============================================
+const PROMO_CONFIG = {
+  message: "USE CODE",
+  codes: [
+    { code: "XMAS10", description: "SHOP ABOVE 15,000/=", discount: "GET 10% OFF" },
+    { code: "XMAS15", description: "SHOP ABOVE 25,000/=", discount: "GET 15% OFF" }
+  ]
+};
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,31 +138,43 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Top bar */}
-      <div className="top-bar">Free shipping on orders over Rs 5000</div>
+      {/* Promo announcement bar - Easy to update for seasons/festivals */}
+      <div className="promo-bar">
+        {PROMO_CONFIG.codes.map((promo, idx) => (
+          <span key={promo.code}>
+            {idx > 0 && <span className="separator">|</span>}
+            {PROMO_CONFIG.message} '<span className="highlight">{promo.code}</span>' {promo.description} {promo.discount}
+          </span>
+        ))}
+      </div>
 
       {/* Navbar header */}
       <header className="xaphora-header">
         <div className="xaphora-container">
           {/* Logo */}
-          <Link to="/" className="xaphora-logo">Xaphora Dress</Link>
+          <Link to="/" className="xaphora-logo">XAPHORA</Link>
 
           {/* Navigation */}
           <nav className="xaphora-nav">
-            <Link to="/women">Women</Link>
-            <Link to="/men">Men</Link>
-            <Link to="/kids">Kids & Baby</Link>
-            <Link to="/cakes">Cakes</Link>
+            <span className="nav-link">
+              MEN <FaChevronDown className="dropdown-arrow" />
+            </span>
+            <span className="nav-link">
+              WOMEN <FaChevronDown className="dropdown-arrow" />
+            </span>
+            <Link to="/kids">KIDS & BABY</Link>
+            <Link to="/cakes">CAKES</Link>
+            <Link to="/products">NEW ARRIVALS</Link>
           </nav>
 
           {/* Actions */}
           <div className="xaphora-actions">
             <form className="search-form" onSubmit={handleSearch}>
-              
+              <div className="search-field-wrapper">
                 <FaSearch className='search-icon' />
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder="Search for a Product"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -168,36 +192,34 @@ const Navbar = () => {
                     <FaTimes />
                   </button>
                 )}
-                {showSuggestions && suggestions.length > 0 && (
-                  <ul className="search-suggestions" role="listbox">
-                    {suggestions.map((s, idx) => (
-                      <li
-                        key={s._id}
-                        role="option"
-                        aria-selected={idx === activeIndex}
-                        className={idx === activeIndex ? 'active' : ''}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          navigate(`/product/${s._id}`);
-                          setShowSuggestions(false);
-                          setSearchQuery('');
-                          setActiveIndex(-1);
-                        }}
-                        onMouseEnter={() => setActiveIndex(idx)}
-                      >
-                        {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
-                        <div className="suggestion-info">
-                          <span className="suggestion-name">{s.name}</span>
-                          <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              
+              </div>
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="search-suggestions" role="listbox">
+                  {suggestions.map((s, idx) => (
+                    <li
+                      key={s._id}
+                      role="option"
+                      aria-selected={idx === activeIndex}
+                      className={idx === activeIndex ? 'active' : ''}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        navigate(`/product/${s._id}`);
+                        setShowSuggestions(false);
+                        setSearchQuery('');
+                        setActiveIndex(-1);
+                      }}
+                      onMouseEnter={() => setActiveIndex(idx)}
+                    >
+                      {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
+                      <div className="suggestion-info">
+                        <span className="suggestion-name">{s.name}</span>
+                        <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </form>
-
-            <Link to="/wishlist"><FaHeart className="nav-icon" /></Link>
 
             {token ? (
               <span
@@ -213,13 +235,14 @@ const Navbar = () => {
               <Link to="/api/auth/login"><FaUser className="nav-icon" /></Link>
             )}
 
+            <Link to="/wishlist"><FaHeart className="nav-icon" /></Link>
             <Link to="/cart"><FaShoppingCart className="nav-icon" /></Link>
 
             <button
               className="mobile-menu-btn"
               onClick={() => setIsMenuOpen(prev => !prev)}
             >
-              <FaBars />
+              {isMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
         </div>
@@ -227,9 +250,11 @@ const Navbar = () => {
         {/* Mobile Nav */}
         {isMenuOpen && (
           <div className="mobile-nav">
-            <Link to="/women">Women</Link>
-            <Link to="/men">Men</Link>
-            <Link to="/kids">Kids & Baby</Link>
+            <Link to="/men" onClick={() => setIsMenuOpen(false)}>MEN</Link>
+            <Link to="/women" onClick={() => setIsMenuOpen(false)}>WOMEN</Link>
+            <Link to="/kids" onClick={() => setIsMenuOpen(false)}>KIDS & BABY</Link>
+            <Link to="/cakes" onClick={() => setIsMenuOpen(false)}>CAKES</Link>
+            <Link to="/products" onClick={() => setIsMenuOpen(false)}>NEW ARRIVALS</Link>
           </div>
         )}
       </header>

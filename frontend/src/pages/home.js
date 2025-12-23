@@ -2,11 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
-import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
 import AccountDrawer from '../components/AccountDrawer';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+
+// ============================================
+// HERO CONFIG - Easy to update for seasons/festivals
+// ============================================
+const HERO_CONFIG = {
+  // Main headline - can be seasonal event name
+  headline: "12 DAYS OF CHRISTMAS",
+  // Promo lines with highlighted amounts/percentages
+  promoLines: [
+    { 
+      prefix: "DAY 12 - SHOP ABOVE", 
+      highlight: "RS 15,000", 
+      suffix: "AND GET", 
+      discount: "10% OFF" 
+    },
+    { 
+      prefix: "& SHOP ABOVE", 
+      highlight: "RS 25,000", 
+      suffix: "AND GET", 
+      discount: "15% OFF" 
+    }
+  ],
+  // Promo codes to display
+  codes: ["XMAS10", "XMAS15"],
+  // Hero image (model/product image on right side)
+  heroImage: "/images/main-image.JPEG",
+  // CTA button
+  ctaText: "SHOP NOW",
+  ctaLink: "/shop"
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -97,19 +126,49 @@ const Home = () => {
       <div className="main-wrapper">
         <Navbar />
 
-        {/* Hero Section */}
+        {/* Hero Section - Carnage Style */}
         <section className="hero-section">
-          <div className="hero-slider">
-            <div className="hero-slide">
-              <video className="background-video" autoPlay loop muted playsInline>
-                <source src="/images/fashion2.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="hero-content">
-                <h1 className="hero-title">New Season Arrivals</h1>
-                <p className="hero-subtitle">Discover the latest trends in fashion</p>
-                <Link to="/shop" className="shop-now-btn">Shop Now</Link>
+          <div className="hero-container">
+            <div className="hero-content">
+              {/* Main Headline */}
+              <h1 className="hero-headline">{HERO_CONFIG.headline}</h1>
+              
+              {/* Promo Lines */}
+              <div className="hero-promo-text">
+                {HERO_CONFIG.promoLines.map((line, idx) => (
+                  <p key={idx} className="promo-line">
+                    <span className="promo-prefix">{line.prefix} </span>
+                    <span className="promo-highlight">{line.highlight}</span>
+                    <span className="promo-prefix"> {line.suffix} </span>
+                    <span className="promo-discount">{line.discount}</span>
+                  </p>
+                ))}
               </div>
+              
+              {/* Promo Codes */}
+              <div className="hero-codes">
+                <span className="code-label">USE CODE - </span>
+                {HERO_CONFIG.codes.map((code, idx) => (
+                  <span key={code}>
+                    {idx > 0 && <span className="code-separator"> | </span>}
+                    <span className="code-value">{code}</span>
+                  </span>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <Link to={HERO_CONFIG.ctaLink} className="hero-cta-btn">
+                {HERO_CONFIG.ctaText}
+              </Link>
+            </div>
+            
+            {/* Hero Image */}
+            <div className="hero-image-wrapper">
+              <img 
+                src={HERO_CONFIG.heroImage} 
+                alt="Featured collection" 
+                className="hero-image"
+              />
             </div>
           </div>
         </section>
