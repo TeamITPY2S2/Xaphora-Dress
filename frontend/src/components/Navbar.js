@@ -7,13 +7,31 @@ import {
   FaShoppingCart,
   FaUser,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaChevronDown
 } from 'react-icons/fa';
 import AccountDrawer from './AccountDrawer';
 import './Navbar.css';
 
+// ============================================
+// PROMO BAR CONFIG - Easy to update for seasons/festivals
+// ============================================
+// HOW TO UPDATE:
+// - simpleMessage: Use this for a basic announcement (set codes to empty array [])
+// - codes: Array of promo offers. Each has: code, description, discount
+// 
+// EXAMPLES:
+// Simple message: { simpleMessage: "Free Shipping on Orders Over Rs 5000", codes: [] }
+// Promo codes: { simpleMessage: "", codes: [{ code: "SAVE10", description: "SHOP ABOVE 10,000", discount: "GET 10% OFF" }] }
+// ============================================
+const PROMO_CONFIG = {
+  simpleMessage: "Free Shipping on Orders Over Rs 5,000 | New Arrivals Every Week",
+  codes: [] // Empty = show simpleMessage. Add codes for promos.
+};
+
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -21,10 +39,28 @@ const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const abortRef = useRef();
   const inputRef = useRef();
+  const searchWrapperRef = useRef();
   const navigate = useNavigate();
 
   const token = localStorage.getItem('token');
   const userName = localStorage.getItem('userName') || '';
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        setSearchOpen(false);
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearchIconClick = () => {
+    setSearchOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
 
   const handleSearch = e => {
     e.preventDefault();
@@ -126,77 +162,108 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Top bar */}
-      <div className="top-bar">Free shipping on orders over Rs 5000</div>
+      {/* Promo announcement bar - Easy to update for seasons/festivals */}
+      <div className="promo-bar">
+        {PROMO_CONFIG.codes.length > 0 ? (
+          // Show promo codes when available
+          PROMO_CONFIG.codes.map((promo, idx) => (
+            <span key={promo.code}>
+              {idx > 0 && <span className="separator">|</span>}
+              USE CODE '<span className="highlight">{promo.code}</span>' {promo.description} {promo.discount}
+            </span>
+          ))
+        ) : (
+          // Show simple message when no promo codes
+          <span>{PROMO_CONFIG.simpleMessage}</span>
+        )}
+      </div>
 
       {/* Navbar header */}
       <header className="xaphora-header">
         <div className="xaphora-container">
           {/* Logo */}
-          <Link to="/" className="xaphora-logo">Xaphora Dress</Link>
+          <Link to="/" className="xaphora-logo">XAPHORA</Link>
 
           {/* Navigation */}
           <nav className="xaphora-nav">
-            <Link to="/women">Women</Link>
-            <Link to="/men">Men</Link>
-            <Link to="/kids">Kids & Baby</Link>
+            <span className="nav-link">
+              MEN <FaChevronDown className="dropdown-arrow" />
+            </span>
+            <span className="nav-link">
+              WOMEN <FaChevronDown className="dropdown-arrow" />
+            </span>
+            <Link to="/kids">KIDS & BABY</Link>
+            <Link to="/cakes">CAKES</Link>
+            <Link to="/products">NEW ARRIVALS</Link>
           </nav>
 
           {/* Actions */}
           <div className="xaphora-actions">
-            <form className="search-form" onSubmit={handleSearch}>
-              
-                <FaSearch className='search-icon' />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => suggestions.length && setShowSuggestions(true)}
-                  ref={inputRef}
-                  className="search-input"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    className="clear-search-btn"
-                    aria-label="Clear search"
-                    onClick={() => { setSearchQuery(''); setSuggestions([]); setShowSuggestions(false); inputRef.current?.focus(); }}
-                  >
-                    <FaTimes />
-                  </button>
-                )}
-                {showSuggestions && suggestions.length > 0 && (
-                  <ul className="search-suggestions" role="listbox">
-                    {suggestions.map((s, idx) => (
-                      <li
-                        key={s._id}
-                        role="option"
-                        aria-selected={idx === activeIndex}
-                        className={idx === activeIndex ? 'active' : ''}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          navigate(`/product/${s._id}`);
-                          setShowSuggestions(false);
-                          setSearchQuery('');
-                          setActiveIndex(-1);
-                        }}
-                        onMouseEnter={() => setActiveIndex(idx)}
-                      >
-                        {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
-                        <div className="suggestion-info">
-                          <span className="suggestion-name">{s.name}</span>
-                          <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              
-            </form>
-
-            <Link to="/wishlist"><FaHeart className="nav-icon" /></Link>
+            {/* Search - Click icon to expand */}
+            <div className={`search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchWrapperRef}>
+              {!searchOpen ? (
+                <button 
+                  type="button" 
+                  className="search-icon-btn" 
+                  onClick={handleSearchIconClick}
+                  aria-label="Open search"
+                >
+                  <FaSearch />
+                </button>
+              ) : (
+                <form className="search-form" onSubmit={handleSearch}>
+                  <div className="search-field">
+                    <FaSearch className="search-icon" />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      onFocus={() => suggestions.length && setShowSuggestions(true)}
+                      ref={inputRef}
+                      className="search-input"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      className="search-close-btn"
+                      aria-label="Close search"
+                      onClick={() => { setSearchOpen(false); setSearchQuery(''); setSuggestions([]); setShowSuggestions(false); }}
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                  {showSuggestions && suggestions.length > 0 && (
+                    <ul className="search-suggestions" role="listbox">
+                      {suggestions.map((s, idx) => (
+                        <li
+                          key={s._id}
+                          role="option"
+                          aria-selected={idx === activeIndex}
+                          className={idx === activeIndex ? 'active' : ''}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            navigate(`/product/${s._id}`);
+                            setShowSuggestions(false);
+                            setSearchQuery('');
+                            setSearchOpen(false);
+                            setActiveIndex(-1);
+                          }}
+                          onMouseEnter={() => setActiveIndex(idx)}
+                        >
+                          {s.imageUrl && <img src={s.imageUrl} alt="" className="suggestion-thumb" />}
+                          <div className="suggestion-info">
+                            <span className="suggestion-name">{s.name}</span>
+                            <span className="suggestion-meta">{s.category}{s.price ? ` • Rs ${Number(s.price).toLocaleString()}` : ''}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </form>
+              )}
+            </div>
 
             {token ? (
               <span
@@ -212,13 +279,14 @@ const Navbar = () => {
               <Link to="/api/auth/login"><FaUser className="nav-icon" /></Link>
             )}
 
+            <Link to="/wishlist"><FaHeart className="nav-icon" /></Link>
             <Link to="/cart"><FaShoppingCart className="nav-icon" /></Link>
 
             <button
               className="mobile-menu-btn"
               onClick={() => setIsMenuOpen(prev => !prev)}
             >
-              <FaBars />
+              {isMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
         </div>
@@ -226,9 +294,11 @@ const Navbar = () => {
         {/* Mobile Nav */}
         {isMenuOpen && (
           <div className="mobile-nav">
-            <Link to="/women">Women</Link>
-            <Link to="/men">Men</Link>
-            <Link to="/kids">Kids & Baby</Link>
+            <Link to="/men" onClick={() => setIsMenuOpen(false)}>MEN</Link>
+            <Link to="/women" onClick={() => setIsMenuOpen(false)}>WOMEN</Link>
+            <Link to="/kids" onClick={() => setIsMenuOpen(false)}>KIDS & BABY</Link>
+            <Link to="/cakes" onClick={() => setIsMenuOpen(false)}>CAKES</Link>
+            <Link to="/products" onClick={() => setIsMenuOpen(false)}>NEW ARRIVALS</Link>
           </div>
         )}
       </header>

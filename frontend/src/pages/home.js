@@ -2,11 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './home.css';
-import { FaSearch, FaShoppingCart, FaUser, FaHeart, FaBars } from 'react-icons/fa';
 import XaphoraChatbot from './XaphoraChatbot';
 import AccountDrawer from '../components/AccountDrawer';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+
+// ============================================
+// HERO CONFIG - Easy to update for seasons/festivals
+// ============================================
+// HOW TO UPDATE:
+// 1. headline: Main big text (e.g., "SUMMER SALE", "NEW ARRIVALS", "DIWALI SPECIAL")
+// 2. promoLines: Array of promo messages. Each line has:
+//    - prefix: Text before the highlighted amount
+//    - highlight: The amount/percentage to highlight in RED
+//    - suffix: Text after highlight, before discount
+//    - discount: The discount text (also highlighted in RED)
+// 3. codes: Array of promo codes to display
+// 4. heroImage: Path to the hero image (place in public/images/)
+// 5. ctaText & ctaLink: Button text and where it links to
+// ============================================
+const HERO_CONFIG = {
+  headline: "XAPHORA DRESS",
+  promoLines: [
+    { 
+      prefix: "Your Style,", 
+      highlight: "Your Story", 
+      suffix: "-", 
+      discount: "Shop Now" 
+    },
+    { 
+      prefix: "Fashion for", 
+      highlight: "Everyone", 
+      suffix: "in the", 
+      discount: "Family" 
+    }
+  ],
+  codes: [], // Empty for now - add promo codes like ["CODE10", "CODE20"] when needed
+  heroImage: "/images/main-image.JPEG",
+  ctaText: "EXPLORE COLLECTION",
+  ctaLink: "/products"
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -81,9 +116,15 @@ const Home = () => {
   };
 
   const categories = [
-    { id: 1, title: "Women's Fashion", image: '/images/womenf.webp' },
+    { id: 1, title: "Women's Fashion", image: '/images/women-fashion.webp' },
     { id: 2, title: "Men's Collection", image: '/images/mensfassion.avif' },
     { id: 3, title: "Kids & Baby", image: '/images/baby.avif' },
+  ];
+
+  const cakeProducts = [
+    { id: 1, title: "Birthday Cakes", image: '/images/birthday-cake.jpeg', description: "Custom designs for memorable celebrations" },
+    { id: 2, title: "Wedding Cakes", image: '/images/wedding-cake.jpeg', description: "Elegant creations for your special day" },
+    { id: 3, title: "Bride-to-be Cakes", image: '/images/bridal-cake.jpeg', description: "Perfect for bridal showers & bachelorettes" },
   ];
 
   return (
@@ -91,32 +132,90 @@ const Home = () => {
       <div className="main-wrapper">
         <Navbar />
 
-        {/* Hero Section */}
+        {/* Hero Section - Carnage Style */}
         <section className="hero-section">
-          <div className="hero-slider">
-            <div className="hero-slide">
-              <video className="background-video" autoPlay loop muted playsInline>
-                <source src="/images/fashion2.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="hero-content">
-                <h1 className="hero-title">New Season Arrivals</h1>
-                <p className="hero-subtitle">Discover the latest trends in fashion</p>
-                <Link to="/shop" className="shop-now-btn">Shop Now</Link>
+          <div className="hero-container">
+            <div className="hero-content">
+              {/* Main Headline */}
+              <h1 className="hero-headline">{HERO_CONFIG.headline}</h1>
+              
+              {/* Promo Lines */}
+              <div className="hero-promo-text">
+                {HERO_CONFIG.promoLines.map((line, idx) => (
+                  <p key={idx} className="promo-line">
+                    <span className="promo-prefix">{line.prefix} </span>
+                    <span className="promo-highlight">{line.highlight}</span>
+                    <span className="promo-prefix"> {line.suffix} </span>
+                    <span className="promo-discount">{line.discount}</span>
+                  </p>
+                ))}
               </div>
+              
+              {/* Promo Codes */}
+              <div className="hero-codes">
+                <span className="code-label">USE CODE - </span>
+                {HERO_CONFIG.codes.map((code, idx) => (
+                  <span key={code}>
+                    {idx > 0 && <span className="code-separator"> | </span>}
+                    <span className="code-value">{code}</span>
+                  </span>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <Link to={HERO_CONFIG.ctaLink} className="hero-cta-btn">
+                {HERO_CONFIG.ctaText}
+              </Link>
+            </div>
+            
+            {/* Hero Image */}
+            <div className="hero-image-wrapper">
+              <img 
+                src={HERO_CONFIG.heroImage} 
+                alt="Featured collection" 
+                className="hero-image"
+              />
             </div>
           </div>
         </section>
 
         {/* Featured Categories */}
         <section className="featured-categories">
+          <div className="section-header">
+            <h2 className="section-title">Explore Fashion Collections</h2>
+            <p className="section-subtitle">Discover style for everyone in the family</p>
+          </div>
           <div className="category-grid">
             {categories.map((cat) => (
               <div key={cat.id} className="category-card">
-                <img src={cat.image} alt={cat.title} className="category-image" />
+                <div className="category-image-container">
+                  <img src={cat.image} alt={cat.title} className="category-image" />
+                </div>
                 <div className="category-content">
-                  <h2 className="category-title">{cat.title}</h2>
+                  <h3 className="category-title">{cat.title}</h3>
                   <Link to={`/category/${cat.id}`} className="shop-now-btn">Shop Now</Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Cakes Section */}
+        <section className="cakes-section">
+          <div className="section-header">
+            <h2 className="section-title">Sweet Treats by Xaphora</h2>
+            <p className="section-subtitle">Custom cakes for every celebration</p>
+          </div>
+          <div className="cakes-grid">
+            {cakeProducts.map((cake) => (
+              <div key={cake.id} className="cake-card">
+                <div className="cake-image-container">
+                  <img src={cake.image} alt={cake.title} className="cake-image" />
+                </div>
+                <div className="cake-content">
+                  <h3 className="cake-title">{cake.title}</h3>
+                  <p className="cake-description">{cake.description}</p>
+                  <Link to="/cakes" className="order-cake-btn">Order Now</Link>
                 </div>
               </div>
             ))}
