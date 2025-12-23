@@ -42,6 +42,7 @@ const adminSchema = new mongoose.Schema(
         "order-management",
         "reviews-management",
         "user-management",
+        "cake-management",
         "regular",
       ],
     },

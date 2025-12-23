@@ -184,6 +184,7 @@ const AddAdmin = () => {
               <option value="order-management">Order Management</option>
               <option value="reviews-management">Reviews Management</option>
               <option value="user-management">User Management</option>
+              <option value="cake-management">Cake Management</option>
               <option value="regular">Regular</option>
             </select>
           </div>
