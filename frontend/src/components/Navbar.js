@@ -140,6 +140,7 @@ const Navbar = () => {
             <Link to="/women">Women</Link>
             <Link to="/men">Men</Link>
             <Link to="/kids">Kids & Baby</Link>
+            <Link to="/cakes">Cakes</Link>
           </nav>
 
           {/* Actions */}
